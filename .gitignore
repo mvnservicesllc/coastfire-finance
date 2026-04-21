@@ -1,0 +1,30 @@
+# Netlify
+.netlify/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies (if you ever add any)
+node_modules/
+
+# Build output (if you ever add a build step)
+dist/
+build/

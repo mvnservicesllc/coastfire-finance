@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The 4% Rule and CoastFIRE: How Safe Withdrawal Rates Actually Work (2026) | CoastFIRE Finance</title>
+<meta name="description" content="The 4% Rule explained for CoastFIRE planners in 2026. How the Safe Withdrawal Rate sets your CoastFIRE number, when 4% is too aggressive, and how to stress-test with Monte Carlo.">
+<link rel="canonical" href="https://coastfirefinance.com/blog/4-percent-rule-coastfire.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://coastfirefinance.com/blog/4-percent-rule-coastfire.html" },
+  "headline": "The 4% Rule and CoastFIRE: How Safe Withdrawal Rates Actually Work (2026)",
+  "description": "The 4% Rule explained for CoastFIRE planners — how the Safe Withdrawal Rate sets your CoastFIRE number and when it's too aggressive.",
+  "image": "https://coastfirefinance.com/og-image.png",
+  "datePublished": "2026-03-01",
+  "dateModified": "2026-04-20",
+  "author": {
+    "@type": "Person",
+    "@id": "https://coastfirefinance.com/#minh",
+    "name": "Minh",
+    "url": "https://coastfirefinance.com/",
+    "jobTitle": "Engineer & Financial Independence Writer"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "@id": "https://coastfirefinance.com/#org",
+    "name": "CoastFIRE Finance",
+    "logo": { "@type": "ImageObject", "url": "https://coastfirefinance.com/logo-square.svg" }
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://coastfirefinance.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://coastfirefinance.com/#blog" },
+    { "@type": "ListItem", "position": 3, "name": "The 4% Rule and CoastFIRE", "item": "https://coastfirefinance.com/blog/4-percent-rule-coastfire.html" }
+  ]
+}
+</script>
+<meta name="theme-color" content="#6c63ff">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<style>
+  :root { --bg:#0f1117; --card:#1a1d29; --border:#2a2f42; --text:#e8eaf2; --muted:#8b92a8; --accent:#6c63ff; --accent2:#00d4aa; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; line-height:1.7; -webkit-font-smoothing:antialiased; }
+  .nav { background:var(--card); border-bottom:1px solid var(--border); padding:14px 20px; position:sticky; top:0; z-index:10; }
+  .nav a { color:var(--accent2); text-decoration:none; font-weight:600; font-size:0.95rem; }
+  .nav a:hover { color:var(--accent); }
+  .wrap { max-width:720px; margin:0 auto; padding:40px 20px 80px; }
+  h1 { font-size:2.2rem; line-height:1.2; margin:0 0 12px; background:linear-gradient(135deg,#6c63ff,#00d4aa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .meta { color:var(--muted); font-size:0.9rem; margin-bottom:30px; }
+  h2 { font-size:1.5rem; margin:36px 0 12px; color:var(--accent2); }
+  h3 { font-size:1.2rem; margin:26px 0 10px; }
+  p { margin:0 0 16px; }
+  .callout { background:var(--card); border-left:3px solid var(--accent); padding:16px 20px; margin:24px 0; border-radius:6px; }
+  .callout strong { color:var(--accent2); }
+  code { background:var(--card); padding:2px 8px; border-radius:4px; font-size:0.9em; color:var(--accent2); }
+  .cta { display:block; background:linear-gradient(135deg,#6c63ff,#00d4aa); color:white; text-align:center; padding:18px 24px; border-radius:10px; text-decoration:none; font-weight:600; margin:32px 0; font-size:1.05rem; }
+  .cta:hover { filter:brightness(1.1); }
+  ul { padding-left:22px; }
+  li { margin-bottom:8px; }
+  table { width:100%; border-collapse:collapse; margin:20px 0; background:var(--card); border-radius:8px; overflow:hidden; }
+  th, td { padding:12px 14px; text-align:left; border-bottom:1px solid var(--border); font-size:0.92rem; }
+  th { background:rgba(108,99,255,0.15); color:var(--accent2); font-weight:600; }
+  tr:last-child td { border-bottom:none; }
+  @media (max-width:500px) { h1 { font-size:1.7rem; } .wrap { padding:24px 16px 60px; } th,td { padding:10px 8px; font-size:0.85rem; } }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a href="../index.html">← Back to Calculator</a>
+</div>
+
+<div class="wrap">
+
+<h1>How to Use the 4% Rule with CoastFIRE</h1>
+<div class="meta">By Minh · Updated 2026 · 7 min read</div>
+
+<p>The 4% Rule and CoastFIRE aren't competing ideas — they're connected. The 4% Rule tells you <em>how much</em> you need to retire. CoastFIRE tells you <em>how much you need today</em> to get there. Understanding how they fit together makes both concepts much more useful.</p>
+
+<p>This article walks through exactly how to connect them, when 4% is the right number, and when you should use something more conservative.</p>
+
+<h2>What the 4% Rule Actually Says</h2>
+
+<p>The 4% Rule comes from the <strong>Trinity Study</strong>, research done in 1998 that looked at historical US market returns and asked: "If you retired at various times in history and withdrew a fixed percentage of your portfolio each year (adjusted for inflation), how often would your money last 30 years?"</p>
+
+<p>Their answer: if you start with a 50/50 or 60/40 stock/bond portfolio and withdraw 4% per year (inflation-adjusted), your money survives 30 years in about 95% of historical scenarios.</p>
+
+<div class="callout">
+  <strong>In plain English:</strong> If you have $1M, you can spend $40K per year (in today's dollars) and almost certainly not run out for 30 years.
+</div>
+
+<h2>The 4% Rule → Your FIRE Number</h2>
+
+<p>Flip the 4% Rule around and you get the FIRE formula:</p>
+
+<p><code>FIRE Number = Annual Expenses ÷ 0.04 = 25 × Annual Expenses</code></p>
+
+<p>Want to spend $60K/year in retirement? You need <strong>$1.5M</strong>. Want to spend $80K? You need <strong>$2M</strong>. This is the Safe Withdrawal Rate (SWR) in action.</p>
+
+<h2>Connecting CoastFIRE to the 4% Rule</h2>
+
+<p>CoastFIRE builds on top of this. Once you know your FIRE number ($1.5M), CoastFIRE asks: "How much do I need <em>today</em> to grow into that $1.5M by my retirement age — without adding more?"</p>
+
+<p>The formula: <code>CoastFIRE = FIRE Number ÷ (1 + r)^n</code></p>
+
+<p>So if you're 35, want to retire at 65 with $1.5M, and assume 5% real return:</p>
+
+<p><code>CoastFIRE = $1,500,000 ÷ (1.05)^30 ≈ $347,000</code></p>
+
+<div class="callout">
+  <strong>The big idea:</strong> The 4% Rule determines your <em>destination</em>. CoastFIRE tells you the <em>minimum starting fuel</em> to get there.
+</div>
+
+<h2>When 4% Is Too Aggressive</h2>
+
+<p>The Trinity Study assumed a 30-year retirement. If you're retiring early — say at 50 instead of 65 — you might need your portfolio to last 40–50 years. That changes the math.</p>
+
+<p>Here's what research suggests for different retirement lengths:</p>
+
+<table>
+  <tr><th>Retirement Length</th><th>Recommended SWR</th><th>FIRE Multiplier</th></tr>
+  <tr><td>20 years (late retirement)</td><td>5.0%</td><td>20×</td></tr>
+  <tr><td>30 years (standard)</td><td>4.0%</td><td>25×</td></tr>
+  <tr><td>40 years (early retirement)</td><td>3.5%</td><td>~28×</td></tr>
+  <tr><td>50 years (very early)</td><td>3.0-3.25%</td><td>~31×</td></tr>
+</table>
+
+<p>If you're planning to CoastFIRE by 40 and live to 90, use <strong>3.5% as your SWR</strong>, not 4%. That changes your FIRE target significantly.</p>
+
+<h2>Why Some People Use 3.5% Regardless</h2>
+
+<p>A growing number of researchers (notably Wade Pfau and Karsten Jeske of Early Retirement Now) argue that 4% is too optimistic for <em>any</em> early retiree because:</p>
+
+<ul>
+  <li>The Trinity Study was backward-looking — it only tested what <em>did</em> happen, not what <em>could</em> happen</li>
+  <li>Current valuations (high P/E ratios) suggest lower forward returns than historical averages</li>
+  <li>A single failure is catastrophic — 95% success means 5% chance of complete depletion</li>
+</ul>
+
+<p>If you're risk-averse or planning a 40+ year retirement, using 3.25% or 3.5% as your SWR gives you a meaningful safety buffer with only moderately more required savings.</p>
+
+<div class="callout">
+  <strong>Practical example:</strong> For $60K/year expenses, 4% gives you a target of $1.5M. 3.5% gives you $1.71M. That extra $210K takes maybe 2–4 extra years to save, but adds substantial resilience.
+</div>
+
+<h2>How to Adjust in the Calculator</h2>
+
+<p>The CoastFIRE Calculator lets you set your SWR directly. Open the Advanced Settings and change the Safe Withdrawal Rate from 4% to whatever fits your situation:</p>
+
+<ul>
+  <li><strong>4.0%</strong> — retiring at 60+, standard planning</li>
+  <li><strong>3.5%</strong> — retiring at 50–55, or general conservatism</li>
+  <li><strong>3.25%</strong> — very early retirement (40s), or high risk aversion</li>
+  <li><strong>3.0%</strong> — extreme early retirement with no flexibility</li>
+</ul>
+
+<p>You'll see both your FIRE target and CoastFIRE number update live.</p>
+
+<a href="../index.html" class="cta">Try Different SWRs in the Calculator →</a>
+
+<h2>A Few Myths to Clear Up</h2>
+
+<h3>"The 4% Rule means I withdraw 4% of my portfolio every year"</h3>
+<p>Not quite. You withdraw 4% <em>in the first year</em>, then adjust for inflation after that. If your portfolio drops, your withdrawal amount stays the same (in real dollars).</p>
+
+<h3>"4% is guaranteed safe"</h3>
+<p>It's 95% safe in historical US data. That's very good, but not perfect. In a truly bad sequence (like retiring in 1966), the 4% Rule would have left you broke before 30 years. Flexibility helps — being willing to cut spending in bad years dramatically improves success rates.</p>
+
+<h3>"4% doesn't apply if I have other income"</h3>
+<p>The 4% Rule applies to the <em>portion of expenses your portfolio covers</em>. If you have a pension and Social Security covering $30K of your $60K spending, your portfolio only needs to cover $30K — so you only need $750K, not $1.5M.</p>
+
+<h2>The Bottom Line</h2>
+
+<p>The 4% Rule and CoastFIRE work beautifully together. The 4% Rule (or whatever SWR you choose) sets your target. CoastFIRE tells you how early in life you can stop saving and let compounding finish the job.</p>
+
+<p>Use 4% as a starting point. If you're retiring early or want more safety, dial it down to 3.25–3.5%. Run your numbers at multiple SWRs to see the range — your true CoastFIRE number lives somewhere in that band, not at a single pinpoint.</p>
+
+<div class="callout" style="border-left-color:#ffd166">
+  <strong style="color:#ffd166">📘 Recommended reading</strong><br>
+  <a href="https://www.amazon.com/dp/1945640095?tag=angelnguyen0e-20" target="_blank" rel="noopener sponsored" style="color:var(--accent2)">Retirement Planning Guidebook</a> by Wade Pfau. If you want to go deeper than the 4% Rule — safe withdrawal rates, sequence-of-returns risk, bucketing strategies, guardrails — Pfau is the researcher everyone cites. Dense but worth it.
+  <br><span style="color:var(--muted);font-size:0.8rem">Affiliate link — we may earn a small commission at no extra cost to you.</span>
+</div>
+
+<div class="callout" style="margin-top:40px;border-left-color:var(--accent2)">
+  <strong>About the author</strong><br>
+  Minh is a lifelong financial enthusiast and an experienced engineer. He built CoastFIRE Finance to help people see their path to financial independence with clear math — not hype. Have a question? <a href="mailto:minh@coastfirefinance.com" style="color:var(--accent2)">Email Minh directly</a>.
+</div>
+
+</div>
+
+</body>
+</html>

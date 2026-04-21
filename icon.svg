@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0f1117"/>
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6c63ff"/>
+      <stop offset="100%" stop-color="#00d4aa"/>
+    </linearGradient>
+  </defs>
+  <!-- Rising chart line -->
+  <polyline
+    points="72,368 168,248 256,296 344,152 440,200"
+    fill="none" stroke="url(#g)" stroke-width="36"
+    stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Dot at peak -->
+  <circle cx="440" cy="200" r="26" fill="#00d4aa"/>
+  <!-- Wave at bottom -->
+  <path d="M56,408 Q128,378 200,408 Q272,438 344,408 Q416,378 464,408 L464,472 Q384,492 256,480 Q128,468 56,472 Z"
+    fill="url(#g)" opacity="0.55"/>
+</svg>

@@ -1,0 +1,2409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>CoastFIRE Calculator</title>
+
+  <!-- PWA / iOS -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CoastFIRE">
+  <meta name="theme-color" content="#6c63ff">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+
+  <!-- SEO / description -->
+  <meta name="description" content="Free CoastFIRE Calculator — find the age you can stop saving and let compound growth carry you to retirement. Monte Carlo simulation, tax-aware projections, Social Security and pension offsets included.">
+
+  <!-- Open Graph (Facebook, LinkedIn, iMessage link previews) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CoastFIRE Finance">
+  <meta property="og:title" content="CoastFIRE Calculator — Find the Age You Can Stop Saving">
+  <meta property="og:description" content="Free calculator with Monte Carlo simulation. Tax-aware. Pension and Social Security offsets. See your path to financial independence with clear math, not hype.">
+  <meta property="og:url" content="https://coastfirefinance.com/">
+  <meta property="og:image" content="https://coastfirefinance.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CoastFIRE Calculator — Find the Age You Can Stop Saving">
+  <meta name="twitter:description" content="Free calculator with Monte Carlo simulation. Tax-aware. Pension and Social Security offsets. See your path to financial independence with clear math.">
+  <meta name="twitter:image" content="https://coastfirefinance.com/og-image.png">
+
+  <!-- Impact.com site verification -->
+  <meta name='impact-site-verification' value='83a129fb-79b8-4b01-a0d3-d403a7901182'>
+
+  <!-- Structured data: WebApplication (the calculator) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "CoastFIRE Calculator",
+    "alternateName": "CoastFIRE Finance Calculator",
+    "url": "https://coastfirefinance.com/",
+    "description": "Free CoastFIRE calculator with Monte Carlo simulation, tax-aware projections, and Social Security / pension offsets. Find the age you can stop saving and let compound growth carry you to retirement.",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Web",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "isAccessibleForFree": true,
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Monte Carlo simulation",
+      "Tax-aware projections",
+      "Social Security offsets",
+      "Pension offsets",
+      "Installable as a PWA"
+    ],
+    "author": { "@id": "https://coastfirefinance.com/#minh" },
+    "publisher": { "@id": "https://coastfirefinance.com/#org" }
+  }
+  </script>
+
+  <!-- Structured data: Organization (publisher) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": "https://coastfirefinance.com/#org",
+    "name": "CoastFIRE Finance",
+    "legalName": "MVN Services LLC",
+    "url": "https://coastfirefinance.com/",
+    "logo": "https://coastfirefinance.com/logo-square.svg",
+    "email": "minh@coastfirefinance.com",
+    "founder": { "@id": "https://coastfirefinance.com/#minh" }
+  }
+  </script>
+
+  <!-- Structured data: Person (author / Minh) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": "https://coastfirefinance.com/#minh",
+    "name": "Minh",
+    "url": "https://coastfirefinance.com/",
+    "jobTitle": "Engineer & Financial Independence Writer",
+    "description": "Lifelong financial enthusiast and engineer. Builder of CoastFIRE Finance. Operates MVN Services LLC.",
+    "knowsAbout": ["CoastFIRE", "Financial Independence", "Retire Early", "Monte Carlo simulation", "Safe Withdrawal Rate"],
+    "worksFor": { "@id": "https://coastfirefinance.com/#org" }
+  }
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0f1117;
+      --surface: #1a1d27;
+      --surface2:#22263a;
+      --border:  #2e3247;
+      --accent:  #6c63ff;
+      --green:   #00d4aa;
+      --yellow:  #f7b731;
+      --red:     #ff6b6b;
+      --white60: rgba(232,234,246,0.6);
+      --text:    #e8eaf6;
+      --muted:   #8b90b0;
+      --radius:  14px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      /* Safe-area insets for iPhone notch / home indicator */
+      padding-top: max(24px, env(safe-area-inset-top));
+      padding-right: max(16px, env(safe-area-inset-right));
+      padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+      padding-left: max(16px, env(safe-area-inset-left));
+    }
+
+    /* ── iOS install banner ── */
+    .ios-banner {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: rgba(108,99,255,0.12);
+      border: 1px solid rgba(108,99,255,0.35);
+      border-radius: 10px; padding: 12px 14px;
+      margin: 0 auto 16px; max-width: 1240px;
+      font-size: 0.83rem; line-height: 1.5;
+    }
+    .ios-banner-ico { font-size: 1.5rem; flex-shrink: 0; }
+    .ios-banner-body { flex: 1; color: #a89eff; }
+    .ios-banner-body strong { color: var(--text); }
+    .ios-banner-close {
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; font-size: 1.1rem; padding: 2px 4px;
+      flex-shrink: 0; touch-action: manipulation;
+    }
+
+    header { text-align: center; margin-bottom: 32px; }
+    header h1 {
+      font-size: 2rem; font-weight: 700;
+      background: linear-gradient(135deg, #6c63ff, #00d4aa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    header p { color: var(--muted); margin-top: 8px; font-size: 0.9rem; max-width: 560px; margin-inline: auto; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 440px 1fr;
+      gap: 22px;
+      max-width: 1240px;
+      margin-inline: auto;
+    }
+    @media (max-width: 920px) { .layout { grid-template-columns: 1fr; } }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+    .card:last-child { margin-bottom: 0; }
+
+    /* ── Accordion ── */
+    .acc { border-top: 1px solid var(--border); padding-top: 14px; margin-top: 14px; }
+    .acc:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+    .acc-hdr {
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer; user-select: none;
+      min-height: 44px; /* iOS minimum tap target */
+      touch-action: manipulation;
+    }
+    .acc-title { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); flex: 1; }
+    .acc-arrow { color: var(--muted); font-size: 0.65rem; transition: transform 0.2s; }
+    .acc-arrow.open { transform: rotate(90deg); }
+    .acc-body { overflow: hidden; max-height: 0; transition: max-height 0.3s ease; }
+    .acc-body.open { max-height: 1200px; }
+    .acc-inner { padding-top: 14px; }
+
+    /* ── Number input fields ── */
+    .field { margin-bottom: 13px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field-label {
+      display: block; font-size: 0.76rem; font-weight: 500;
+      color: var(--muted); margin-bottom: 5px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    .field-wrap {
+      display: flex; align-items: stretch;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field-wrap:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(108,99,255,0.15);
+    }
+    .field-wrap.y:focus-within { border-color: var(--yellow); box-shadow: 0 0 0 2px rgba(247,183,49,0.15); }
+    .field-wrap.g:focus-within { border-color: var(--green);  box-shadow: 0 0 0 2px rgba(0,212,170,0.15); }
+
+    .field-pfx, .field-sfx {
+      padding: 0 10px;
+      background: rgba(108,99,255,0.1);
+      color: var(--accent);
+      font-size: 0.85rem; font-weight: 700;
+      border-right: 1px solid var(--border);
+      display: flex; align-items: center;
+      flex-shrink: 0; white-space: nowrap;
+    }
+    .field-wrap.y .field-pfx,
+    .field-wrap.y .field-sfx { background: rgba(247,183,49,0.1); color: var(--yellow); border-color: var(--border); }
+    .field-wrap.g .field-pfx,
+    .field-wrap.g .field-sfx { background: rgba(0,212,170,0.1);  color: var(--green);  border-color: var(--border); }
+    .field-sfx { border-right: none; border-left: 1px solid var(--border); }
+
+    .field-wrap input[type="number"] {
+      flex: 1; min-width: 0;
+      padding: 9px 10px;
+      background: none; border: none; outline: none;
+      color: var(--text);
+      font-size: 1rem; /* 16px minimum — prevents iOS auto-zoom */
+      font-weight: 500;
+      -moz-appearance: textfield;
+    }
+    .field-wrap input[type="number"]::-webkit-inner-spin-button,
+    .field-wrap input[type="number"]::-webkit-outer-spin-button { display: none; }
+
+    /* stepper buttons */
+    .field-steps { display: flex; flex-direction: column; border-left: 1px solid var(--border); }
+    .field-steps button {
+      flex: 1; padding: 0 9px; min-height: 22px;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 0.6rem; line-height: 1;
+      transition: background 0.12s, color 0.12s;
+      touch-action: manipulation;
+    }
+    .field-steps button:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+    .field-steps button:first-child { border-bottom: 1px solid var(--border); }
+
+    .field-hint { font-size: 0.67rem; color: var(--muted); margin-top: 3px; }
+
+    /* 2-up row */
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 13px; }
+    .field-row .field { margin-bottom: 0; }
+
+    /* ── Toggle switch ── */
+    .sw-row {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.86rem; color: var(--text); margin-bottom: 12px;
+      padding: 10px 12px;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+      min-height: 44px; /* tap target */
+    }
+    .sw-row-sub { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .sw { position: relative; display: inline-block; width: 40px; height: 21px; flex-shrink: 0; }
+    .sw input { opacity: 0; width: 0; height: 0; }
+    .sw-track {
+      position: absolute; cursor: pointer; inset: 0;
+      background: var(--border); border-radius: 21px; transition: background 0.2s;
+    }
+    .sw-track:before {
+      content: ''; position: absolute;
+      width: 15px; height: 15px; left: 3px; bottom: 3px;
+      background: white; border-radius: 50%; transition: transform 0.2s;
+    }
+    .sw input:checked + .sw-track { background: var(--yellow); }
+    .sw input:checked + .sw-track:before { transform: translateX(19px); }
+    .sw input.g:checked + .sw-track { background: var(--green); }
+    .sw input.p:checked + .sw-track { background: var(--accent); }
+
+    /* ── Sub-section divider ── */
+    .sub-hdr {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 11px; margin: 14px 0 10px;
+    }
+    .sub-hdr:first-child { border-top: none; padding-top: 0; margin-top: 0; }
+
+    /* ── Info boxes ── */
+    .info-box {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 9px; padding: 11px 13px; margin-top: 12px;
+    }
+    .info-box-g { border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.06); }
+    .info-box-y { border-color: rgba(247,183,49,0.3); background: rgba(247,183,49,0.06); }
+
+    .ibar-label { font-size: 0.67rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
+    .ibar { display: flex; border-radius: 4px; overflow: hidden; height: 7px; background: var(--border); margin: 5px 0; }
+    .ibar div { transition: width 0.3s; }
+    .ibar-p { background: var(--accent); }
+    .ibar-s { background: var(--yellow); }
+    .ibar-m { background: var(--green); }
+    .ibar-key { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 0.69rem; color: var(--muted); }
+
+    /* ── Result boxes ── */
+    .rg { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 11px; margin-bottom: 18px; }
+
+    .rb {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 10px; text-align: center;
+    }
+    .rb .lbl { font-size: 0.64rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .rb .val { font-size: 1.15rem; font-weight: 700; line-height: 1.25; }
+    .rb .sub { font-size: 0.63rem; color: var(--muted); margin-top: 3px; }
+    .rb .val.g  { color: var(--green); }
+    .rb .val.p  { color: var(--accent); }
+    .rb .val.r  { color: var(--red); }
+    .rb .val.y  { color: var(--yellow); }
+    .rb .val.w  { color: var(--white60); }
+
+    /* ── Banner ── */
+    .banner {
+      border-radius: 10px; padding: 12px 16px; margin-bottom: 16px;
+      font-size: 0.87rem; font-weight: 500;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .banner.coast { background: rgba(0,212,170,0.12); border: 1px solid rgba(0,212,170,0.35); color: var(--green); }
+    .banner.track { background: rgba(108,99,255,0.12); border: 1px solid rgba(108,99,255,0.35); color: #a89eff; }
+    .banner.warn  { background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.35); color: #ff9a9a; }
+    .banner .ico  { font-size: 1.35rem; flex-shrink: 0; }
+
+    /* ── Display toggle ── */
+    .disp-toggle { display: flex; align-items: center; gap: 10px; font-size: 0.75rem; color: var(--muted); margin-bottom: 14px; justify-content: flex-end; }
+    .pill-group { display: flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+    .pill {
+      padding: 6px 14px; font-size: 0.72rem; cursor: pointer;
+      border: none; background: none; color: var(--muted);
+      transition: all 0.15s; touch-action: manipulation; min-height: 36px;
+    }
+    .pill.on { background: var(--accent); color: white; border-radius: 20px; }
+
+    /* ── Chart area ── */
+    .chart-area { display: flex; flex-direction: column; }
+    .cw { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 18px; }
+    .cw:last-child { margin-bottom: 0; }
+    .ct { font-size: 0.78rem; font-weight: 700; color: var(--muted); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.07em; }
+    canvas { width: 100% !important; }
+
+    /* ── Breakdown bar ── */
+    .bbar-wrap { margin-top: 10px; }
+    .bbar-lbl { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
+    .bbar { display: flex; border-radius: 5px; overflow: hidden; height: 8px; background: var(--border); }
+    .bbar div { transition: width 0.3s; }
+    .bbar-adv  { background: var(--accent); }
+    .bbar-brok { background: var(--yellow); }
+    .bbar-key  { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 5px; font-size: 0.68rem; color: var(--muted); }
+
+    /* ── Table / Phases ── */
+    .tab-switch { display: flex; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+    .ts-btn {
+      flex: 1; padding: 9px; background: none; border: none;
+      color: var(--muted); font-size: 0.78rem; cursor: pointer;
+      transition: all 0.15s; touch-action: manipulation; min-height: 44px;
+    }
+    .ts-btn.on { background: var(--accent); color: white; }
+
+    .tbl-scroll { max-height: 320px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .tbl th { text-align: left; color: var(--muted); font-weight: 500; padding: 5px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    .tbl td { padding: 5px 8px; border-bottom: 1px solid rgba(46,50,71,0.45); }
+    .tbl tr:hover td { background: rgba(255,255,255,0.02); }
+    .tbl tr.hl-coast  td { color: var(--green);  font-weight: 700; background: rgba(0,212,170,0.07) !important; }
+    .tbl tr.hl-retire td { color: var(--yellow); font-weight: 700; background: rgba(247,183,49,0.06) !important; }
+    .tbl .ph-acc   { color: var(--accent); }
+    .tbl .ph-coast { color: var(--green); }
+
+    /* ── Save toast ── */
+    .save-bar { text-align:center; font-size:0.72rem; color:var(--muted); margin:-8px 0 18px; }
+    .save-bar button {
+      background:none; border:none; color:var(--muted); cursor:pointer;
+      font-size:0.72rem; text-decoration:underline; padding:4px 6px;
+      touch-action: manipulation;
+    }
+    .save-bar button:hover { color:var(--text); }
+    #save-dot { display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); margin-right:4px; vertical-align:middle; opacity:0; transition:opacity 0.4s; }
+    #save-dot.on { opacity:1; }
+
+    /* ── Timeline ── */
+    .timeline { display: flex; flex-direction: column; }
+    .tl-item { display: flex; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--border); }
+    .tl-item:last-child { border-bottom: none; }
+    .tl-ico { font-size: 1.4rem; flex-shrink: 0; line-height: 1; padding-top: 2px; }
+    .tl-title { font-weight: 600; font-size: 0.87rem; margin-bottom: 3px; }
+    .tl-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.55; }
+    .tl-tag { display: inline-block; font-size: 0.62rem; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 6px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.05em; }
+    .tag-p { background: rgba(108,99,255,0.2); color: #a89eff; }
+    .tag-g { background: rgba(0,212,170,0.2);  color: var(--green); }
+    .tag-y { background: rgba(247,183,49,0.2); color: var(--yellow); }
+
+    /* ── Affiliate / Resources ── */
+    .aff-disclosure {
+      font-size: 0.68rem; color: var(--muted); margin-bottom: 14px;
+      padding: 8px 10px; background: rgba(255,255,255,0.02);
+      border-radius: 6px; border-left: 2px solid var(--border);
+    }
+    .aff-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 720px) { .aff-grid { grid-template-columns: 1fr; } }
+    .aff-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px;
+      display: flex; flex-direction: column;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .aff-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .aff-card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .aff-logo {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .aff-logo.p { background: rgba(108,99,255,0.15); }
+    .aff-logo.y { background: rgba(247,183,49,0.15); }
+    .aff-logo.g { background: rgba(0,212,170,0.15); }
+    .aff-name { font-weight: 700; font-size: 0.92rem; color: var(--text); }
+    .aff-tag  { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+    .aff-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; flex: 1; margin-bottom: 12px; }
+    .aff-cta  {
+      display: flex; align-items: center; justify-content: center;
+      padding: 10px 12px; min-height: 44px;
+      background: var(--accent); color: white; text-decoration: none;
+      border-radius: 7px; font-size: 0.8rem; font-weight: 600;
+      transition: filter 0.15s; touch-action: manipulation;
+    }
+    .aff-cta.y { background: var(--yellow); color: #22263a; }
+    .aff-cta.g { background: var(--green);  color: #0f1117; }
+    .aff-cta:hover { filter: brightness(1.12); }
+    .blog-list { display: flex; flex-direction: column; gap: 8px; }
+    .blog-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; background: rgba(108,99,255,0.06);
+      border: 1px solid var(--border); border-radius: 10px;
+      text-decoration: none; color: inherit; transition: all 0.15s;
+      min-height: 44px;
+    }
+    .blog-row:hover { border-color: var(--accent); background: rgba(108,99,255,0.12); transform: translateX(2px); }
+    .blog-emoji { font-size: 1.4rem; flex-shrink: 0; }
+    .blog-text { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .blog-title { font-weight: 600; font-size: 0.98rem; color: var(--text); }
+    .blog-meta { font-size: 0.8rem; color: var(--muted); }
+    .blog-arrow { color: var(--accent2); font-size: 1.1rem; font-weight: 600; flex-shrink: 0; }
+
+    /* ── Monte Carlo ── */
+    .mc-run-btn {
+      background: linear-gradient(135deg, #6c63ff, #00d4aa);
+      color: white; border: none; padding: 11px 20px;
+      border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; touch-action: manipulation; min-height: 44px;
+      transition: filter 0.15s, transform 0.15s;
+    }
+    .mc-run-btn:hover { filter: brightness(1.12); transform: translateY(-1px); }
+    .mc-run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .mc-scenario-label {
+      font-size: 0.95rem; font-weight: 600; color: var(--accent2);
+      margin: 6px 0 8px; padding: 6px 10px;
+      background: rgba(0,212,170,0.08); border-left: 3px solid var(--accent2);
+      border-radius: 4px;
+    }
+
+    /* ── Small phone breakpoints ── */
+    @media (max-width: 500px) {
+      header h1 { font-size: 1.55rem; }
+      .card { padding: 16px 14px; }
+      .cw  { padding: 16px 14px; }
+      .rg  { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 380px) {
+      .field-row { grid-template-columns: 1fr; }
+      .rg { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- iOS "Add to Home Screen" install banner (hidden by default) -->
+<div class="ios-banner" id="ios-banner" style="display:none">
+  <span class="ios-banner-ico">📲</span>
+  <div class="ios-banner-body">
+    <strong>Install on your iPhone</strong><br>
+    Tap <strong>Share ⬆️</strong> at the bottom of Safari, then tap <strong>"Add to Home Screen"</strong> to install as an app.
+  </div>
+  <button class="ios-banner-close" onclick="dismissIOSBanner()" aria-label="Dismiss">✕</button>
+</div>
+
+<header>
+  <h1>🏄 CoastFIRE Calculator</h1>
+  <p>Nominal projections with pension offsets, after-tax brokerage, employer match, and clean pre/post-coast phases.</p>
+</header>
+<div class="save-bar">
+  <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
+  <button onclick="clearSave()">Reset to defaults</button>
+</div>
+
+<div class="layout">
+
+<!-- ══════════════════════════════════════════════
+     LEFT PANEL — INPUTS
+══════════════════════════════════════════════ -->
+<div>
+<div class="card">
+
+  <!-- ── AGE ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('age')">
+      <span class="acc-title">👤 Age</span>
+      <span class="acc-arrow open" id="arr-age">▶</span>
+    </div>
+    <div class="acc-body open" id="body-age">
+      <div class="acc-inner">
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label">Current Age</label>
+            <div class="field-wrap">
+              <input type="number" id="n-cage" min="18" max="70" value="30" step="1" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-cage',1)">▲</button>
+                <button onclick="step('n-cage',-1)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">18 – 70 yrs</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Retirement Age</label>
+            <div class="field-wrap">
+              <input type="number" id="n-rage" min="40" max="85" value="60" step="1" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-rage',1)">▲</button>
+                <button onclick="step('n-rage',-1)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">40 – 85 yrs</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRIMARY INCOME ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('inc')">
+      <span class="acc-title">💼 Income</span>
+      <span class="acc-arrow open" id="arr-inc">▶</span>
+    </div>
+    <div class="acc-body open" id="body-inc">
+      <div class="acc-inner">
+
+        <div class="sub-hdr">Primary</div>
+        <div class="field">
+          <label class="field-label">Annual Income</label>
+          <div class="field-wrap">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-p-inc" min="0" max="300000" value="80000" step="1000" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-p-inc',1000)">▲</button>
+              <button onclick="step('n-p-inc',-1000)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">Up to $300,000/yr</div>
+        </div>
+
+        <div class="sw-row">
+          <div>
+            <div>Include Spouse / Partner</div>
+            <div class="sw-row-sub">Adds spouse income &amp; separate employer match</div>
+          </div>
+          <label class="sw"><input type="checkbox" id="sw-spouse" onchange="toggleSpouse()"><span class="sw-track"></span></label>
+        </div>
+
+        <div id="spouse-block" style="display:none">
+          <div class="sub-hdr">Spouse / Partner</div>
+          <div class="field">
+            <label class="field-label">Current 401k / IRA Balance</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-ta-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-ta-bal',5000)">▲</button>
+                <button onclick="step('n-s-ta-bal',-5000)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Annual Income</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-inc" min="0" max="300000" value="60000" step="1000" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-inc',1000)">▲</button>
+                <button onclick="step('n-s-inc',-1000)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">Up to $300,000/yr</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Spouse 401k Contributions / yr</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-ta-cont" min="0" max="150000" value="10000" step="500" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-ta-cont',500)">▲</button>
+                <button onclick="step('n-s-ta-cont',-500)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label">Spouse Match Rate</label>
+              <div class="field-wrap y">
+                <input type="number" id="n-s-match-rate" min="0" max="200" value="50" step="25" inputmode="decimal">
+                <span class="field-sfx">%</span>
+                <div class="field-steps">
+                  <button onclick="step('n-s-match-rate',25)">▲</button>
+                  <button onclick="step('n-s-match-rate',-25)">▼</button>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Match Cap (% salary)</label>
+              <div class="field-wrap y">
+                <input type="number" id="n-s-match-cap" min="0" max="15" value="6" step="0.5" inputmode="decimal">
+                <span class="field-sfx">%</span>
+                <div class="field-steps">
+                  <button onclick="step('n-s-match-cap',0.5)">▲</button>
+                  <button onclick="step('n-s-match-cap',-0.5)">▼</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="info-box info-box-y" id="spouse-match-preview">
+            Spouse match: <strong id="s-match-amt">—</strong>/yr · Spouse total into 401k: <strong id="s-match-total">—</strong>/yr
+            <div style="font-size:0.69rem;color:var(--muted);margin-top:3px" id="s-match-note"></div>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-top:12px">
+          <div class="ibar-label">Household Income &amp; Employer Match</div>
+          <div class="ibar">
+            <div class="ibar-p" id="ibar-p"></div>
+            <div class="ibar-s" id="ibar-s"></div>
+            <div class="ibar-m" id="ibar-m"></div>
+          </div>
+          <div class="ibar-key">
+            <span><span style="color:var(--accent)">■</span> Primary: <strong id="ilbl-p">—</strong></span>
+            <span id="ilbl-s-wrap" style="display:none"><span style="color:var(--yellow)">■</span> Spouse: <strong id="ilbl-s">—</strong></span>
+            <span><span style="color:var(--green)">■</span> Total Match: <strong id="ilbl-m">—</strong></span>
+            <span style="margin-left:auto;color:var(--text)">Savings rate: <strong id="ilbl-rate">—</strong></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAX-ADVANTAGED ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('ta')">
+      <span class="acc-title">🏦 Tax-Advantaged <span class="tl-tag tag-p">401k / IRA</span></span>
+      <span class="acc-arrow open" id="arr-ta">▶</span>
+    </div>
+    <div class="acc-body open" id="body-ta">
+      <div class="acc-inner">
+        <div class="sub-hdr">Primary 401k / IRA</div>
+        <div class="field">
+          <label class="field-label">Current Balance</label>
+          <div class="field-wrap">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-ta-bal" min="0" max="10000000" value="50000" step="1000" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-ta-bal',5000)">▲</button>
+              <button onclick="step('n-ta-bal',-5000)">▼</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Your Annual Contributions</label>
+          <div class="field-wrap">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-ta-cont" min="0" max="150000" value="15000" step="500" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-ta-cont',500)">▲</button>
+              <button onclick="step('n-ta-cont',-500)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">Up to $150,000/yr (incl. catch-up)</div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label">Employer Match Rate</label>
+            <div class="field-wrap g">
+              <input type="number" id="n-match-rate" min="0" max="200" value="50" step="25" inputmode="decimal">
+              <span class="field-sfx">%</span>
+              <div class="field-steps">
+                <button onclick="step('n-match-rate',25)">▲</button>
+                <button onclick="step('n-match-rate',-25)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Match Cap (% salary)</label>
+            <div class="field-wrap g">
+              <input type="number" id="n-match-cap" min="0" max="15" value="6" step="0.5" inputmode="decimal">
+              <span class="field-sfx">%</span>
+              <div class="field-steps">
+                <button onclick="step('n-match-cap',0.5)">▲</button>
+                <button onclick="step('n-match-cap',-0.5)">▼</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="info-box info-box-g">
+          Primary match: <strong id="match-amt">—</strong>/yr · Total into 401k: <strong id="match-total">—</strong>/yr
+          <div style="font-size:0.69rem;color:var(--muted);margin-top:3px" id="match-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BROKERAGE ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('br')">
+      <span class="acc-title">📈 Brokerage <span class="tl-tag tag-y">Taxable</span></span>
+      <span class="acc-arrow open" id="arr-br">▶</span>
+    </div>
+    <div class="acc-body open" id="body-br">
+      <div class="acc-inner">
+        <div class="field">
+          <label class="field-label">Current Balance</label>
+          <div class="field-wrap y">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-br-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-br-bal',5000)">▲</button>
+              <button onclick="step('n-br-bal',-5000)">▼</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Annual Contributions</label>
+          <div class="field-wrap y">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-br-cont" min="0" max="150000" value="0" step="500" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-br-cont',500)">▲</button>
+              <button onclick="step('n-br-cont',-500)">▼</button>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label">Dividend Tax Drag</label>
+            <div class="field-wrap y">
+              <input type="number" id="n-div-drag" min="0" max="2" value="0.3" step="0.05" inputmode="decimal">
+              <span class="field-sfx">%</span>
+              <div class="field-steps">
+                <button onclick="step('n-div-drag',0.05)">▲</button>
+                <button onclick="step('n-div-drag',-0.05)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">Annual tax on dividends</div>
+          </div>
+          <div class="field">
+            <label class="field-label">LTCG Rate</label>
+            <div class="field-wrap y">
+              <input type="number" id="n-ltcg" min="0" max="40" value="15" step="1" inputmode="numeric">
+              <span class="field-sfx">%</span>
+              <div class="field-steps">
+                <button onclick="step('n-ltcg',1)">▲</button>
+                <button onclick="step('n-ltcg',-1)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">Tax on gains at withdrawal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PENSION ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('pen')">
+      <span class="acc-title">🎯 Pension &amp; Annuities</span>
+      <span class="acc-arrow open" id="arr-pen">▶</span>
+    </div>
+    <div class="acc-body open" id="body-pen">
+      <div class="acc-inner">
+        <div class="sw-row">
+          <div>
+            <div>Include Pension / Annuity Income</div>
+            <div class="sw-row-sub">Reduces the portfolio withdrawal needed</div>
+          </div>
+          <label class="sw"><input type="checkbox" class="p" id="sw-pen" onchange="recalc()"><span class="sw-track"></span></label>
+        </div>
+        <div id="pen-block">
+          <div class="field">
+            <label class="field-label">Annual Pension Income (Today's $)</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-pen" min="0" max="300000" value="24000" step="500" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-pen',500)">▲</button>
+                <button onclick="step('n-pen',-500)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Pension Starts at Age</label>
+            <div class="field-wrap y">
+              <input type="number" id="n-page" min="50" max="80" value="65" step="1" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-page',1)">▲</button>
+                <button onclick="step('n-page',-1)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="sw-row">
+            <div>
+              <div>COLA — Inflation-Adjusted</div>
+              <div class="sw-row-sub">Social Security &amp; most gov pensions are COLA</div>
+            </div>
+            <label class="sw"><input type="checkbox" class="g" id="sw-cola" checked onchange="recalc()"><span class="sw-track"></span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SOCIAL SECURITY ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('ss')">
+      <span class="acc-title">🏛️ Social Security</span>
+      <span class="acc-arrow" id="arr-ss">▶</span>
+    </div>
+    <div class="acc-body" id="body-ss">
+      <div class="acc-inner">
+        <div class="sw-row">
+          <div>
+            <div>Include Social Security Income</div>
+            <div class="sw-row-sub">Always COLA-adjusted — reduces your FIRE portfolio target</div>
+          </div>
+          <label class="sw"><input type="checkbox" class="g" id="sw-ss" onchange="toggleSS()"><span class="sw-track"></span></label>
+        </div>
+        <div id="ss-block" style="display:none">
+          <div class="sub-hdr">Your Benefit</div>
+          <div class="field">
+            <label class="field-label">Your Monthly Benefit (Today's $)</label>
+            <div class="field-wrap g">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-ss-primary" min="0" max="5000" value="2000" step="50" inputmode="numeric">
+              <span class="field-sfx">/mo</span>
+              <div class="field-steps">
+                <button onclick="step('n-ss-primary',50)">▲</button>
+                <button onclick="step('n-ss-primary',-50)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">Check <strong>ssa.gov/myaccount</strong> for your estimate</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Claim Age</label>
+            <div class="field-wrap g">
+              <input type="number" id="n-ss-age" min="62" max="70" value="67" step="1" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-ss-age',1)">▲</button>
+                <button onclick="step('n-ss-age',-1)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">62 = reduced · 67 = full · 70 = max (+24%)</div>
+          </div>
+          <div class="sw-row" style="margin-top:10px">
+            <div>
+              <div>Include Spouse / Partner SS</div>
+              <div class="sw-row-sub">Spouse's own earned benefit or spousal benefit</div>
+            </div>
+            <label class="sw"><input type="checkbox" class="y" id="sw-ss-spouse" onchange="toggleSSSpouse()"><span class="sw-track"></span></label>
+          </div>
+          <div id="ss-spouse-block" style="display:none">
+            <div class="sub-hdr">Spouse Benefit</div>
+            <div class="field">
+              <label class="field-label">Spouse Monthly Benefit (Today's $)</label>
+              <div class="field-wrap y">
+                <span class="field-pfx">$</span>
+                <input type="number" id="n-ss-spouse" min="0" max="5000" value="1500" step="50" inputmode="numeric">
+                <span class="field-sfx">/mo</span>
+                <div class="field-steps">
+                  <button onclick="step('n-ss-spouse',50)">▲</button>
+                  <button onclick="step('n-ss-spouse',-50)">▼</button>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Spouse Claim Age</label>
+              <div class="field-wrap y">
+                <input type="number" id="n-ss-spouse-age" min="62" max="70" value="67" step="1" inputmode="numeric">
+                <div class="field-steps">
+                  <button onclick="step('n-ss-spouse-age',1)">▲</button>
+                  <button onclick="step('n-ss-spouse-age',-1)">▼</button>
+                </div>
+              </div>
+              <div class="field-hint">62 – 70 yrs</div>
+            </div>
+          </div>
+          <div class="info-box info-box-g" id="ss-preview">
+            <div id="ss-preview-text">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── RETURNS ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('ret')">
+      <span class="acc-title">📊 Spending &amp; Returns</span>
+      <span class="acc-arrow open" id="arr-ret">▶</span>
+    </div>
+    <div class="acc-body open" id="body-ret">
+      <div class="acc-inner">
+        <div class="field">
+          <label class="field-label">Annual Retirement Spending (Today's $)</label>
+          <div class="field-wrap">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-spend" min="0" max="500000" value="60000" step="1000" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-spend',1000)">▲</button>
+              <button onclick="step('n-spend',-1000)">▼</button>
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label">Nominal Return</label>
+            <div class="field-wrap">
+              <input type="number" id="n-nom" min="0" max="20" value="7" step="0.5" inputmode="decimal">
+              <span class="field-sfx">%</span>
+              <div class="field-steps">
+                <button onclick="step('n-nom',0.5)">▲</button>
+                <button onclick="step('n-nom',-0.5)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Inflation Rate</label>
+            <div class="field-wrap">
+              <input type="number" id="n-inf" min="0" max="15" value="3" step="0.25" inputmode="decimal">
+              <span class="field-sfx">%</span>
+              <div class="field-steps">
+                <button onclick="step('n-inf',0.25)">▲</button>
+                <button onclick="step('n-inf',-0.25)">▼</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Safe Withdrawal Rate (SWR)</label>
+          <div class="field-wrap">
+            <input type="number" id="n-swr" min="2" max="8" value="4" step="0.25" inputmode="decimal">
+            <span class="field-sfx">%</span>
+            <div class="field-steps">
+              <button onclick="step('n-swr',0.25)">▲</button>
+              <button onclick="step('n-swr',-0.25)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">4% = Trinity study standard; 3.5% = conservative</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /card -->
+</div><!-- /left -->
+
+<!-- ══════════════════════════════════════════════
+     RIGHT PANEL — RESULTS
+══════════════════════════════════════════════ -->
+<div class="chart-area">
+
+  <div class="card" style="margin-bottom:18px">
+    <div id="banner" class="banner track">
+      <span class="ico" id="b-ico">🚀</span>
+      <span id="b-text">Calculating…</span>
+    </div>
+
+    <div class="disp-toggle">
+      <span>Display in:</span>
+      <div class="pill-group">
+        <button class="pill on" id="pill-nom"  onclick="setDisp('nom')">Future $</button>
+        <button class="pill"    id="pill-real" onclick="setDisp('real')">Today's $</button>
+      </div>
+    </div>
+
+    <div class="rg">
+      <div class="rb"><div class="lbl">Gross FIRE #</div><div class="val p" id="r-fire-g">—</div><div class="sub">Full spending / SWR</div></div>
+      <div class="rb"><div class="lbl">Income Offsets</div><div class="val y" id="r-pen-off">—</div><div class="sub" id="r-pen-off-sub">Pension + SS / yr</div></div>
+      <div class="rb"><div class="lbl">Net FIRE #</div><div class="val p" id="r-fire-n">—</div><div class="sub">Portfolio must cover</div></div>
+      <div class="rb"><div class="lbl">CoastFIRE Target</div><div class="val p" id="r-coast">—</div><div class="sub">Portfolio needed today</div></div>
+      <div class="rb"><div class="lbl">Portfolio Now</div><div class="val g" id="r-now">—</div><div class="sub">After-tax effective</div></div>
+      <div class="rb"><div class="lbl">Gap to CoastFIRE</div><div class="val" id="r-gap">—</div><div class="sub" id="r-gap-sub">—</div></div>
+      <div class="rb"><div class="lbl">CoastFIRE Age</div><div class="val g" id="r-coast-age">—</div><div class="sub" id="r-coast-yr">—</div></div>
+      <div class="rb"><div class="lbl">Nominal Return</div><div class="val g" id="r-nom-ret">—</div><div class="sub">Before tax drag</div></div>
+      <div class="rb"><div class="lbl">Real Return</div><div class="val w" id="r-real-ret">—</div><div class="sub">After inflation</div></div>
+      <div class="rb"><div class="lbl">Household Income</div><div class="val p" id="r-hh-income">—</div><div class="sub">Primary + Spouse</div></div>
+      <div class="rb"><div class="lbl">Savings Rate</div><div class="val g" id="r-sav-rate">—</div><div class="sub">% of household income</div></div>
+      <div class="rb"><div class="lbl">Total Employer Match</div><div class="val g" id="r-match">—</div><div class="sub">Free money / yr</div></div>
+    </div>
+
+    <div class="bbar-wrap">
+      <div class="bbar-lbl">Portfolio Breakdown (current)</div>
+      <div class="bbar">
+        <div class="bbar-adv"  id="bar-adv"></div>
+        <div class="bbar-brok" id="bar-brk"></div>
+      </div>
+      <div class="bbar-key">
+        <span><span style="color:var(--accent)">■</span> Tax-Advantaged: <strong id="bar-adv-lbl">—</strong></span>
+        <span><span style="color:var(--yellow)">■</span> Brokerage (after LTCG): <strong id="bar-brk-lbl">—</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cw">
+    <div class="ct">Portfolio Projection</div>
+    <canvas id="chart" height="230"></canvas>
+  </div>
+
+  <div class="cw" id="keep-invest-section" style="display:none">
+    <div class="ct">📈 What if you keep investing after CoastFIRE?</div>
+    <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
+      Compares stopping contributions at CoastFIRE vs continuing the same contributions all the way to retirement.
+    </div>
+    <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:8px">Total Portfolio</div>
+    <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
+      <div class="rb"><div class="lbl">Coast-Only</div><div class="val p" id="ki-coast-final">—</div><div class="sub">Stop at CoastFIRE</div></div>
+      <div class="rb"><div class="lbl">Keep Investing</div><div class="val" style="color:#ff9a9a" id="ki-keep-final">—</div><div class="sub">Continue contributions</div></div>
+      <div class="rb"><div class="lbl">Total Extra</div><div class="val g" id="ki-extra">—</div><div class="sub">Bonus for staying in</div></div>
+    </div>
+    <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:8px">Brokerage Account Only <span style="font-weight:400;text-transform:none;letter-spacing:0">(taxable)</span></div>
+    <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
+      <div class="rb"><div class="lbl">Brokerage — Coast</div><div class="val y" id="ki-br-coast">—</div><div class="sub">After LTCG, stop at coast</div></div>
+      <div class="rb"><div class="lbl">Brokerage — Keep</div><div class="val" style="color:#ffd166" id="ki-br-keep">—</div><div class="sub">After LTCG, keep adding</div></div>
+      <div class="rb"><div class="lbl">Brokerage Extra</div><div class="val g" id="ki-br-extra">—</div><div class="sub">From continued contributions</div></div>
+    </div>
+    <div class="info-box" id="ki-summary" style="margin-top:0;font-size:0.82rem;line-height:1.6"></div>
+  </div>
+
+  <div class="cw">
+    <div class="ct">🎲 Monte Carlo Simulation — After CoastFIRE</div>
+    <div class="info-box" style="font-size:0.82rem;line-height:1.5;margin-bottom:14px">
+      Starting from the moment you hit your CoastFIRE number (or today, if you've already hit it), this runs 1,000 simulated futures with 15% market volatility to show how your money grows over the remaining years until retirement — <strong>under two strategies: coast (stop contributing) or keep investing.</strong>
+    </div>
+    <button class="mc-run-btn" id="mc-run" onclick="runMonteCarlo()">▶ Run 1,000 Simulations</button>
+
+    <div id="mc-scenarios" style="display:none;margin-top:14px">
+      <div class="mc-scenario-label">💤 If You Coast After Hitting CoastFIRE (stop contributing)</div>
+      <div class="rgrid" style="margin-bottom:14px">
+        <div class="rb"><div class="lbl">Coast Success Rate</div><div class="val g" id="mc-coast-success">—</div><div class="sub">% runs hit FIRE target</div></div>
+        <div class="rb"><div class="lbl">P10 (Pessimistic)</div><div class="val r" id="mc-coast-p10">—</div><div class="sub">Bottom 10% of runs</div></div>
+        <div class="rb"><div class="lbl">P50 (Median)</div><div class="val" id="mc-coast-p50">—</div><div class="sub">Middle outcome</div></div>
+        <div class="rb"><div class="lbl">P90 (Optimistic)</div><div class="val g" id="mc-coast-p90">—</div><div class="sub">Top 10% of runs</div></div>
+      </div>
+
+      <div class="mc-scenario-label">💪 If You Keep Investing After Hitting CoastFIRE</div>
+      <div class="rgrid">
+        <div class="rb"><div class="lbl">Keep-Invest Success Rate</div><div class="val g" id="mc-keep-success">—</div><div class="sub">% runs hit FIRE target</div></div>
+        <div class="rb"><div class="lbl">P10 (Pessimistic)</div><div class="val r" id="mc-keep-p10">—</div><div class="sub">Bottom 10% of runs</div></div>
+        <div class="rb"><div class="lbl">P50 (Median)</div><div class="val" id="mc-keep-p50">—</div><div class="sub">Middle outcome</div></div>
+        <div class="rb"><div class="lbl">P90 (Optimistic)</div><div class="val g" id="mc-keep-p90">—</div><div class="sub">Top 10% of runs</div></div>
+      </div>
+    </div>
+    <div id="mc-chart-wrap" style="margin-top:14px;display:none">
+      <canvas id="mc-chart" height="220"></canvas>
+    </div>
+    <div class="info-box" id="mc-summary" style="margin-top:12px;font-size:0.82rem;line-height:1.6;display:none"></div>
+  </div>
+
+  <div class="cw">
+    <div class="ct">Detail</div>
+    <div class="tab-switch">
+      <button class="ts-btn on" id="tb-tbl"   onclick="switchTab('tbl')">Year-by-Year Table</button>
+      <button class="ts-btn"    id="tb-phases" onclick="switchTab('phases')">Phases</button>
+    </div>
+    <div id="pane-tbl">
+      <div class="tbl-scroll">
+        <table class="tbl">
+          <thead>
+            <tr><th>Age</th><th>Phase</th><th>Tax-Adv</th><th>Brokerage</th><th>Eff. Total</th><th>CoastFIRE Target</th><th>Progress</th></tr>
+          </thead>
+          <tbody id="tbl-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="pane-phases" style="display:none">
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       CONTEXTUAL RECOMMENDATIONS (live — based on inputs)
+  ══════════════════════════════════════════════ -->
+  <div class="cw" id="ctx-card" style="margin-bottom:20px;display:none">
+    <div class="ct">✨ Recommended for You</div>
+    <div class="info-box" style="font-size:0.82rem;line-height:1.5;margin-bottom:12px">
+      Based on what you entered above, these tools best fit <strong>your</strong> situation right now.
+    </div>
+    <div class="aff-disclosure" style="margin-bottom:12px">
+      <strong>Disclosure:</strong> Affiliate links — we may earn a commission if you sign up, at no extra cost to you.
+    </div>
+    <div class="aff-grid" id="ctx-grid"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       AFFILIATE / RESOURCES
+       TODO: Replace each href="..." below with your
+       approved affiliate tracking link for that program.
+  ══════════════════════════════════════════════ -->
+  <div class="cw" style="margin-bottom:0">
+    <div class="ct">💰 Put Your CoastFIRE Plan Into Action</div>
+    <div class="aff-disclosure">
+      <strong>Disclosure:</strong> Links below are affiliate links — we may earn a commission if you sign up, at no cost to you. We only recommend tools we'd use ourselves.
+    </div>
+    <div class="aff-grid">
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo p">🏦</div>
+          <div>
+            <div class="aff-name">Fidelity</div>
+            <div class="aff-tag">401k / IRA · No fees</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          Commission-free index funds, zero-expense-ratio options (FZROX), and strong Roth IRA support. Ideal for your tax-advantaged bucket.
+        </div>
+        <!-- Replace with your Fidelity affiliate URL -->
+        <a href="https://www.fidelity.com/" class="aff-cta" target="_blank" rel="noopener sponsored">Open a Fidelity Account →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo y">📈</div>
+          <div>
+            <div class="aff-name">M1 Finance</div>
+            <div class="aff-tag">Brokerage · Automated</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          Auto-invest into your "Pie" portfolio on a schedule. Perfect for brokerage contributions — set it once and coast.
+        </div>
+        <!-- Replace with your M1 Finance affiliate URL -->
+        <a href="https://m1.com/" class="aff-cta y" target="_blank" rel="noopener sponsored">Start Investing with M1 →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo p">🏹</div>
+          <div>
+            <div class="aff-name">Robinhood</div>
+            <div class="aff-tag">Brokerage · IRA match</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          Commission-free brokerage with a Roth/Traditional IRA that offers a <strong>1–3% contribution match</strong> (Gold) — rare free money on retirement contributions. Great for your Roth bucket and VTI-style core holdings.
+        </div>
+        <!-- TODO: Replace with your Robinhood affiliate URL from Impact once approved -->
+        <a href="https://robinhood.com/" class="aff-cta" target="_blank" rel="noopener sponsored">Open Robinhood Account →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo g">💵</div>
+          <div>
+            <div class="aff-name">Wealthfront Cash</div>
+            <div class="aff-tag">HYSA · High APY</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          High-yield cash account with FDIC insurance up to $8M. Park your emergency fund and pre-coast savings here, not in checking.
+        </div>
+        <!-- Replace with your Wealthfront affiliate URL -->
+        <a href="https://www.wealthfront.com/cash" class="aff-cta g" target="_blank" rel="noopener sponsored">Open Wealthfront Cash →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo p">📬</div>
+          <div>
+            <div class="aff-name">Financial Freedom Insights</div>
+            <div class="aff-tag">Newsletter · Free</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          This newsletter is full of financial tips, insights, financial news, announcements, a special treat for those who make it to the bottom, and more!
+        </div>
+        <a href="https://financial-freedom-insights.beehiiv.com/" class="aff-cta" target="_blank" rel="noopener">Subscribe Free →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo g">📊</div>
+          <div>
+            <div class="aff-name">Empower (Personal Capital)</div>
+            <div class="aff-tag">Net-worth dashboard · Free</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          The best free tool for tracking your entire financial picture in one place — perfect complement to this calculator. Links all your accounts (401k, IRA, brokerage, cash) and shows your real net worth.
+        </div>
+        <!-- TODO: Replace with your Empower/Impact affiliate URL -->
+        <a href="https://www.empower.com/" class="aff-cta g" target="_blank" rel="noopener sponsored">Get Empower Free →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo p">🏛️</div>
+          <div>
+            <div class="aff-name">SoFi Invest</div>
+            <div class="aff-tag">Roth IRA · Brokerage</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          Commission-free brokerage with automated Roth IRAs, active investing, and cash management. Clean mobile app and no minimums — good for investors getting started on their CoastFIRE path.
+        </div>
+        <!-- TODO: Replace with your SoFi/Impact affiliate URL -->
+        <a href="https://www.sofi.com/invest/" class="aff-cta" target="_blank" rel="noopener sponsored">Open SoFi Invest →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo y">📘</div>
+          <div>
+            <div class="aff-name">The Simple Path to Wealth</div>
+            <div class="aff-tag">J.L. Collins · Book</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          The foundational FIRE book. Explains index-fund investing, the 4% rule, and the mindset behind CoastFIRE in a way anyone can follow. I recommend this as the <em>first</em> book on any FIRE reading list.
+        </div>
+        <!-- TODO: Replace angelnguyen0e-20 with your Amazon Associates tracking ID (e.g., coastfire-20) -->
+        <a href="https://www.amazon.com/dp/1533667926?tag=angelnguyen0e-20" class="aff-cta y" target="_blank" rel="noopener sponsored">Read on Amazon →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       CONTACT & CONSULTATION
+  ══════════════════════════════════════════════ -->
+  <div class="cw" style="margin-top:20px;margin-bottom:0">
+    <div class="ct">✉️ Contact & Tool Consultation</div>
+    <div class="info-box" style="font-size:0.9rem;line-height:1.7;margin-bottom:14px">
+      I'm a <strong>consultant for this calculator</strong> — not a licensed financial advisor. What that means: I can help you understand and use the tool, walk through what each input does, explain the CoastFIRE concept, and help interpret your results. I can't give personalized investment advice, tax advice, or tell you what to buy or sell.
+      <br><br>
+      <strong>What you can reach out about:</strong>
+      <ul style="margin:8px 0 0;padding-left:22px">
+        <li>How to use the calculator and what each input means</li>
+        <li>Walkthroughs of your results (explaining the math, not recommending actions)</li>
+        <li>Scheduling and pricing for 1-on-1 tool walkthrough sessions</li>
+        <li>Questions or feedback on the calculator itself</li>
+        <li>Partnership or media inquiries</li>
+      </ul>
+      <br>
+      <span style="color:var(--muted);font-size:0.82rem">
+        <strong>Disclaimer:</strong> Nothing on this site or in consultations is financial, tax, or investment advice. For personalized advice tailored to your situation, consult a licensed fiduciary financial advisor, CPA, or attorney.
+      </span>
+    </div>
+    <a href="mailto:minh@coastfirefinance.com?subject=CoastFIRE%20Tool%20Inquiry" class="aff-cta" target="_blank" rel="noopener" style="display:inline-block;max-width:320px">Email Minh →</a>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       BLOG / LEARN MORE
+  ══════════════════════════════════════════════ -->
+  <div class="cw" style="margin-top:20px;margin-bottom:0">
+    <div class="ct">📚 Learn More About CoastFIRE</div>
+    <div class="info-box" style="font-size:0.9rem;line-height:1.6;margin-bottom:14px">
+      New to the concept or want to go deeper? Start with these guides.
+    </div>
+    <div class="blog-list">
+      <a href="blog/what-is-coastfire.html" class="blog-row">
+        <span class="blog-emoji">🌱</span>
+        <span class="blog-text">
+          <span class="blog-title">What Is CoastFIRE?</span>
+          <span class="blog-meta">Beginner · 6 min read</span>
+        </span>
+        <span class="blog-arrow">→</span>
+      </a>
+      <a href="blog/coastfire-vs-baristafire.html" class="blog-row">
+        <span class="blog-emoji">⚖️</span>
+        <span class="blog-text">
+          <span class="blog-title">CoastFIRE vs BaristaFIRE</span>
+          <span class="blog-meta">Comparison · 7 min read</span>
+        </span>
+        <span class="blog-arrow">→</span>
+      </a>
+      <a href="blog/coastfire-at-30-vs-40.html" class="blog-row">
+        <span class="blog-emoji">🎂</span>
+        <span class="blog-text">
+          <span class="blog-title">CoastFIRE at 30 vs 40</span>
+          <span class="blog-meta">Strategy · 8 min read</span>
+        </span>
+        <span class="blog-arrow">→</span>
+      </a>
+      <a href="blog/my-coastfire-journey.html" class="blog-row">
+        <span class="blog-emoji">🧭</span>
+        <span class="blog-text">
+          <span class="blog-title">My CoastFIRE Journey</span>
+          <span class="blog-meta">By Minh · 7 min read</span>
+        </span>
+        <span class="blog-arrow">→</span>
+      </a>
+      <a href="blog/5-coastfire-mistakes.html" class="blog-row">
+        <span class="blog-emoji">⚠️</span>
+        <span class="blog-text">
+          <span class="blog-title">5 CoastFIRE Mistakes</span>
+          <span class="blog-meta">By Minh · 6 min read</span>
+        </span>
+        <span class="blog-arrow">→</span>
+      </a>
+      <a href="blog/4-percent-rule-coastfire.html" class="blog-row">
+        <span class="blog-emoji">📊</span>
+        <span class="blog-text">
+          <span class="blog-title">The 4% Rule + CoastFIRE</span>
+          <span class="blog-meta">By Minh · 7 min read</span>
+        </span>
+        <span class="blog-arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SUPPORT THE SITE (VENMO DONATION)
+  ══════════════════════════════════════════════ -->
+  <div class="cw" style="margin-top:20px;margin-bottom:0">
+    <div class="ct">💙 Support the Site</div>
+    <div class="info-box" style="font-size:0.9rem;line-height:1.7;margin-bottom:14px">
+      This calculator is <strong>free and always will be</strong> — no logins, no ads, no data collection. If it helped you plan your financial future and you'd like to say thanks, a small Venmo tip helps cover hosting costs and keeps the site independent.
+      <br><br>
+      Every bit — even $3 — is genuinely appreciated. Thank you!
+    </div>
+    <a href="https://venmo.com/Mivang" class="aff-cta" target="_blank" rel="noopener" style="display:inline-block;max-width:320px;background:linear-gradient(135deg,#3D95CE,#008CFF)">💙 Tip via Venmo (@Mivang) →</a>
+  </div>
+
+</div><!-- /right -->
+</div><!-- /layout -->
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────────────────────────────────────────
+const S = {
+  cage: 30, rage: 60,
+  primaryIncome: 80000,
+  spouseEnabled: false, spouseIncome: 60000,
+  sTaBal: 0, sTaCont: 10000, sMatchRate: 0.50, sMatchCap: 0.06,
+  taBal: 50000, taCont: 15000, matchRate: 0.50, matchCap: 0.06,
+  brBal: 0, brCont: 0, divDrag: 0.003, ltcg: 0.15,
+  penEnabled: false, pen: 24000, pAge: 65, cola: true,
+  ssEnabled: false, ssPrimary: 2000, ssAge: 67,
+  ssSpouseEnabled: false, ssSpouse: 1500, ssSpouseAge: 67,
+  spend: 60000, nom: 0.07, inf: 0.03, swr: 0.04,
+};
+
+let dispMode = 'nom';
+let chart;
+let mcChart;
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  ACCORDION
+// ─────────────────────────────────────────────────────────────────────────────
+function toggle(id) {
+  const body  = document.getElementById('body-' + id);
+  const arrow = document.getElementById('arr-'  + id);
+  const open  = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  arrow.classList.toggle('open', !open);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  NUMBER INPUT BINDER
+// ─────────────────────────────────────────────────────────────────────────────
+function bindNum(id, key, toVal) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const upd = () => {
+    const raw = parseFloat(el.value);
+    if (isNaN(raw)) return;
+    S[key] = toVal ? toVal(raw) : raw;
+    recalc();
+  };
+  el.addEventListener('input',  upd);
+  el.addEventListener('change', upd);
+  upd();
+}
+
+function step(id, delta) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const cur = parseFloat(el.value) || 0;
+  const min = parseFloat(el.min)   ?? -Infinity;
+  const max = parseFloat(el.max)   ?? Infinity;
+  el.value  = Math.min(max, Math.max(min, cur + delta));
+  el.dispatchEvent(new Event('input'));
+}
+
+bindNum('n-cage',        'cage',         null);
+bindNum('n-rage',        'rage',         null);
+bindNum('n-p-inc',       'primaryIncome',null);
+bindNum('n-s-inc',       'spouseIncome', null);
+bindNum('n-s-ta-bal',    'sTaBal',       null);
+bindNum('n-s-ta-cont',   'sTaCont',      null);
+bindNum('n-s-match-rate','sMatchRate',   v => v/100);
+bindNum('n-s-match-cap', 'sMatchCap',    v => v/100);
+bindNum('n-ta-bal',      'taBal',        null);
+bindNum('n-ta-cont',     'taCont',       null);
+bindNum('n-match-rate',  'matchRate',    v => v/100);
+bindNum('n-match-cap',   'matchCap',     v => v/100);
+bindNum('n-br-bal',      'brBal',        null);
+bindNum('n-br-cont',     'brCont',       null);
+bindNum('n-div-drag',    'divDrag',      v => v/100);
+bindNum('n-ltcg',        'ltcg',         v => v/100);
+bindNum('n-pen',         'pen',          null);
+bindNum('n-page',        'pAge',         null);
+bindNum('n-spend',       'spend',        null);
+bindNum('n-nom',         'nom',          v => v/100);
+bindNum('n-inf',         'inf',          v => v/100);
+bindNum('n-swr',         'swr',          v => v/100);
+bindNum('n-ss-primary',    'ssPrimary',  null);
+bindNum('n-ss-age',        'ssAge',      null);
+bindNum('n-ss-spouse',     'ssSpouse',   null);
+bindNum('n-ss-spouse-age', 'ssSpouseAge',null);
+
+document.getElementById('sw-pen').addEventListener('change',  e => { S.penEnabled = e.target.checked; recalc(); });
+document.getElementById('sw-cola').addEventListener('change', e => { S.cola       = e.target.checked; recalc(); });
+
+function toggleSpouse() {
+  S.spouseEnabled = document.getElementById('sw-spouse').checked;
+  document.getElementById('spouse-block').style.display = S.spouseEnabled ? '' : 'none';
+  document.getElementById('ilbl-s-wrap').style.display  = S.spouseEnabled ? '' : 'none';
+  recalc();
+}
+function toggleSS() {
+  S.ssEnabled = document.getElementById('sw-ss').checked;
+  document.getElementById('ss-block').style.display = S.ssEnabled ? '' : 'none';
+  recalc();
+}
+function toggleSSSpouse() {
+  S.ssSpouseEnabled = document.getElementById('sw-ss-spouse').checked;
+  document.getElementById('ss-spouse-block').style.display = S.ssSpouseEnabled ? '' : 'none';
+  recalc();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function fmt(n) {
+  if (n == null || isNaN(n)) return '—';
+  const a = Math.abs(n), s = n < 0 ? '-' : '';
+  if (a >= 1e6) return s + '$' + (a/1e6).toFixed(2) + 'M';
+  if (a >= 1e3) return s + '$' + (a/1e3).toFixed(0) + 'K';
+  return s + '$' + Math.round(a);
+}
+function pct(n, d=1) { return (n*100).toFixed(d) + '%'; }
+function set(id, v)  { const el = document.getElementById(id); if (el) el.textContent = v; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  CHART
+// ─────────────────────────────────────────────────────────────────────────────
+function initChart() {
+  const ctx = document.getElementById('chart').getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: [], datasets: [] },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#8b90b0', font: { size: 11 }, boxWidth: 12, padding: 14 } },
+        tooltip: {
+          backgroundColor: '#1a1d27', borderColor: '#2e3247', borderWidth: 1,
+          titleColor: '#e8eaf6', bodyColor: '#8b90b0',
+          callbacks: { label: c => '  ' + c.dataset.label + ': ' + fmt(c.raw) }
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#8b90b0', font: { size: 10 }, maxTicksLimit: 12 }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#8b90b0', font: { size: 10 }, callback: v => fmt(v) }, grid: { color: 'rgba(255,255,255,0.04)' } }
+      }
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  CORE ALGORITHM
+// ─────────────────────────────────────────────────────────────────────────────
+function runCalc() {
+  const {
+    cage, rage,
+    primaryIncome, spouseEnabled, spouseIncome, sTaBal, sTaCont, sMatchRate, sMatchCap,
+    taBal, taCont, matchRate, matchCap,
+    brBal, brCont, divDrag, ltcg,
+    penEnabled, pen, pAge, cola,
+    ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
+    spend, nom, inf, swr,
+  } = S;
+
+  if (rage <= cage) return null;
+
+  const yrs     = rage - cage;
+  const nowYear = new Date().getFullYear();
+
+  const totalIncome   = primaryIncome + (spouseEnabled ? spouseIncome : 0);
+  const pMatchCeil    = primaryIncome * matchCap;
+  const annualMatch   = Math.min(taCont, pMatchCeil) * matchRate;
+  const sMatchCeil    = spouseEnabled ? spouseIncome * sMatchCap : 0;
+  const sAnnualMatch  = spouseEnabled ? Math.min(sTaCont, sMatchCeil) * sMatchRate : 0;
+  const totalMatch       = annualMatch + sAnnualMatch;
+  const effectiveTaCont  = taCont + annualMatch + (spouseEnabled ? sTaCont : 0) + sAnnualMatch;
+  const totalContribs    = effectiveTaCont + brCont;
+  const savingsRate      = totalIncome > 0 ? totalContribs / totalIncome : 0;
+
+  const nomSpend = spend * Math.pow(1 + inf, yrs);
+
+  let nomPension = 0;
+  if (penEnabled && pen > 0 && pAge <= rage) {
+    nomPension = cola ? pen * Math.pow(1 + inf, rage - cage) : pen;
+  }
+
+  const ssPrimaryAnnual = ssPrimary * 12;
+  const ssSpouseAnnual  = ssSpouse  * 12;
+  let nomSS = 0, nomSSPrimary = 0, nomSSSpouse = 0;
+  if (ssEnabled) {
+    if (ssPrimary > 0 && ssAge <= rage) {
+      nomSSPrimary = ssPrimaryAnnual * Math.pow(1 + inf, rage - cage);
+      nomSS += nomSSPrimary;
+    }
+    if (ssSpouseEnabled && ssSpouse > 0 && ssSpouseAge <= rage) {
+      nomSSSpouse = ssSpouseAnnual * Math.pow(1 + inf, rage - cage);
+      nomSS += nomSSSpouse;
+    }
+  }
+
+  const totalNomOffset = nomPension + nomSS;
+  const netSpend   = Math.max(nomSpend - totalNomOffset, 0);
+  const grossFIRE  = nomSpend / swr;
+  const netFIRE    = netSpend  / swr;
+  const coastToday = netFIRE / Math.pow(1 + nom, yrs);
+
+  const ages = [], taVals = [], brVals = [], effBrVals = [],
+        effTotals = [], coastTargets = [], phases = [];
+
+  const combinedTaBal = taBal + (spouseEnabled ? sTaBal : 0);
+  let ta = combinedTaBal, br = brBal, basis = brBal;
+  let coastAge = null, coastTa = null, coastBr = null;
+
+  for (let y = 0; y <= yrs; y++) {
+    const age     = cage + y;
+    const yrsLeft = rage - age;
+    const target  = netFIRE / Math.pow(1 + nom, yrsLeft);
+    const gains   = Math.max(br - basis, 0);
+    const effBr   = br - gains * ltcg;
+    const effTot  = ta + effBr;
+
+    ages.push(age);
+    taVals.push(ta);
+    brVals.push(br);
+    effBrVals.push(effBr);
+    effTotals.push(effTot);
+    coastTargets.push(target);
+
+    if (coastAge === null && effTot >= target) { coastAge = age; coastTa = ta; coastBr = br; }
+    phases.push(coastAge !== null ? 'coast' : 'accum');
+
+    const addTa = coastAge === null ? effectiveTaCont : 0;
+    const addBr = coastAge === null ? brCont          : 0;
+    ta    = ta * (1 + nom) + addTa;
+    br    = br * (1 + nom - divDrag) + addBr;
+    basis = basis + addBr;
+  }
+
+  const coastPath = new Array(ages.length).fill(null);
+  if (coastAge !== null) {
+    const ci = coastAge - cage;
+    let cTa = coastTa, cBr = coastBr, cBasis = brBal;
+    for (let y = 0; y < ci; y++) cBasis += brCont;
+    for (let y = ci; y <= yrs; y++) {
+      const g = Math.max(cBr - cBasis, 0);
+      coastPath[y] = cTa + (cBr - g * ltcg);
+      cTa = cTa * (1 + nom);
+      cBr = cBr * (1 + nom - divDrag);
+    }
+  }
+
+  const keepInvestPath = new Array(ages.length).fill(null);
+  const keepBrPath     = new Array(ages.length).fill(null);
+  let keepFinalTotal = null, keepBrFinal = null, extraAtRetirement = null;
+
+  if (coastAge !== null) {
+    const ci = coastAge - cage;
+    let kTa = coastTa, kBr = coastBr, kBasis = brBal;
+    for (let y = 0; y < ci; y++) kBasis += brCont;
+    for (let y = ci; y <= yrs; y++) {
+      const g = Math.max(kBr - kBasis, 0);
+      const effKBr = kBr - g * ltcg;
+      keepInvestPath[y] = kTa + effKBr;
+      keepBrPath[y]     = effKBr;
+      kTa    = kTa * (1 + nom) + effectiveTaCont;
+      kBr    = kBr * (1 + nom - divDrag) + brCont;
+      kBasis = kBasis + brCont;
+    }
+    keepFinalTotal    = keepInvestPath[yrs];
+    keepBrFinal       = keepBrPath[yrs];
+    extraAtRetirement = keepFinalTotal - effTotals[yrs];
+  }
+
+  return {
+    cage, rage, yrs, nowYear, taBal, taCont, brBal, brCont, nom, inf, swr,
+    totalIncome, primaryIncome, spouseEnabled, spouseIncome,
+    sTaBal, sTaCont, sMatchRate, sMatchCap,
+    annualMatch, sAnnualMatch, totalMatch,
+    effectiveTaCont, totalContribs, savingsRate, matchRate, matchCap,
+    nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
+    ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
+    penEnabled, pen, pAge, cola,
+    ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
+    combinedTaBal,
+    ages, taVals, brVals, effBrVals, effTotals, coastTargets, phases, coastPath,
+    keepInvestPath, keepBrPath, keepFinalTotal, keepBrFinal, extraAtRetirement,
+    coastAge, effNow: effTotals[0],
+    finalEffTotal: effTotals[yrs],
+    finalEffBr: effBrVals[yrs],
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  DISPLAY TOGGLE
+// ─────────────────────────────────────────────────────────────────────────────
+function setDisp(mode) {
+  dispMode = mode;
+  document.getElementById('pill-nom').classList.toggle('on',  mode === 'nom');
+  document.getElementById('pill-real').classList.toggle('on', mode === 'real');
+  recalc();
+}
+function toDisp(nomVal, yr) {
+  return dispMode === 'real' ? nomVal / Math.pow(1 + S.inf, yr) : nomVal;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  RECALC
+// ─────────────────────────────────────────────────────────────────────────────
+function recalc() {
+  if (!chart) return;
+  const R = runCalc();
+  if (!R) return;
+
+  const {
+    cage, rage, yrs, nowYear, taBal, taCont, brBal, brCont, nom, inf, swr,
+    totalIncome, primaryIncome, spouseEnabled, spouseIncome,
+    sTaBal, sTaCont, sMatchRate, sMatchCap,
+    annualMatch, sAnnualMatch, totalMatch,
+    effectiveTaCont, totalContribs, savingsRate, matchRate, matchCap,
+    nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
+    ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
+    penEnabled, pen, pAge, cola,
+    ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
+    combinedTaBal,
+    ages, taVals, brVals, effBrVals, effTotals, coastTargets, phases, coastPath,
+    keepInvestPath, keepBrPath, keepFinalTotal, keepBrFinal, extraAtRetirement,
+    coastAge, effNow, finalEffTotal, finalEffBr,
+  } = R;
+
+  const realReturn = (1 + nom) / (1 + inf) - 1;
+  const dRet = v => toDisp(v, yrs);
+  const hasPen = penEnabled && nomPension > 0;
+  const hasSS  = ssEnabled  && nomSS > 0;
+
+  set('r-fire-g',    fmt(dRet(grossFIRE)));
+  set('r-fire-n',    fmt(dRet(netFIRE)));
+  set('r-coast',     fmt(toDisp(coastToday, 0)));
+  set('r-now',       fmt(effNow));
+  set('r-nom-ret',   pct(nom));
+  set('r-real-ret',  pct(realReturn));
+  set('r-hh-income', fmt(totalIncome));
+  set('r-sav-rate',  totalIncome > 0 ? pct(savingsRate) : '—');
+  set('r-match',     totalMatch > 0 ? fmt(totalMatch) + '/yr' : 'None');
+
+  const penOffEl  = document.getElementById('r-pen-off');
+  const penOffSub = document.getElementById('r-pen-off-sub');
+  if (hasPen || hasSS) {
+    set('r-pen-off', fmt(dRet(totalNomOffset)) + '/yr');
+    penOffEl.className = 'val y';
+    const parts = [];
+    if (hasPen) parts.push('Pension: ' + fmt(dRet(nomPension)) + '/yr');
+    if (hasSS)  parts.push('SS: '      + fmt(dRet(nomSS))      + '/yr');
+    penOffSub.textContent = parts.join(' · ');
+  } else {
+    set('r-pen-off', 'None');
+    penOffEl.className = 'val w';
+    penOffSub.textContent = 'Pension + SS / yr';
+  }
+
+  if (ssEnabled) {
+    const nomCombined = nomSSPrimary + nomSSSpouse;
+    let prevLines = [];
+    prevLines.push(`Your benefit: <strong>${fmt(ssPrimary)}/mo</strong> → <strong>${fmt(dRet(nomSSPrimary))}/yr</strong> at retirement`);
+    if (ssSpouseEnabled && ssSpouse > 0) {
+      prevLines.push(`Spouse benefit: <strong>${fmt(ssSpouse)}/mo</strong> → <strong>${fmt(dRet(nomSSSpouse))}/yr</strong> at retirement`);
+      prevLines.push(`Combined SS: <strong>${fmt(ssPrimary + ssSpouse)}/mo today</strong> · <strong>${fmt(dRet(nomCombined))}/yr</strong> at retirement (nominal)`);
+    }
+    if (nomSS === 0) {
+      prevLines.push(`<span style="color:var(--red)">⚠️ SS claim age is after your retirement age — benefit not counted.</span>`);
+    } else {
+      prevLines.push(`Reduces FIRE target by: <strong>${fmt(dRet(nomSS / swr))}</strong>`);
+    }
+    document.getElementById('ss-preview-text').innerHTML = prevLines.join('<br>');
+  }
+
+  const gap   = coastToday - effNow;
+  const gapEl = document.getElementById('r-gap');
+  const gapSb = document.getElementById('r-gap-sub');
+  if (gap <= 0) { gapEl.textContent = '✓ Reached!'; gapEl.className = 'val g'; gapSb.textContent = 'CoastFIRE achieved'; }
+  else          { gapEl.textContent = fmt(gap);      gapEl.className = 'val r'; gapSb.textContent = 'Still needed to coast'; }
+
+  const cAgeEl = document.getElementById('r-coast-age');
+  const cYrEl  = document.getElementById('r-coast-yr');
+  if (coastAge !== null) {
+    cAgeEl.textContent = coastAge === cage ? 'Now!' : coastAge;
+    cAgeEl.className   = 'val g';
+    cYrEl.textContent  = coastAge === cage ? 'Already there' : (nowYear + (coastAge - cage));
+  } else {
+    cAgeEl.textContent = '> ' + rage; cAgeEl.className = 'val r';
+    cYrEl.textContent  = 'Not reached before retirement';
+  }
+
+  const total = (combinedTaBal + brBal) || 1;
+  const taP   = (combinedTaBal / total * 100).toFixed(1);
+  const brP   = (brBal / total * 100).toFixed(1);
+  document.getElementById('bar-adv').style.width = taP + '%';
+  document.getElementById('bar-brk').style.width = brP + '%';
+  const taLabel = spouseEnabled && sTaBal > 0
+    ? fmt(combinedTaBal) + ' (' + fmt(taBal) + ' primary + ' + fmt(sTaBal) + ' spouse)'
+    : fmt(combinedTaBal);
+  set('bar-adv-lbl', taLabel + ' (' + taP + '%)');
+  set('bar-brk-lbl', fmt(brBal) + ' (' + brP + '%)');
+
+  const incBase = (totalIncome + totalMatch) || 1;
+  document.getElementById('ibar-p').style.width = (primaryIncome / incBase * 100).toFixed(1) + '%';
+  document.getElementById('ibar-s').style.width = ((spouseEnabled ? spouseIncome : 0) / incBase * 100).toFixed(1) + '%';
+  document.getElementById('ibar-m').style.width = (totalMatch / incBase * 100).toFixed(1) + '%';
+  set('ilbl-p', fmt(primaryIncome) + '/yr');
+  set('ilbl-s', fmt(spouseIncome)  + '/yr');
+  set('ilbl-m', totalMatch > 0 ? fmt(totalMatch) + '/yr' : '$0');
+  set('ilbl-rate', totalIncome > 0 ? pct(savingsRate) : '—');
+
+  set('match-amt',   fmt(annualMatch));
+  set('match-total', fmt(taCont + annualMatch));
+  const pCapDol = primaryIncome * matchCap;
+  const pCapped = taCont > pCapDol;
+  document.getElementById('match-note').textContent =
+    matchRate > 0
+      ? `${Math.round(matchRate*100)}% match on up to ${pct(matchCap)} of salary (${fmt(pCapDol)}/yr eligible).` +
+        (pCapped ? ` ⚠️ ${fmt(taCont - pCapDol)}/yr of your contributions is unmatched.` : ' ✓ All contributions within cap.')
+      : 'No employer match configured.';
+
+  if (spouseEnabled) {
+    set('s-match-amt',   fmt(sAnnualMatch));
+    set('s-match-total', fmt(sTaCont + sAnnualMatch));
+    const sCapDol = spouseIncome * sMatchCap;
+    const sCapped = sTaCont > sCapDol;
+    document.getElementById('s-match-note').textContent =
+      sMatchRate > 0
+        ? `${Math.round(sMatchRate*100)}% match on up to ${pct(sMatchCap)} of spouse salary (${fmt(sCapDol)}/yr eligible).` +
+          (sCapped ? ` ⚠️ ${fmt(sTaCont - sCapDol)}/yr unmatched.` : ' ✓ All within cap.')
+        : 'No spouse employer match configured.';
+  }
+
+  const kiSection = document.getElementById('keep-invest-section');
+  if (coastAge !== null && keepFinalTotal !== null) {
+    kiSection.style.display = '';
+    const dFinal   = v => toDisp(v, yrs);
+    const extra    = extraAtRetirement;
+    const pctMore  = finalEffTotal > 0 ? ((extra / finalEffTotal) * 100).toFixed(1) : '—';
+    const extraYrs = extra > 0 && nomSpend > 0 ? (extra / nomSpend).toFixed(1) : null;
+
+    set('ki-coast-final', fmt(dFinal(finalEffTotal)));
+    set('ki-keep-final',  fmt(dFinal(keepFinalTotal)));
+    set('ki-extra',       extra > 0 ? '+' + fmt(dFinal(extra)) : fmt(dFinal(extra)));
+
+    const brCoast = finalEffBr ?? 0;
+    const brKeep  = keepBrFinal ?? 0;
+    const brExtra = brKeep - brCoast;
+    set('ki-br-coast', fmt(dFinal(brCoast)));
+    set('ki-br-keep',  fmt(dFinal(brKeep)));
+    set('ki-br-extra', brExtra > 0 ? '+' + fmt(dFinal(brExtra)) : fmt(dFinal(brExtra)));
+
+    const yrsInvesting = rage - coastAge;
+    let summary = `By coasting at age <strong>${coastAge}</strong> you'd have <strong>${fmt(dFinal(finalEffTotal))}</strong> at retirement. `;
+    summary += `If you kept investing <strong>${fmt(effectiveTaCont + brCont)}/yr</strong> for ${yrsInvesting} more year${yrsInvesting !== 1 ? 's' : ''}, `;
+    summary += `you'd arrive at <strong style="color:#ff9a9a">${fmt(dFinal(keepFinalTotal))}</strong> — <strong>+${pctMore}% more</strong> (${fmt(dFinal(extra))} extra).`;
+    if (extraYrs) summary += ` That's roughly <strong>${extraYrs} extra years</strong> of retirement spending.`;
+    summary += `<br><span style="color:var(--muted);font-size:0.72rem">⚠️ CoastFIRE means you <em>don't need</em> to keep working — the choice to invest more is purely optional upside.</span>`;
+    document.getElementById('ki-summary').innerHTML = summary;
+  } else {
+    kiSection.style.display = 'none';
+  }
+
+  const banner = document.getElementById('banner');
+  const bIco   = document.getElementById('b-ico');
+  const bTxt   = document.getElementById('b-text');
+  if (effNow >= coastToday) {
+    banner.className = 'banner coast'; bIco.textContent = '🎉';
+    bTxt.textContent = "You've already reached CoastFIRE! Your portfolio can compound to full FIRE by retirement without further contributions.";
+  } else if (coastAge !== null) {
+    banner.className = 'banner track'; bIco.textContent = '🚀';
+    const yL = coastAge - cage;
+    bTxt.textContent = `CoastFIRE at age ${coastAge} — ${yL} year${yL !== 1 ? 's' : ''} away. Contributions become optional after that!`;
+  } else {
+    banner.className = 'banner warn'; bIco.textContent = '⚠️';
+    bTxt.textContent = `CoastFIRE not reached before age ${rage}. Try increasing contributions, adding pension income, or extending retirement age.`;
+  }
+
+  const cv = arr => arr.map((v, i) => v == null ? null : Math.round(toDisp(v, i)));
+  chart.data.labels   = ages;
+  chart.data.datasets = [
+    { label: 'Tax-Advantaged',          data: cv(taVals),           borderColor: '#6c63ff', backgroundColor: 'rgba(108,99,255,0.08)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
+    { label: 'Brokerage (After-Tax)',   data: cv(effBrVals),        borderColor: '#f7b731', backgroundColor: 'rgba(247,183,49,0.06)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
+    { label: 'Total Portfolio',         data: cv(effTotals),        borderColor: 'rgba(232,234,246,0.6)', borderWidth: 1.5, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,2] },
+    { label: 'Coast-Only Path',         data: cv(coastPath),        borderColor: '#00d4aa', borderWidth: 2,   fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [8,4] },
+    { label: 'Keep Investing — Total',  data: cv(keepInvestPath||[]),borderColor: '#ff9a9a', borderWidth: 2.5, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [6,3] },
+    { label: 'Keep Investing — Broker.',data: cv(keepBrPath||[]),   borderColor: '#ffd166', borderWidth: 1.8, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,4] },
+    { label: 'CoastFIRE Target',        data: cv(coastTargets),     borderColor: 'rgba(0,212,170,0.45)', borderWidth: 1.5, fill: false, tension: 0.3, pointRadius: 0, borderDash: [4,3] },
+    { label: 'Net FIRE Number',         data: ages.map(() => Math.round(toDisp(netFIRE, yrs))), borderColor: 'rgba(255,107,107,0.7)', borderWidth: 1.5, fill: false, tension: 0, pointRadius: 0, borderDash: [3,3] },
+  ];
+  chart.update();
+
+  const tbody = document.getElementById('tbl-body');
+  tbody.innerHTML = '';
+  for (let i = 0; i <= yrs; i++) {
+    const age = ages[i];
+    const ph  = phases[i];
+    const ta  = toDisp(taVals[i],      i);
+    const eb  = toDisp(effBrVals[i],   i);
+    const et  = toDisp(effTotals[i],   i);
+    const ct  = toDisp(coastTargets[i],i);
+    const pp  = Math.min(et / ct * 100, 100).toFixed(0);
+    const isC = coastAge !== null && age === coastAge;
+    const isR = age === rage;
+    const tr  = document.createElement('tr');
+    if (isR) tr.className = 'hl-retire';
+    else if (isC) tr.className = 'hl-coast';
+    const phStr = ph === 'accum'
+      ? '<span class="ph-acc">⏫ Accumulating</span>'
+      : '<span class="ph-coast">🏄 Coasting</span>';
+    tr.innerHTML = `
+      <td>${age}${isC ? ' 🏄' : isR ? ' 🏖️' : ''}</td>
+      <td>${phStr}</td>
+      <td>${fmt(ta)}</td><td>${fmt(eb)}</td><td>${fmt(et)}</td><td>${fmt(ct)}</td>
+      <td><div style="display:flex;align-items:center;gap:5px">
+        <div style="flex:1;height:5px;background:var(--border);border-radius:3px">
+          <div style="width:${pp}%;height:100%;background:${ph==='coast'?'var(--green)':'var(--accent)'};border-radius:3px"></div>
+        </div>
+        <span style="font-size:0.68rem;color:var(--muted);width:30px;text-align:right">${pp}%</span>
+      </div></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  const items = [];
+  items.push({ ico: '📍', title: `Today — Age ${cage}`,
+    detail: [
+      `Portfolio: <strong>${fmt(effNow)}</strong> (${fmt(taBal)} tax-adv + ${fmt(brBal)} brokerage)`,
+      totalIncome > 0 ? `Household income: <strong>${fmt(totalIncome)}/yr</strong> · Savings rate: <strong>${pct(savingsRate)}</strong>` : '',
+      `Your contributions: <strong>${fmt(taCont + brCont + (spouseEnabled ? sTaCont : 0))}/yr</strong>` +
+        (totalMatch > 0 ? ` + employer match: <strong>${fmt(totalMatch)}/yr</strong> = <strong>${fmt(totalContribs)}/yr</strong> total` : ''),
+      `CoastFIRE target today: <strong>${fmt(coastToday)}</strong>`,
+    ].filter(Boolean).join('<br>')
+  });
+
+  if (penEnabled && pen > 0 && pAge <= rage) {
+    items.push({ ico: '🎯', title: `Pension / Annuity — Starts Age ${pAge} <span class="tl-tag tag-y">${cola ? 'COLA' : 'Fixed'}</span>`,
+      detail: [
+        `Income: <strong>${fmt(pen)}/yr</strong> today's dollars`,
+        cola ? `At retirement (nominal): <strong>${fmt(dRet(nomPension))}/yr</strong>` : `Fixed nominal: <strong>${fmt(pen)}/yr</strong> (loses purchasing power)`,
+        `Reduces FIRE number by: <strong>${fmt(dRet(nomPension / swr))}</strong>`,
+      ].join('<br>')
+    });
+  }
+
+  if (ssEnabled && nomSS > 0) {
+    const ssLines = [];
+    if (nomSSPrimary > 0)
+      ssLines.push(`Your benefit: <strong>${fmt(ssPrimary)}/mo</strong> → <strong>${fmt(dRet(nomSSPrimary))}/yr</strong> at retirement · Claim age: <strong>${ssAge}</strong>`);
+    if (ssSpouseEnabled && nomSSSpouse > 0)
+      ssLines.push(`Spouse benefit: <strong>${fmt(ssSpouse)}/mo</strong> → <strong>${fmt(dRet(nomSSSpouse))}/yr</strong> at retirement · Claim age: <strong>${ssSpouseAge}</strong>`);
+    if (nomSSPrimary > 0 && nomSSSpouse > 0)
+      ssLines.push(`Combined SS: <strong>${fmt(dRet(nomSS))}/yr</strong> at retirement`);
+    ssLines.push(`Reduces FIRE number by: <strong>${fmt(dRet(nomSS / swr))}</strong>`);
+    items.push({ ico: '🏛️', title: `Social Security <span class="tl-tag tag-g">COLA-Adjusted</span>`, detail: ssLines.join('<br>') });
+  } else if (ssEnabled && nomSS === 0) {
+    items.push({ ico: '🏛️', title: `Social Security <span class="tl-tag" style="background:rgba(255,107,107,0.2);color:var(--red)">Claim Age After Retirement</span>`,
+      detail: `SS claim age is after your retirement age (${rage}). Benefit not counted. Consider claiming earlier or delaying retirement.`
+    });
+  }
+
+  if (coastAge !== null && coastAge > cage) {
+    const ci   = coastAge - cage;
+    const cTgt = toDisp(coastTargets[ci], ci);
+    const cTot = toDisp(effTotals[ci],    ci);
+    items.push({ ico: '🏄', title: `CoastFIRE — Age ${coastAge} (${nowYear + ci}) <span class="tl-tag tag-g">Stop Contributing</span>`,
+      detail: [
+        `Portfolio: <strong>${fmt(cTot)}</strong> vs target <strong>${fmt(cTgt)}</strong>`,
+        `Compound growth alone carries you to retirement from here.`,
+        `Freed-up: <strong>${fmt(totalContribs)}/yr</strong>` + (totalMatch > 0 ? ` incl. <strong>${fmt(totalMatch)}/yr</strong> employer match` : ''),
+      ].join('<br>')
+    });
+  } else if (effNow >= coastToday) {
+    items.push({ ico: '🎉', title: `CoastFIRE Already Reached! <span class="tl-tag tag-g">No contributions needed</span>`,
+      detail: `Portfolio of <strong>${fmt(effNow)}</strong> already exceeds CoastFIRE target of <strong>${fmt(coastToday)}</strong>.`
+    });
+  } else {
+    items.push({ ico: '⚠️', title: `CoastFIRE — Not Reached Before Retirement`,
+      detail: `Portfolio doesn't hit CoastFIRE target before age ${rage}. Increase contributions or adjust retirement timeline.`
+    });
+  }
+
+  const fd = toDisp(finalEffTotal, yrs);
+  const nd = toDisp(netFIRE, yrs);
+  const retirementDetails = [
+    `Projected portfolio: <strong>${fmt(fd)}</strong>`,
+    `Net FIRE number: <strong>${fmt(nd)}</strong>`,
+    `Surplus / shortfall: <strong style="color:${fd >= nd ? 'var(--green)' : 'var(--red)'}">${fd >= nd ? '+' : ''}${fmt(fd - nd)}</strong>`,
+  ];
+  if ((hasPen || hasSS) && totalNomOffset > 0) {
+    const offParts = [];
+    if (hasPen) offParts.push(`Pension <strong>${fmt(dRet(nomPension))}/yr</strong>`);
+    if (hasSS)  offParts.push(`SS <strong>${fmt(dRet(nomSS))}/yr</strong>`);
+    retirementDetails.push(`Income offsets: ${offParts.join(' + ')} = <strong>${fmt(dRet(totalNomOffset))}/yr</strong> of your <strong>${fmt(dRet(nomSpend))}/yr</strong> spending.`);
+  }
+  items.push({ ico: '🏖️', title: `Full FIRE — Age ${rage} (${nowYear + yrs})`, detail: retirementDetails.join('<br>') });
+
+  document.getElementById('timeline').innerHTML = items.map(p => `
+    <div class="tl-item">
+      <span class="tl-ico">${p.ico}</span>
+      <div><div class="tl-title">${p.title}</div><div class="tl-detail">${p.detail}</div></div>
+    </div>
+  `).join('');
+
+  saveState();
+  set('save-status', 'All inputs auto-saved ✓');
+
+  updateContextual(R);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  CONTEXTUAL AFFILIATE ENGINE
+//  Picks 2–3 affiliate cards to spotlight based on the user's calculator state
+// ─────────────────────────────────────────────────────────────────────────────
+const AFFILIATES = {
+  empower: {
+    id: 'empower', logo: '📊', logoCls: 'g',
+    name: 'Empower (Personal Capital)', tag: 'Net-worth dashboard · Free',
+    url: 'https://www.empower.com/',
+    cta: 'Get Empower Free →', ctaCls: 'g'
+  },
+  m1: {
+    id: 'm1', logo: '📈', logoCls: 'y',
+    name: 'M1 Finance', tag: 'Brokerage · Automated',
+    url: 'https://m1.com/',
+    cta: 'Start Investing with M1 →', ctaCls: 'y'
+  },
+  sofi: {
+    id: 'sofi', logo: '🏛️', logoCls: 'p',
+    name: 'SoFi Invest', tag: 'Roth IRA · Brokerage',
+    url: 'https://www.sofi.com/invest/',
+    cta: 'Open SoFi Invest →', ctaCls: ''
+  },
+  wealthfront: {
+    id: 'wealthfront', logo: '💵', logoCls: 'g',
+    name: 'Wealthfront Cash', tag: 'HYSA · High APY',
+    url: 'https://www.wealthfront.com/cash',
+    cta: 'Open Wealthfront Cash →', ctaCls: 'g'
+  },
+  fidelity: {
+    id: 'fidelity', logo: '🏦', logoCls: 'p',
+    name: 'Fidelity', tag: '401k / IRA · No fees',
+    url: 'https://www.fidelity.com/',
+    cta: 'Open a Fidelity Account →', ctaCls: ''
+  },
+  robinhood: {
+    id: 'robinhood', logo: '🏹', logoCls: 'p',
+    name: 'Robinhood', tag: 'Brokerage · IRA match',
+    url: 'https://robinhood.com/',
+    cta: 'Open Robinhood Account →', ctaCls: ''
+  },
+  book: {
+    id: 'book', logo: '📘', logoCls: 'y',
+    name: 'The Simple Path to Wealth', tag: 'J.L. Collins · Book',
+    url: 'https://www.amazon.com/dp/1533667926?tag=angelnguyen0e-20',
+    cta: 'Read on Amazon →', ctaCls: 'y'
+  },
+  newsletter: {
+    id: 'newsletter', logo: '📬', logoCls: 'p',
+    name: 'Financial Freedom Insights', tag: 'Newsletter · Free',
+    url: 'https://financial-freedom-insights.beehiiv.com/',
+    cta: 'Subscribe Free →', ctaCls: ''
+  }
+};
+
+function updateContextual(R) {
+  const card = document.getElementById('ctx-card');
+  const grid = document.getElementById('ctx-grid');
+  if (!card || !grid) return;
+
+  const picks = [];
+  const reasons = {};
+  const add = (key, reason) => {
+    if (picks.includes(key)) return;
+    picks.push(key);
+    reasons[key] = reason;
+  };
+
+  const { cage, coastAge, effNow, coastToday, brCont, brBal,
+          penEnabled, ssEnabled, savingsRate } = R;
+
+  const alreadyCoast = effNow >= coastToday && coastToday > 0;
+  const yearsToCoast = coastAge !== null ? Math.max(0, coastAge - cage) : null;
+  const nearCoast = !alreadyCoast && yearsToCoast !== null && yearsToCoast <= 5;
+  const farFromCoast = yearsToCoast !== null && yearsToCoast > 10;
+
+  if (alreadyCoast) {
+    add('empower', "You've hit CoastFIRE — time to track your net worth closely.");
+    add('sofi',    'Keep investing on autopilot to build a buffer above your CoastFIRE number.');
+  } else if (nearCoast) {
+    add('m1',      `You're ~${yearsToCoast} yrs from CoastFIRE — automate contributions so you land it.`);
+    add('empower', 'Track every account in one place as you close the gap.');
+  } else if (farFromCoast) {
+    add('book',      'Long runway — the fundamentals of index investing will compound for you.');
+    add('robinhood', "Decades ahead — Robinhood's 1–3% IRA match is free money compounding for 30+ years.");
+    add('sofi',      'Start a Roth IRA now; decades of tax-free growth ahead.');
+  } else {
+    add('fidelity', 'Solid base for tax-advantaged accounts — FZROX, Roth IRA, 401k rollovers.');
+    add('robinhood','Roth IRA with a 1–3% contribution match — rare free boost on retirement savings.');
+    add('m1',       'Automate your contributions with a Pie portfolio and coast.');
+  }
+
+  if (brCont > 0 || brBal > 0) {
+    add('wealthfront', 'You have taxable savings — a HYSA is a better home for your emergency fund.');
+  }
+  if (penEnabled || ssEnabled) {
+    add('empower', 'With pension/SS income streams, a unified dashboard helps you see the full picture.');
+  }
+  if (typeof savingsRate === 'number' && savingsRate < 0.15) {
+    add('newsletter', 'Savings rate is tight — free newsletter with tips to find more room.');
+  }
+
+  const top = picks.slice(0, 3);
+  if (!top.length) { card.style.display = 'none'; return; }
+
+  grid.innerHTML = top.map(k => {
+    const a = AFFILIATES[k];
+    const why = reasons[k];
+    return `
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo ${a.logoCls}">${a.logo}</div>
+          <div>
+            <div class="aff-name">${a.name}</div>
+            <div class="aff-tag">${a.tag}</div>
+          </div>
+        </div>
+        <div class="aff-desc"><strong style="color:var(--accent2)">Why this fits you:</strong> ${why}</div>
+        <a href="${a.url}" class="aff-cta ${a.ctaCls}" target="_blank" rel="noopener sponsored">${a.cta}</a>
+      </div>`;
+  }).join('');
+  card.style.display = '';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  TAB SWITCH
+// ─────────────────────────────────────────────────────────────────────────────
+function switchTab(t) {
+  document.getElementById('pane-tbl').style.display    = t === 'tbl'    ? '' : 'none';
+  document.getElementById('pane-phases').style.display = t === 'phases' ? '' : 'none';
+  document.getElementById('tb-tbl').className    = 'ts-btn' + (t === 'tbl'    ? ' on' : '');
+  document.getElementById('tb-phases').className = 'ts-btn' + (t === 'phases' ? ' on' : '');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  PERSIST
+// ─────────────────────────────────────────────────────────────────────────────
+const LS_KEY = 'coastfire_v2';
+
+const INPUT_MAP = [
+  { id:'n-cage',         key:'cage',          m:1   },
+  { id:'n-rage',         key:'rage',          m:1   },
+  { id:'n-p-inc',        key:'primaryIncome', m:1   },
+  { id:'n-s-inc',        key:'spouseIncome',  m:1   },
+  { id:'n-s-ta-bal',     key:'sTaBal',        m:1   },
+  { id:'n-s-ta-cont',    key:'sTaCont',       m:1   },
+  { id:'n-s-match-rate', key:'sMatchRate',    m:100 },
+  { id:'n-s-match-cap',  key:'sMatchCap',     m:100 },
+  { id:'n-ta-bal',       key:'taBal',         m:1   },
+  { id:'n-ta-cont',      key:'taCont',        m:1   },
+  { id:'n-match-rate',   key:'matchRate',     m:100 },
+  { id:'n-match-cap',    key:'matchCap',      m:100 },
+  { id:'n-br-bal',       key:'brBal',         m:1   },
+  { id:'n-br-cont',      key:'brCont',        m:1   },
+  { id:'n-div-drag',     key:'divDrag',       m:100 },
+  { id:'n-ltcg',         key:'ltcg',          m:100 },
+  { id:'n-pen',          key:'pen',           m:1   },
+  { id:'n-page',         key:'pAge',          m:1   },
+  { id:'n-ss-primary',   key:'ssPrimary',     m:1   },
+  { id:'n-ss-age',       key:'ssAge',         m:1   },
+  { id:'n-ss-spouse',    key:'ssSpouse',      m:1   },
+  { id:'n-ss-spouse-age',key:'ssSpouseAge',   m:1   },
+  { id:'n-spend',        key:'spend',         m:1   },
+  { id:'n-nom',          key:'nom',           m:100 },
+  { id:'n-inf',          key:'inf',           m:100 },
+  { id:'n-swr',          key:'swr',           m:100 },
+];
+
+function saveState() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(S));
+    const dot = document.getElementById('save-dot');
+    if (dot) { dot.classList.add('on'); clearTimeout(dot._t); dot._t = setTimeout(() => dot.classList.remove('on'), 1200); }
+  } catch(e) {}
+}
+
+function syncUIFromState() {
+  INPUT_MAP.forEach(({ id, key, m }) => {
+    const el = document.getElementById(id);
+    if (el) el.value = +(S[key] * m).toFixed(4);
+  });
+  const cb   = (id, val) => { const el = document.getElementById(id); if (el) el.checked = val; };
+  const show = (id, vis) => { const el = document.getElementById(id); if (el) el.style.display = vis ? '' : 'none'; };
+  cb('sw-spouse',    S.spouseEnabled);
+  cb('sw-pen',       S.penEnabled);
+  cb('sw-cola',      S.cola);
+  cb('sw-ss',        S.ssEnabled);
+  cb('sw-ss-spouse', S.ssSpouseEnabled);
+  show('spouse-block',    S.spouseEnabled);
+  show('ilbl-s-wrap',     S.spouseEnabled);
+  show('ss-block',        S.ssEnabled);
+  show('ss-spouse-block', S.ssSpouseEnabled);
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) { set('save-status', 'No saved data — using defaults'); return; }
+    const saved = JSON.parse(raw);
+    Object.keys(S).forEach(k => { if (k in saved) S[k] = saved[k]; });
+    syncUIFromState();
+    set('save-status', 'Inputs loaded from last session');
+  } catch(e) {
+    set('save-status', 'Auto-saving inputs in your browser');
+  }
+}
+
+function clearSave() {
+  if (!confirm('Reset all inputs to defaults?')) return;
+  try { localStorage.removeItem(LS_KEY); } catch(e) {}
+  location.reload();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  iOS INSTALL BANNER
+// ─────────────────────────────────────────────────────────────────────────────
+(function () {
+  const isIOS        = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true;
+  const dismissed    = localStorage.getItem('ios-banner-dismissed');
+  if (isIOS && !isStandalone && !dismissed) {
+    document.getElementById('ios-banner').style.display = 'flex';
+  }
+})();
+
+function dismissIOSBanner() {
+  document.getElementById('ios-banner').style.display = 'none';
+  try { localStorage.setItem('ios-banner-dismissed', '1'); } catch(e) {}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  SERVICE WORKER
+// ─────────────────────────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  MONTE CARLO SIMULATION
+// ─────────────────────────────────────────────────────────────────────────────
+function normalRandom(mean, stddev) {
+  let u = 0, v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  const z = Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  return z * stddev + mean;
+}
+
+function runMonteCarlo() {
+  const btn = document.getElementById('mc-run');
+  btn.disabled = true;
+  btn.textContent = 'Running…';
+
+  setTimeout(() => {
+    const R = runCalc();
+    if (!R) { btn.disabled = false; btn.textContent = '▶ Run 1,000 Simulations'; return; }
+
+    // The simulation starts AT THE MOMENT you hit CoastFIRE (or now, if already past it)
+    // and projects forward to retirement age — answering: "What happens to your money
+    // after you hit CoastFIRE, whether you keep investing or coast?"
+    const { cage, rage, yrs, taBal, brBal, effectiveTaCont, brCont, nom, inf, netFIRE, coastAge, coastToday } = R;
+    const fireTarget   = netFIRE;
+    const effNow       = taBal + brBal;
+    const annualCont   = effectiveTaCont + brCont;
+    const volatility   = 0.15;
+    const runs         = 1000;
+
+    // Determine the simulation starting point.
+    let simStartBal, simYears, simStartAge, alreadyAtCoast;
+    if (effNow >= coastToday) {
+      simStartBal    = effNow;
+      simStartAge    = cage;
+      simYears       = yrs;
+      alreadyAtCoast = true;
+    } else if (coastAge !== null && coastAge <= rage) {
+      simStartBal    = coastToday;
+      simStartAge    = coastAge;
+      simYears       = rage - coastAge;
+      alreadyAtCoast = false;
+    } else {
+      document.getElementById('mc-scenarios').style.display = 'none';
+      document.getElementById('mc-chart-wrap').style.display = 'none';
+      document.getElementById('mc-summary').style.display = '';
+      document.getElementById('mc-summary').innerHTML =
+        `⚠️ <strong>You won't hit CoastFIRE before retirement at this savings rate.</strong> Increase contributions or extend your retirement age so the simulation has a CoastFIRE moment to project from.`;
+      btn.disabled = false;
+      btn.textContent = '▶ Run 1,000 Simulations';
+      return;
+    }
+
+    if (simYears <= 0) {
+      document.getElementById('mc-scenarios').style.display = 'none';
+      document.getElementById('mc-chart-wrap').style.display = 'none';
+      document.getElementById('mc-summary').style.display = '';
+      document.getElementById('mc-summary').innerHTML =
+        `⚠️ <strong>No years remaining to simulate.</strong> You hit CoastFIRE at or after your retirement age. Increase retirement age to see the projection.`;
+      btn.disabled = false;
+      btn.textContent = '▶ Run 1,000 Simulations';
+      return;
+    }
+
+    // Run TWO post-CoastFIRE scenarios:
+    // (1) Coast: stop contributing at CoastFIRE — just let compound growth run
+    // (2) Keep investing: continue adding annualCont/yr (inflation-adjusted)
+    const outcomesCoast = [];
+    const outcomesKeep  = [];
+    for (let i = 0; i < runs; i++) {
+      let balCoast = simStartBal;
+      let balKeep  = simStartBal;
+      let contY    = annualCont;
+      for (let y = 0; y < simYears; y++) {
+        const r = normalRandom(nom, volatility);
+        balCoast = balCoast * (1 + r);
+        balKeep  = balKeep  * (1 + r) + contY;
+        contY   *= (1 + inf);
+      }
+      outcomesCoast.push(balCoast);
+      outcomesKeep.push(balKeep);
+    }
+
+    outcomesCoast.sort((a, b) => a - b);
+    outcomesKeep.sort((a, b) => a - b);
+
+    const coastP10 = outcomesCoast[Math.floor(runs * 0.10)];
+    const coastP50 = outcomesCoast[Math.floor(runs * 0.50)];
+    const coastP90 = outcomesCoast[Math.floor(runs * 0.90)];
+    const keepP10  = outcomesKeep [Math.floor(runs * 0.10)];
+    const keepP50  = outcomesKeep [Math.floor(runs * 0.50)];
+    const keepP90  = outcomesKeep [Math.floor(runs * 0.90)];
+    const successCoast = outcomesCoast.filter(v => v >= fireTarget).length / runs * 100;
+    const successKeep  = outcomesKeep .filter(v => v >= fireTarget).length / runs * 100;
+
+    document.getElementById('mc-scenarios').style.display = '';
+    document.getElementById('mc-chart-wrap').style.display = '';
+    document.getElementById('mc-summary').style.display = '';
+
+    // Coast scenario
+    document.getElementById('mc-coast-success').textContent = successCoast.toFixed(1) + '%';
+    document.getElementById('mc-coast-p10').textContent = fmt(coastP10);
+    document.getElementById('mc-coast-p50').textContent = fmt(coastP50);
+    document.getElementById('mc-coast-p90').textContent = fmt(coastP90);
+    document.getElementById('mc-coast-success').className = 'val ' + (successCoast >= 80 ? 'g' : successCoast >= 50 ? 'y' : 'r');
+
+    // Keep-investing scenario
+    document.getElementById('mc-keep-success').textContent = successKeep.toFixed(1) + '%';
+    document.getElementById('mc-keep-p10').textContent = fmt(keepP10);
+    document.getElementById('mc-keep-p50').textContent = fmt(keepP50);
+    document.getElementById('mc-keep-p90').textContent = fmt(keepP90);
+    document.getElementById('mc-keep-success').className = 'val ' + (successKeep >= 80 ? 'g' : successKeep >= 50 ? 'y' : 'r');
+
+    const delta = successKeep - successCoast;
+    const anchor = alreadyAtCoast
+      ? `You're already past CoastFIRE with ${fmt(simStartBal)} today. Over the next ${simYears} years to retirement at age ${rage}:`
+      : `Your CoastFIRE moment arrives at age ${simStartAge} with ${fmt(simStartBal)}. From there, ${simYears} years of growth until retirement at age ${rage}:`;
+    document.getElementById('mc-summary').innerHTML =
+      `<strong>${anchor}</strong><br><br>` +
+      `💤 <strong>If you coast</strong> (stop contributing): ${successCoast.toFixed(0)}% of simulated futures hit your FIRE target of ${fmt(fireTarget)}. Median ending balance: <strong>${fmt(coastP50)}</strong>.<br>` +
+      `💪 <strong>If you keep investing</strong> ${fmt(annualCont)}/yr: ${successKeep.toFixed(0)}% success rate — a ${delta >= 0 ? '+' : ''}${delta.toFixed(0)}-point buffer. Median ending balance: <strong>${fmt(keepP50)}</strong>.<br><br>` +
+      (successCoast >= 80
+        ? `✅ Coasting after CoastFIRE is a solid plan — your odds are strong either way.`
+        : successCoast >= 50
+        ? `⚠️ Coasting is borderline — continuing to invest meaningfully reduces your downside risk.`
+        : `🚨 Volatility could bite hard if you coast — staying invested adds real insurance.`);
+
+    drawMCChart(outcomesCoast, outcomesKeep, fireTarget);
+
+    btn.disabled = false;
+    btn.textContent = '▶ Re-run 1,000 Simulations';
+  }, 50);
+}
+
+function drawMCChart(outcomesCoast, outcomesKeep, fireTarget) {
+  const bins = 40;
+  const runs = outcomesCoast.length;
+  // Use combined P1-P99 range so both distributions fit on the same axis.
+  const allSorted = [...outcomesCoast, ...outcomesKeep].sort((a, b) => a - b);
+  const displayMin = allSorted[Math.floor(allSorted.length * 0.01)];
+  const displayMax = allSorted[Math.floor(allSorted.length * 0.99)];
+  const span = Math.max(displayMax - displayMin, 1);
+  const step = span / bins;
+  const labels = [];
+  for (let i = 0; i < bins; i++) labels.push(displayMin + step * (i + 0.5));
+
+  const binify = (arr) => {
+    const c = new Array(bins).fill(0);
+    arr.forEach(v => {
+      let idx = Math.floor((v - displayMin) / step);
+      if (idx < 0) idx = 0;
+      if (idx >= bins) idx = bins - 1;
+      c[idx]++;
+    });
+    return c;
+  };
+
+  const coastCounts = binify(outcomesCoast);
+  const keepCounts  = binify(outcomesKeep);
+
+  const ctx = document.getElementById('mc-chart').getContext('2d');
+  if (mcChart) mcChart.destroy();
+  mcChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels.map(v => fmt(v)),
+      datasets: [
+        {
+          label: '💤 Coast (stop contributing)',
+          data: coastCounts,
+          backgroundColor: 'rgba(255,99,99,0.55)',
+          borderWidth: 0,
+        },
+        {
+          label: '💪 Keep investing',
+          data: keepCounts,
+          backgroundColor: 'rgba(0,212,170,0.55)',
+          borderWidth: 0,
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, labels: { color: '#e8eaf2', font: { size: 11 } } },
+        tooltip: { callbacks: { title: items => 'Ending: ' + items[0].label, label: item => item.dataset.label + ': ' + item.raw + ' runs' } }
+      },
+      scales: {
+        x: { stacked: false, ticks: { color: '#8b92a8', maxTicksLimit: 6, font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: '#8b92a8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: 'Number of runs', color: '#8b92a8' } }
+      }
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────────────────────────────────────
+loadState();
+initChart();
+recalc();
+</script>
+
+</body>
+</html>

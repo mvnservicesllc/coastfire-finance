@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1d29"/>
+      <stop offset="100%" stop-color="#0f1117"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6c63ff"/>
+      <stop offset="100%" stop-color="#00d4aa"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6c63ff"/>
+      <stop offset="100%" stop-color="#00d4aa"/>
+    </linearGradient>
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6c63ff" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#00d4aa" stop-opacity="0.7"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Full background -->
+  <rect width="1200" height="320" rx="40" fill="url(#bgGrad)"/>
+
+  <!-- ───── ICON MARK (left) ───── -->
+  <g transform="translate(40, 40)">
+    <rect width="240" height="240" rx="48" fill="#0f1117"
+          stroke="url(#accentGrad)" stroke-width="2" opacity="0.9"/>
+
+    <!-- Rising chart -->
+    <polyline
+      points="38,180 82,124 120,146 168,78 210,100"
+      fill="none" stroke="url(#accentGrad)" stroke-width="18"
+      stroke-linecap="round" stroke-linejoin="round"
+      filter="url(#glow)"/>
+
+    <!-- Peak dot -->
+    <circle cx="210" cy="100" r="14" fill="#00d4aa" filter="url(#glow)"/>
+    <circle cx="210" cy="100" r="6" fill="#0f1117"/>
+
+    <!-- Wave bottom -->
+    <path d="M20,198 Q62,184 104,198 Q146,212 188,198 Q214,188 222,194 L222,226 Q180,236 120,232 Q60,228 20,230 Z"
+          fill="url(#waveGrad)"/>
+    <path d="M20,210 Q62,198 104,210 Q146,222 188,210 Q214,202 222,206 L222,226 L20,226 Z"
+          fill="url(#accentGrad)" opacity="0.55"/>
+  </g>
+
+  <!-- ───── TEXT (right) ───── -->
+  <g transform="translate(320, 0)">
+    <text x="0" y="170" font-family="-apple-system, Segoe UI, Roboto, sans-serif"
+          font-size="104" font-weight="800" fill="url(#textGrad)"
+          letter-spacing="-2">CoastFIRE</text>
+    <text x="0" y="250" font-family="-apple-system, Segoe UI, Roboto, sans-serif"
+          font-size="56" font-weight="500" fill="#e8eaf2"
+          letter-spacing="8">FINANCE</text>
+
+    <!-- Tagline -->
+    <text x="4" y="292" font-family="-apple-system, Segoe UI, Roboto, sans-serif"
+          font-size="20" font-weight="400" fill="#8b92a8"
+          letter-spacing="3">CLEAR MATH. NO HYPE.</text>
+  </g>
+</svg>

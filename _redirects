@@ -1,0 +1,134 @@
+# Serve our SVG icon for every icon variant browsers may request
+/favicon.ico                                  /icon.svg  200
+/favicon.png                                  /icon.svg  200
+/apple-touch-icon.png                         /icon.svg  200
+/apple-touch-icon-precomposed.png             /icon.svg  200
+/apple-touch-icon-120x120.png                 /icon.svg  200
+/apple-touch-icon-120x120-precomposed.png     /icon.svg  200
+/apple-touch-icon-152x152.png                 /icon.svg  200
+/apple-touch-icon-152x152-precomposed.png     /icon.svg  200
+/apple-touch-icon-167x167.png                 /icon.svg  200
+/apple-touch-icon-167x167-precomposed.png     /icon.svg  200
+/apple-touch-icon-180x180.png                 /icon.svg  200
+/apple-touch-icon-180x180-precomposed.png     /icon.svg  200
+
+# Silently redirect common bot-probe paths to homepage (kills 404 noise)
+/wp-login.php   /  301
+/wp-admin/*     /  301
+/wp-content/*   /  301
+/admin          /  301
+/admin/*        /  301
+/administrator  /  301
+/Login.php      /  301
+/login.php      /  301
+/login          /  301
+/Login          /  301
+/home           /  301
+/online         /  301
+/secure         /  301
+/en             /  301
+/en/*           /  301
+/phpmyadmin     /  301
+/phpmyadmin/*   /  301
+/.env           /  301
+/.git/*         /  301
+/xmlrpc.php     /  301
+
+# ═══════════════════════════════════════════════════════════════
+# .env probes — we're a static site, we have no .env files at all
+# ═══════════════════════════════════════════════════════════════
+/.env                         /  301
+/:a/.env                      /  301
+/:a/:b/.env                   /  301
+/:a/:b/:c/.env                /  301
+/:a/:b/:c/:d/.env             /  301
+/.env.*                       /  301
+/:a/.env.*                    /  301
+/:a/:b/.env.*                 /  301
+/.env-*                       /  301
+/.env_*                       /  301
+/:a/.env-*                    /  301
+/:a/.env_*                    /  301
+
+# env.* files WITHOUT leading dot (env.production, env.bak, env.docker, etc.)
+/env                          /  301
+/env.*                        /  301
+/:a/env                       /  301
+/:a/env.*                     /  301
+/:a/:b/env.*                  /  301
+
+# ═══════════════════════════════════════════════════════════════
+# PHP probes — we have zero .php files; all .php requests are hostile
+# ═══════════════════════════════════════════════════════════════
+/phpinfo                      /  301
+/phpinfo.php                  /  301
+/:a/phpinfo                   /  301
+/:a/phpinfo.php               /  301
+/:a/:b/phpinfo.php            /  301
+/info.php                     /  301
+/Info.php                     /  301
+/php.php                      /  301
+/php-info.php                 /  301
+/_phpinfo.php                 /  301
+/old_phpinfo.php              /  301
+/phpversion.php               /  301
+/phpInfo.php                  /  301
+/pinfo.php                    /  301
+/p.php                        /  301
+/p1.php                       /  301
+/i.php                        /  301
+/test.php                     /  301
+/debug.php                    /  301
+/server-info.php              /  301
+/server-status.php            /  301
+/_profiler/*                  /  301
+/_environment                 /  301
+/webroot/*                    /  301
+/info                         /  301
+/:a/:b/*.php                  /  301
+/:a/*.php                     /  301
+
+# ═══════════════════════════════════════════════════════════════
+# .well-known probes (Chrome Privacy Prefetch Proxy + others)
+# ═══════════════════════════════════════════════════════════════
+/.well-known/*                /  301
+
+# WordPress wlwmanifest.xml probes (bots guess install subpath)
+/wp-includes/*                      /  301
+/site/wp-includes/*                 /  301
+/sito/wp-includes/*                 /  301
+/test/wp-includes/*                 /  301
+/shop/wp-includes/*                 /  301
+/2020/wp-includes/*                 /  301
+/2021/wp-includes/*                 /  301
+/2022/wp-includes/*                 /  301
+/2023/wp-includes/*                 /  301
+/2024/wp-includes/*                 /  301
+/2025/wp-includes/*                 /  301
+/2026/wp-includes/*                 /  301
+/wp/wp-includes/*                   /  301
+/wordpress/wp-includes/*            /  301
+/blog/wp-includes/*                 /  301
+/news/wp-includes/*                 /  301
+/web/wp-includes/*                  /  301
+/cms/wp-includes/*                  /  301
+/media/wp-includes/*                /  301
+/old/wp-includes/*                  /  301
+/new/wp-includes/*                  /  301
+
+# Bot scrapers misparse protocol-relative URLs (//cdnjs.cloudflare.com/...)
+/cdnjs.cloudflare.com/*             /  301
+/cdn.*/*                            /  301
+
+# CMS-vulnerability scans (Chinese-CMS probes, generic asset probes)
+/css/support_parent.css        /  301
+/static/*                      /  301
+/js/lkk_ch.js                  /  301
+/sys_files/*                   /  301
+/manage/*                      /  301
+/cms/*                         /  301
+/joomla/*                      /  301
+/drupal/*                      /  301
+/bitrix/*                      /  301
+/.well-known/security.txt      /  301
+/wp-json/*                     /  301

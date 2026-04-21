@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>My CoastFIRE Journey: How I Calculated My Number (Engineer's Case Study, 2026) | CoastFIRE Finance</title>
+<meta name="description" content="An engineer's 2026 case study of discovering CoastFIRE, running the real numbers, and the lessons learned from building a calculator to prove the math out.">
+<link rel="canonical" href="https://coastfirefinance.com/blog/my-coastfire-journey.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": { "@type": "WebPage", "@id": "https://coastfirefinance.com/blog/my-coastfire-journey.html" },
+  "headline": "My CoastFIRE Journey: How I Calculated My Number (Engineer's Case Study, 2026)",
+  "description": "An engineer's case study of discovering CoastFIRE, running the numbers, and the lessons from building a calculator.",
+  "image": "https://coastfirefinance.com/og-image.png",
+  "datePublished": "2026-03-10",
+  "dateModified": "2026-04-20",
+  "author": {
+    "@type": "Person",
+    "@id": "https://coastfirefinance.com/#minh",
+    "name": "Minh",
+    "url": "https://coastfirefinance.com/",
+    "jobTitle": "Engineer & Financial Independence Writer"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "@id": "https://coastfirefinance.com/#org",
+    "name": "CoastFIRE Finance",
+    "logo": { "@type": "ImageObject", "url": "https://coastfirefinance.com/logo-square.svg" }
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://coastfirefinance.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://coastfirefinance.com/#blog" },
+    { "@type": "ListItem", "position": 3, "name": "My CoastFIRE Journey", "item": "https://coastfirefinance.com/blog/my-coastfire-journey.html" }
+  ]
+}
+</script>
+<meta name="theme-color" content="#6c63ff">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<style>
+  :root { --bg:#0f1117; --card:#1a1d29; --border:#2a2f42; --text:#e8eaf2; --muted:#8b92a8; --accent:#6c63ff; --accent2:#00d4aa; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; line-height:1.7; -webkit-font-smoothing:antialiased; }
+  .nav { background:var(--card); border-bottom:1px solid var(--border); padding:14px 20px; position:sticky; top:0; z-index:10; }
+  .nav a { color:var(--accent2); text-decoration:none; font-weight:600; font-size:0.95rem; }
+  .nav a:hover { color:var(--accent); }
+  .wrap { max-width:720px; margin:0 auto; padding:40px 20px 80px; }
+  h1 { font-size:2.2rem; line-height:1.2; margin:0 0 12px; background:linear-gradient(135deg,#6c63ff,#00d4aa); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .meta { color:var(--muted); font-size:0.9rem; margin-bottom:30px; }
+  h2 { font-size:1.5rem; margin:36px 0 12px; color:var(--accent2); }
+  h3 { font-size:1.2rem; margin:26px 0 10px; }
+  p { margin:0 0 16px; }
+  .callout { background:var(--card); border-left:3px solid var(--accent); padding:16px 20px; margin:24px 0; border-radius:6px; }
+  .callout strong { color:var(--accent2); }
+  code { background:var(--card); padding:2px 8px; border-radius:4px; font-size:0.9em; color:var(--accent2); }
+  .cta { display:block; background:linear-gradient(135deg,#6c63ff,#00d4aa); color:white; text-align:center; padding:18px 24px; border-radius:10px; text-decoration:none; font-weight:600; margin:32px 0; font-size:1.05rem; }
+  .cta:hover { filter:brightness(1.1); }
+  ul { padding-left:22px; }
+  li { margin-bottom:8px; }
+  blockquote { border-left:3px solid var(--accent2); padding:4px 20px; margin:24px 0; color:var(--muted); font-style:italic; }
+  @media (max-width:500px) { h1 { font-size:1.7rem; } .wrap { padding:24px 16px 60px; } }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a href="../index.html">← Back to Calculator</a>
+</div>
+
+<div class="wrap">
+
+<h1>My CoastFIRE Journey: How I Calculated My Number</h1>
+<div class="meta">By Minh · Updated 2026 · 7 min read</div>
+
+<p>A few years ago, I stumbled across the concept of CoastFIRE while reading through personal finance forums at 1 AM. I'm an engineer by trade — I've spent my career breaking systems down into components to understand them — and the idea that there was a single number that could tell me "you're done saving" felt too good to be true.</p>
+
+<p>So I did what engineers do: I didn't trust it. I built a model.</p>
+
+<h2>Why I Didn't Believe the Rule of Thumb</h2>
+
+<p>The internet loves clean formulas. "Save 15% of your income." "Multiply your expenses by 25." "You need $1M to retire." But every time I tried to apply these to my own situation, they broke down.</p>
+
+<ul>
+  <li>What about my employer match? Is that 15% before or after?</li>
+  <li>What if I have a pension that kicks in at 65?</li>
+  <li>What about Social Security — should I count it or not?</li>
+  <li>How does brokerage (taxed) vs 401(k) (tax-deferred) change things?</li>
+</ul>
+
+<p>The blog posts I read always had <em>some</em> version of these questions unanswered. So I sat down one Saturday and wrote my first spreadsheet.</p>
+
+<h2>The First Draft (It Was Wrong)</h2>
+
+<p>My first model assumed a flat 7% return, ignored inflation, and treated all accounts equally. Clean. Simple. <strong>Completely wrong.</strong></p>
+
+<p>When I showed it to a friend who works in finance, she pointed out three problems in under a minute:</p>
+
+<ol>
+  <li>A nominal 7% return with 3% inflation is a <em>real</em> 4% return. That's a huge difference over 30 years.</li>
+  <li>A taxable brokerage account faces long-term capital gains on the way out — it's not 1:1 equivalent to a Roth IRA.</li>
+  <li>Pension and Social Security <strong>reduce</strong> the amount your portfolio has to cover. They're not gravy on top — they're part of the math.</li>
+</ol>
+
+<blockquote>"Your model is a blueprint for a house with no roof." — my friend, being brutally honest</blockquote>
+
+<p>That critique saved me. It sent me deep into the rabbit hole of Safe Withdrawal Rate research, sequence-of-returns risk, and tax-efficient withdrawal orders.</p>
+
+<h2>What I Learned Running My Own Numbers</h2>
+
+<p>After a few weekends of refactoring, I had a calculator I actually trusted. When I finally plugged in my real inputs, three things surprised me:</p>
+
+<h3>1. I was closer than I thought</h3>
+<p>I had been saving aggressively for years without a clear target. When I finally did the math, my CoastFIRE number was <strong>substantially lower</strong> than I'd assumed. I was within striking distance.</p>
+
+<h3>2. My employer match was doing more than I realized</h3>
+<p>A 50% match on 6% of salary sounds small, but over 30 years that "free money" compounded into over six figures. It changed my strategy — I stopped treating the match as a "nice to have" and made it the first priority.</p>
+
+<h3>3. The decision wasn't financial — it was psychological</h3>
+<p>Hitting the number didn't mean I'd actually stop saving. The habit was too ingrained. What hitting the number <em>did</em> do was give me permission to say no to projects I didn't want, and yes to ones that paid less but meant more.</p>
+
+<h2>The Moment It Clicked</h2>
+
+<p>The real insight wasn't about money. It was about <strong>optionality</strong>. Before I knew my CoastFIRE number, every career decision carried an invisible weight: "Is this paying me enough to retire someday?" After I knew my number, that weight was gone. The decisions got clearer. The work got better.</p>
+
+<div class="callout">
+  <strong>What I tell people now:</strong> The goal of CoastFIRE isn't to quit your job. It's to make every future working year a choice.
+</div>
+
+<h2>Why I Built This Calculator</h2>
+
+<p>After my friend saw my spreadsheet, she asked me to run her numbers. Then her partner. Then a coworker. Every time, I realized the spreadsheet had a dozen inputs that non-engineers would find confusing — but the <em>insight</em> people got when they saw their number was genuinely life-changing.</p>
+
+<p>So I turned the spreadsheet into a web app. No logins. No data collection. Nothing to buy. Just the math, done right, in your browser. That's the calculator you're using right now.</p>
+
+<a href="../index.html" class="cta">Calculate Your CoastFIRE Number →</a>
+
+<h2>If I Could Do It Over</h2>
+
+<p>If I were starting from scratch today, I'd do three things differently:</p>
+
+<ol>
+  <li><strong>Max the employer match from day one.</strong> The opportunity cost of missing even a year is brutal.</li>
+  <li><strong>Use real, not nominal, returns in all my planning.</strong> Inflation is quiet but it's ruthless.</li>
+  <li><strong>Calculate early, not late.</strong> Knowing the number at 25 would have changed how I evaluated job offers, cities to live in, and when to buy a house.</li>
+</ol>
+
+<p>If you're reading this and you haven't run your numbers yet — do it today. It takes 5 minutes. You might be closer than you think.</p>
+
+<div class="callout" style="border-left-color:#ffd166">
+  <strong style="color:#ffd166">📘 Recommended reading</strong><br>
+  <a href="https://www.amazon.com/dp/0857197681?tag=angelnguyen0e-20" target="_blank" rel="noopener sponsored" style="color:var(--accent2)">The Psychology of Money</a> by Morgan Housel. The book that taught me FIRE is mostly about behavior, not spreadsheets. If you resonated with this journey, it'll put words to why the math works but only if you can actually <em>stick with it</em>.
+  <br><span style="color:var(--muted);font-size:0.8rem">Affiliate link — we may earn a small commission at no extra cost to you.</span>
+</div>
+
+<div class="callout" style="margin-top:40px;border-left-color:var(--accent2)">
+  <strong>About the author</strong><br>
+  Minh is a lifelong financial enthusiast and an experienced engineer. He built CoastFIRE Finance to help people see their path to financial independence with clear math — not hype. Have a question? <a href="mailto:minh@coastfirefinance.com" style="color:var(--accent2)">Email Minh directly</a>.
+</div>
+
+</div>
+
+</body>
+</html>
