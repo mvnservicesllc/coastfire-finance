@@ -132,3 +132,11 @@
 /bitrix/*                      /  301
 /.well-known/security.txt      /  301
 /wp-json/*                     /  301
+
+# PWA / metadata file probes (we use /manifest.json, not these variants)
+/meta.json                     /  301
+/meta                          /  301
+/metadata.json                 /  301
+/manifest.webmanifest          /  301
+/site.webmanifest              /  301
+/browserconfig.xml             /  301
