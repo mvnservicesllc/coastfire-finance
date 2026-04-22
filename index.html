@@ -2015,6 +2015,20 @@ const AFFILIATES = {
     name: 'Financial Freedom Insights', tag: 'Newsletter · Free',
     url: 'https://financial-freedom-insights.beehiiv.com/',
     cta: 'Subscribe Free →', ctaCls: ''
+  },
+  ynab: {
+    id: 'ynab', logo: '💰', logoCls: 'g',
+    name: 'YNAB (You Need A Budget)', tag: 'Budget app · 34-day free trial',
+    // TODO: Replace with your YNAB affiliate URL after approval at https://www.ynab.com/affiliates
+    url: 'https://www.ynab.com/',
+    cta: 'Try YNAB Free →', ctaCls: 'g'
+  },
+  monarch: {
+    id: 'monarch', logo: '🦋', logoCls: 'p',
+    name: 'Monarch Money', tag: 'Budget + net worth · Premium',
+    // TODO: Replace with your Monarch affiliate URL after approval via PartnerStack
+    url: 'https://www.monarchmoney.com/',
+    cta: 'Try Monarch →', ctaCls: ''
   }
 };
 
@@ -2041,10 +2055,12 @@ function updateContextual(R) {
 
   if (alreadyCoast) {
     add('empower', "You've hit CoastFIRE — time to track your net worth closely.");
+    add('monarch', 'Protect what you built — Monarch unifies budget + net worth so coast drift is easy to spot.');
     add('sofi',    'Keep investing on autopilot to build a buffer above your CoastFIRE number.');
   } else if (nearCoast) {
     add('m1',      `You're ~${yearsToCoast} yrs from CoastFIRE — automate contributions so you land it.`);
     add('empower', 'Track every account in one place as you close the gap.');
+    add('ynab',    'Final stretch — tighten your spending plan to close the gap faster.');
   } else if (farFromCoast) {
     add('book',      'Long runway — the fundamentals of index investing will compound for you.');
     add('robinhood', "Decades ahead — Robinhood's 1–3% IRA match is free money compounding for 30+ years.");
@@ -2062,7 +2078,8 @@ function updateContextual(R) {
     add('empower', 'With pension/SS income streams, a unified dashboard helps you see the full picture.');
   }
   if (typeof savingsRate === 'number' && savingsRate < 0.15) {
-    add('newsletter', 'Savings rate is tight — free newsletter with tips to find more room.');
+    add('ynab',       'Savings rate is tight — YNAB helps you find room in your budget without feeling squeezed.');
+    add('newsletter', 'Free newsletter with tips to find more to save each month.');
   }
 
   const top = picks.slice(0, 3);
