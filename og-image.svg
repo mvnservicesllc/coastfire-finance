@@ -1,20 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1a1d29"/>
-      <stop offset="100%" stop-color="#0f1117"/>
+      <stop offset="0%" stop-color="#13253e"/>
+      <stop offset="100%" stop-color="#0b1929"/>
     </linearGradient>
     <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6c63ff"/>
-      <stop offset="100%" stop-color="#00d4aa"/>
+      <stop offset="0%" stop-color="#c9965c"/>
+      <stop offset="100%" stop-color="#e8c685"/>
     </linearGradient>
     <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#6c63ff"/>
-      <stop offset="100%" stop-color="#00d4aa"/>
+      <stop offset="0%" stop-color="#c9965c"/>
+      <stop offset="100%" stop-color="#e8c685"/>
     </linearGradient>
     <linearGradient id="wave" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6c63ff" stop-opacity="0.6"/>
-      <stop offset="100%" stop-color="#00d4aa" stop-opacity="0.6"/>
+      <stop offset="0%" stop-color="#c9965c" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#e8c685" stop-opacity="0.6"/>
     </linearGradient>
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="6"/>
@@ -34,9 +34,9 @@
               fill="none" stroke="url(#accent)" stroke-width="14"
               stroke-linecap="round" stroke-linejoin="round"/>
     <!-- Peak dot -->
-    <circle cx="420" cy="60" r="16" fill="#00d4aa" filter="url(#glow)"/>
-    <circle cx="420" cy="60" r="16" fill="#00d4aa"/>
-    <circle cx="420" cy="60" r="7" fill="#0f1117"/>
+    <circle cx="420" cy="60" r="16" fill="#e8c685" filter="url(#glow)"/>
+    <circle cx="420" cy="60" r="16" fill="#e8c685"/>
+    <circle cx="420" cy="60" r="7" fill="#0b1929"/>
   </g>
 
   <!-- Wave (bottom) -->
@@ -51,15 +51,15 @@
           font-size="72" font-weight="800" fill="url(#textGrad)"
           letter-spacing="-2">CoastFIRE</text>
     <text x="0" y="60" font-family="-apple-system, Segoe UI, Roboto, sans-serif"
-          font-size="44" font-weight="500" fill="#e8eaf2"
+          font-size="44" font-weight="500" fill="#e8ecf1"
           letter-spacing="4">CALCULATOR</text>
 
     <text x="0" y="150" font-family="-apple-system, Segoe UI, Roboto, sans-serif"
-          font-size="30" font-weight="400" fill="#8b92a8">
+          font-size="30" font-weight="400" fill="#8da3b8">
       Find the age you can stop saving —
     </text>
     <text x="0" y="192" font-family="-apple-system, Segoe UI, Roboto, sans-serif"
-          font-size="30" font-weight="400" fill="#8b92a8">
+          font-size="30" font-weight="400" fill="#8da3b8">
       and let compounding finish the job.
     </text>
 
@@ -68,25 +68,25 @@
       <rect x="0"   y="0" width="160" height="40" rx="20" fill="none"
             stroke="url(#accent)" stroke-width="1.5"/>
       <text x="80" y="26" font-family="-apple-system, Segoe UI, Roboto, sans-serif"
-            font-size="16" font-weight="600" fill="#00d4aa"
+            font-size="16" font-weight="600" fill="#e8c685"
             text-anchor="middle">MONTE CARLO</text>
 
       <rect x="175" y="0" width="160" height="40" rx="20" fill="none"
             stroke="url(#accent)" stroke-width="1.5"/>
       <text x="255" y="26" font-family="-apple-system, Segoe UI, Roboto, sans-serif"
-            font-size="16" font-weight="600" fill="#00d4aa"
+            font-size="16" font-weight="600" fill="#e8c685"
             text-anchor="middle">TAX-AWARE</text>
 
       <rect x="350" y="0" width="175" height="40" rx="20" fill="none"
             stroke="url(#accent)" stroke-width="1.5"/>
       <text x="437" y="26" font-family="-apple-system, Segoe UI, Roboto, sans-serif"
-            font-size="16" font-weight="600" fill="#00d4aa"
+            font-size="16" font-weight="600" fill="#e8c685"
             text-anchor="middle">SS + PENSION</text>
     </g>
 
     <!-- Domain at bottom of text block -->
     <text x="0" y="360" font-family="-apple-system, Segoe UI, Roboto, sans-serif"
-          font-size="22" font-weight="600" fill="#e8eaf2"
+          font-size="22" font-weight="600" fill="#e8ecf1"
           letter-spacing="3">COASTFIREFINANCE.COM</text>
   </g>
 </svg>

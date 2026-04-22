@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="CoastFIRE">
-  <meta name="theme-color" content="#6c63ff">
+  <meta name="theme-color" content="#c9965c">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <link rel="apple-touch-icon" href="icon.svg">
 
@@ -101,18 +101,19 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:      #0f1117;
-      --surface: #1a1d27;
-      --surface2:#22263a;
-      --border:  #2e3247;
-      --accent:  #6c63ff;
-      --green:   #00d4aa;
-      --yellow:  #f7b731;
-      --red:     #ff6b6b;
-      --white60: rgba(232,234,246,0.6);
-      --text:    #e8eaf6;
-      --muted:   #8b90b0;
+      --bg:      #0b1929;
+      --surface: #13253e;
+      --surface2:#1a3050;
+      --border:  #2a4060;
+      --accent:  #c9965c;
+      --green:   #5f9677;
+      --yellow:  #e8c685;
+      --red:     #c47070;
+      --white60: rgba(232,236,241,0.6);
+      --text:    #e8ecf1;
+      --muted:   #8da3b8;
       --radius:  14px;
+      --serif:   Georgia, 'Times New Roman', 'Cambria', serif;
     }
 
     body {
@@ -130,14 +131,14 @@
     /* ── iOS install banner ── */
     .ios-banner {
       display: flex; align-items: flex-start; gap: 12px;
-      background: rgba(108,99,255,0.12);
-      border: 1px solid rgba(108,99,255,0.35);
+      background: rgba(201,150,92,0.12);
+      border: 1px solid rgba(201,150,92,0.35);
       border-radius: 10px; padding: 12px 14px;
       margin: 0 auto 16px; max-width: 1240px;
       font-size: 0.83rem; line-height: 1.5;
     }
     .ios-banner-ico { font-size: 1.5rem; flex-shrink: 0; }
-    .ios-banner-body { flex: 1; color: #a89eff; }
+    .ios-banner-body { flex: 1; color: #d4b085; }
     .ios-banner-body strong { color: var(--text); }
     .ios-banner-close {
       background: none; border: none; color: var(--muted);
@@ -147,8 +148,10 @@
 
     header { text-align: center; margin-bottom: 32px; }
     header h1 {
-      font-size: 2rem; font-weight: 700;
-      background: linear-gradient(135deg, #6c63ff, #00d4aa);
+      font-family: var(--serif);
+      font-size: 2.3rem; font-weight: 700;
+      letter-spacing: -0.01em;
+      background: linear-gradient(135deg, #c9965c, #e8c685);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
     header p { color: var(--muted); margin-top: 8px; font-size: 0.9rem; max-width: 560px; margin-inline: auto; }
@@ -207,14 +210,14 @@
     }
     .field-wrap:focus-within {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(108,99,255,0.15);
+      box-shadow: 0 0 0 2px rgba(201,150,92,0.15);
     }
-    .field-wrap.y:focus-within { border-color: var(--yellow); box-shadow: 0 0 0 2px rgba(247,183,49,0.15); }
-    .field-wrap.g:focus-within { border-color: var(--green);  box-shadow: 0 0 0 2px rgba(0,212,170,0.15); }
+    .field-wrap.y:focus-within { border-color: var(--yellow); box-shadow: 0 0 0 2px rgba(232,198,133,0.15); }
+    .field-wrap.g:focus-within { border-color: var(--green);  box-shadow: 0 0 0 2px rgba(95,150,119,0.15); }
 
     .field-pfx, .field-sfx {
       padding: 0 10px;
-      background: rgba(108,99,255,0.1);
+      background: rgba(201,150,92,0.1);
       color: var(--accent);
       font-size: 0.85rem; font-weight: 700;
       border-right: 1px solid var(--border);
@@ -222,9 +225,9 @@
       flex-shrink: 0; white-space: nowrap;
     }
     .field-wrap.y .field-pfx,
-    .field-wrap.y .field-sfx { background: rgba(247,183,49,0.1); color: var(--yellow); border-color: var(--border); }
+    .field-wrap.y .field-sfx { background: rgba(232,198,133,0.1); color: var(--yellow); border-color: var(--border); }
     .field-wrap.g .field-pfx,
-    .field-wrap.g .field-sfx { background: rgba(0,212,170,0.1);  color: var(--green);  border-color: var(--border); }
+    .field-wrap.g .field-sfx { background: rgba(95,150,119,0.1);  color: var(--green);  border-color: var(--border); }
     .field-sfx { border-right: none; border-left: 1px solid var(--border); }
 
     .field-wrap input[type="number"] {
@@ -296,8 +299,8 @@
       background: var(--surface2); border: 1px solid var(--border);
       border-radius: 9px; padding: 11px 13px; margin-top: 12px;
     }
-    .info-box-g { border-color: rgba(0,212,170,0.3); background: rgba(0,212,170,0.06); }
-    .info-box-y { border-color: rgba(247,183,49,0.3); background: rgba(247,183,49,0.06); }
+    .info-box-g { border-color: rgba(95,150,119,0.3); background: rgba(95,150,119,0.06); }
+    .info-box-y { border-color: rgba(232,198,133,0.3); background: rgba(232,198,133,0.06); }
 
     .ibar-label { font-size: 0.67rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 5px; }
     .ibar { display: flex; border-radius: 4px; overflow: hidden; height: 7px; background: var(--border); margin: 5px 0; }
@@ -329,9 +332,9 @@
       font-size: 0.87rem; font-weight: 500;
       display: flex; align-items: center; gap: 10px;
     }
-    .banner.coast { background: rgba(0,212,170,0.12); border: 1px solid rgba(0,212,170,0.35); color: var(--green); }
-    .banner.track { background: rgba(108,99,255,0.12); border: 1px solid rgba(108,99,255,0.35); color: #a89eff; }
-    .banner.warn  { background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.35); color: #ff9a9a; }
+    .banner.coast { background: rgba(95,150,119,0.12); border: 1px solid rgba(95,150,119,0.35); color: var(--green); }
+    .banner.track { background: rgba(201,150,92,0.12); border: 1px solid rgba(201,150,92,0.35); color: #d4b085; }
+    .banner.warn  { background: rgba(196,112,112,0.12); border: 1px solid rgba(196,112,112,0.35); color: #ff9a9a; }
     .banner .ico  { font-size: 1.35rem; flex-shrink: 0; }
 
     /* ── Display toggle ── */
@@ -374,8 +377,8 @@
     .tbl th { text-align: left; color: var(--muted); font-weight: 500; padding: 5px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
     .tbl td { padding: 5px 8px; border-bottom: 1px solid rgba(46,50,71,0.45); }
     .tbl tr:hover td { background: rgba(255,255,255,0.02); }
-    .tbl tr.hl-coast  td { color: var(--green);  font-weight: 700; background: rgba(0,212,170,0.07) !important; }
-    .tbl tr.hl-retire td { color: var(--yellow); font-weight: 700; background: rgba(247,183,49,0.06) !important; }
+    .tbl tr.hl-coast  td { color: var(--green);  font-weight: 700; background: rgba(95,150,119,0.07) !important; }
+    .tbl tr.hl-retire td { color: var(--yellow); font-weight: 700; background: rgba(232,198,133,0.06) !important; }
     .tbl .ph-acc   { color: var(--accent); }
     .tbl .ph-coast { color: var(--green); }
 
@@ -398,9 +401,9 @@
     .tl-title { font-weight: 600; font-size: 0.87rem; margin-bottom: 3px; }
     .tl-detail { font-size: 0.78rem; color: var(--muted); line-height: 1.55; }
     .tl-tag { display: inline-block; font-size: 0.62rem; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 6px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.05em; }
-    .tag-p { background: rgba(108,99,255,0.2); color: #a89eff; }
-    .tag-g { background: rgba(0,212,170,0.2);  color: var(--green); }
-    .tag-y { background: rgba(247,183,49,0.2); color: var(--yellow); }
+    .tag-p { background: rgba(201,150,92,0.2); color: #d4b085; }
+    .tag-g { background: rgba(95,150,119,0.2);  color: var(--green); }
+    .tag-y { background: rgba(232,198,133,0.2); color: var(--yellow); }
 
     /* ── Affiliate / Resources ── */
     .aff-disclosure {
@@ -426,9 +429,9 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 1.3rem; flex-shrink: 0;
     }
-    .aff-logo.p { background: rgba(108,99,255,0.15); }
-    .aff-logo.y { background: rgba(247,183,49,0.15); }
-    .aff-logo.g { background: rgba(0,212,170,0.15); }
+    .aff-logo.p { background: rgba(201,150,92,0.15); }
+    .aff-logo.y { background: rgba(232,198,133,0.15); }
+    .aff-logo.g { background: rgba(95,150,119,0.15); }
     .aff-name { font-weight: 700; font-size: 0.92rem; color: var(--text); }
     .aff-tag  { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
     .aff-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; flex: 1; margin-bottom: 12px; }
@@ -439,18 +442,18 @@
       border-radius: 7px; font-size: 0.8rem; font-weight: 600;
       transition: filter 0.15s; touch-action: manipulation;
     }
-    .aff-cta.y { background: var(--yellow); color: #22263a; }
-    .aff-cta.g { background: var(--green);  color: #0f1117; }
+    .aff-cta.y { background: var(--yellow); color: #1a3050; }
+    .aff-cta.g { background: var(--green);  color: #0b1929; }
     .aff-cta:hover { filter: brightness(1.12); }
     .blog-list { display: flex; flex-direction: column; gap: 8px; }
     .blog-row {
       display: flex; align-items: center; gap: 14px;
-      padding: 14px 16px; background: rgba(108,99,255,0.06);
+      padding: 14px 16px; background: rgba(201,150,92,0.06);
       border: 1px solid var(--border); border-radius: 10px;
       text-decoration: none; color: inherit; transition: all 0.15s;
       min-height: 44px;
     }
-    .blog-row:hover { border-color: var(--accent); background: rgba(108,99,255,0.12); transform: translateX(2px); }
+    .blog-row:hover { border-color: var(--accent); background: rgba(201,150,92,0.12); transform: translateX(2px); }
     .blog-emoji { font-size: 1.4rem; flex-shrink: 0; }
     .blog-text { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
     .blog-title { font-weight: 600; font-size: 0.98rem; color: var(--text); }
@@ -459,7 +462,7 @@
 
     /* ── Monte Carlo ── */
     .mc-run-btn {
-      background: linear-gradient(135deg, #6c63ff, #00d4aa);
+      background: linear-gradient(135deg, #c9965c, #e8c685);
       color: white; border: none; padding: 11px 20px;
       border-radius: 8px; font-size: 0.85rem; font-weight: 600;
       cursor: pointer; touch-action: manipulation; min-height: 44px;
@@ -470,7 +473,7 @@
     .mc-scenario-label {
       font-size: 0.95rem; font-weight: 600; color: var(--accent2);
       margin: 6px 0 8px; padding: 6px 10px;
-      background: rgba(0,212,170,0.08); border-left: 3px solid var(--accent2);
+      background: rgba(95,150,119,0.08); border-left: 3px solid var(--accent2);
       border-radius: 4px;
     }
 
@@ -1051,7 +1054,7 @@
     <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:8px">Brokerage Account Only <span style="font-weight:400;text-transform:none;letter-spacing:0">(taxable)</span></div>
     <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
       <div class="rb"><div class="lbl">Brokerage — Coast</div><div class="val y" id="ki-br-coast">—</div><div class="sub">After LTCG, stop at coast</div></div>
-      <div class="rb"><div class="lbl">Brokerage — Keep</div><div class="val" style="color:#ffd166" id="ki-br-keep">—</div><div class="sub">After LTCG, keep adding</div></div>
+      <div class="rb"><div class="lbl">Brokerage — Keep</div><div class="val" style="color:#d4a96c" id="ki-br-keep">—</div><div class="sub">After LTCG, keep adding</div></div>
       <div class="rb"><div class="lbl">Brokerage Extra</div><div class="val g" id="ki-br-extra">—</div><div class="sub">From continued contributions</div></div>
     </div>
     <div class="info-box" id="ki-summary" style="margin-top:0;font-size:0.82rem;line-height:1.6"></div>
@@ -1221,6 +1224,36 @@
         </div>
         <!-- TODO: Replace with your Empower/Impact affiliate URL -->
         <a href="https://www.empower.com/" class="aff-cta g" target="_blank" rel="noopener sponsored">Get Empower Free →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo p">🦋</div>
+          <div>
+            <div class="aff-name">Monarch Money</div>
+            <div class="aff-tag">Budget + net worth · Premium</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          All-in-one budgeting and net-worth tracker — think Mint's replacement but built for people who actually care about their numbers. Great for couples sharing finances.
+        </div>
+        <!-- TODO: Replace with your Monarch affiliate URL after approval via PartnerStack -->
+        <a href="https://www.monarchmoney.com/" class="aff-cta" target="_blank" rel="noopener sponsored">Try Monarch →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo g">💰</div>
+          <div>
+            <div class="aff-name">YNAB (You Need A Budget)</div>
+            <div class="aff-tag">Budget app · 34-day free trial</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          The budgeting app FIRE folks swear by. Built around giving every dollar a job — the fastest way to find extra savings room without feeling squeezed. No card required for the trial.
+        </div>
+        <!-- TODO: Replace with your YNAB affiliate URL after approval at https://www.ynab.com/affiliates -->
+        <a href="https://www.ynab.com/" class="aff-cta g" target="_blank" rel="noopener sponsored">Try YNAB Free →</a>
       </div>
 
       <div class="aff-card">
@@ -1487,16 +1520,16 @@ function initChart() {
       responsive: true,
       interaction: { mode: 'index', intersect: false },
       plugins: {
-        legend: { labels: { color: '#8b90b0', font: { size: 11 }, boxWidth: 12, padding: 14 } },
+        legend: { labels: { color: '#8da3b8', font: { size: 11 }, boxWidth: 12, padding: 14 } },
         tooltip: {
-          backgroundColor: '#1a1d27', borderColor: '#2e3247', borderWidth: 1,
-          titleColor: '#e8eaf6', bodyColor: '#8b90b0',
+          backgroundColor: '#13253e', borderColor: '#2a4060', borderWidth: 1,
+          titleColor: '#e8ecf1', bodyColor: '#8da3b8',
           callbacks: { label: c => '  ' + c.dataset.label + ': ' + fmt(c.raw) }
         }
       },
       scales: {
-        x: { ticks: { color: '#8b90b0', font: { size: 10 }, maxTicksLimit: 12 }, grid: { color: 'rgba(255,255,255,0.04)' } },
-        y: { ticks: { color: '#8b90b0', font: { size: 10 }, callback: v => fmt(v) }, grid: { color: 'rgba(255,255,255,0.04)' } }
+        x: { ticks: { color: '#8da3b8', font: { size: 10 }, maxTicksLimit: 12 }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#8da3b8', font: { size: 10 }, callback: v => fmt(v) }, grid: { color: 'rgba(255,255,255,0.04)' } }
       }
     }
   });
@@ -1834,14 +1867,14 @@ function recalc() {
   const cv = arr => arr.map((v, i) => v == null ? null : Math.round(toDisp(v, i)));
   chart.data.labels   = ages;
   chart.data.datasets = [
-    { label: 'Tax-Advantaged',          data: cv(taVals),           borderColor: '#6c63ff', backgroundColor: 'rgba(108,99,255,0.08)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
-    { label: 'Brokerage (After-Tax)',   data: cv(effBrVals),        borderColor: '#f7b731', backgroundColor: 'rgba(247,183,49,0.06)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
-    { label: 'Total Portfolio',         data: cv(effTotals),        borderColor: 'rgba(232,234,246,0.6)', borderWidth: 1.5, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,2] },
-    { label: 'Coast-Only Path',         data: cv(coastPath),        borderColor: '#00d4aa', borderWidth: 2,   fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [8,4] },
+    { label: 'Tax-Advantaged',          data: cv(taVals),           borderColor: '#c9965c', backgroundColor: 'rgba(201,150,92,0.08)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
+    { label: 'Brokerage (After-Tax)',   data: cv(effBrVals),        borderColor: '#e8c685', backgroundColor: 'rgba(232,198,133,0.06)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
+    { label: 'Total Portfolio',         data: cv(effTotals),        borderColor: 'rgba(232,236,241,0.6)', borderWidth: 1.5, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,2] },
+    { label: 'Coast-Only Path',         data: cv(coastPath),        borderColor: '#5f9677', borderWidth: 2,   fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [8,4] },
     { label: 'Keep Investing — Total',  data: cv(keepInvestPath||[]),borderColor: '#ff9a9a', borderWidth: 2.5, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [6,3] },
-    { label: 'Keep Investing — Broker.',data: cv(keepBrPath||[]),   borderColor: '#ffd166', borderWidth: 1.8, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,4] },
-    { label: 'CoastFIRE Target',        data: cv(coastTargets),     borderColor: 'rgba(0,212,170,0.45)', borderWidth: 1.5, fill: false, tension: 0.3, pointRadius: 0, borderDash: [4,3] },
-    { label: 'Net FIRE Number',         data: ages.map(() => Math.round(toDisp(netFIRE, yrs))), borderColor: 'rgba(255,107,107,0.7)', borderWidth: 1.5, fill: false, tension: 0, pointRadius: 0, borderDash: [3,3] },
+    { label: 'Keep Investing — Broker.',data: cv(keepBrPath||[]),   borderColor: '#d4a96c', borderWidth: 1.8, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,4] },
+    { label: 'CoastFIRE Target',        data: cv(coastTargets),     borderColor: 'rgba(95,150,119,0.45)', borderWidth: 1.5, fill: false, tension: 0.3, pointRadius: 0, borderDash: [4,3] },
+    { label: 'Net FIRE Number',         data: ages.map(() => Math.round(toDisp(netFIRE, yrs))), borderColor: 'rgba(196,112,112,0.7)', borderWidth: 1.5, fill: false, tension: 0, pointRadius: 0, borderDash: [3,3] },
   ];
   chart.update();
 
@@ -1909,7 +1942,7 @@ function recalc() {
     ssLines.push(`Reduces FIRE number by: <strong>${fmt(dRet(nomSS / swr))}</strong>`);
     items.push({ ico: '🏛️', title: `Social Security <span class="tl-tag tag-g">COLA-Adjusted</span>`, detail: ssLines.join('<br>') });
   } else if (ssEnabled && nomSS === 0) {
-    items.push({ ico: '🏛️', title: `Social Security <span class="tl-tag" style="background:rgba(255,107,107,0.2);color:var(--red)">Claim Age After Retirement</span>`,
+    items.push({ ico: '🏛️', title: `Social Security <span class="tl-tag" style="background:rgba(196,112,112,0.2);color:var(--red)">Claim Age After Retirement</span>`,
       detail: `SS claim age is after your retirement age (${rage}). Benefit not counted. Consider claiming earlier or delaying retirement.`
     });
   }
@@ -2395,7 +2428,7 @@ function drawMCChart(outcomesCoast, outcomesKeep, fireTarget) {
         {
           label: '💪 Keep investing',
           data: keepCounts,
-          backgroundColor: 'rgba(0,212,170,0.55)',
+          backgroundColor: 'rgba(95,150,119,0.55)',
           borderWidth: 0,
         }
       ]
@@ -2403,12 +2436,12 @@ function drawMCChart(outcomesCoast, outcomesKeep, fireTarget) {
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { display: true, labels: { color: '#e8eaf2', font: { size: 11 } } },
+        legend: { display: true, labels: { color: '#e8ecf1', font: { size: 11 } } },
         tooltip: { callbacks: { title: items => 'Ending: ' + items[0].label, label: item => item.dataset.label + ': ' + item.raw + ' runs' } }
       },
       scales: {
-        x: { stacked: false, ticks: { color: '#8b92a8', maxTicksLimit: 6, font: { size: 10 } }, grid: { display: false } },
-        y: { ticks: { color: '#8b92a8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: 'Number of runs', color: '#8b92a8' } }
+        x: { stacked: false, ticks: { color: '#8da3b8', maxTicksLimit: 6, font: { size: 10 } }, grid: { display: false } },
+        y: { ticks: { color: '#8da3b8', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, title: { display: true, text: 'Number of runs', color: '#8da3b8' } }
       }
     }
   });

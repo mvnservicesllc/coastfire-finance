@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1a1d29"/>
-      <stop offset="100%" stop-color="#0f1117"/>
+      <stop offset="0%" stop-color="#13253e"/>
+      <stop offset="100%" stop-color="#0b1929"/>
     </linearGradient>
     <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6c63ff"/>
-      <stop offset="100%" stop-color="#00d4aa"/>
+      <stop offset="0%" stop-color="#c9965c"/>
+      <stop offset="100%" stop-color="#e8c685"/>
     </linearGradient>
     <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#6c63ff" stop-opacity="0.7"/>
-      <stop offset="100%" stop-color="#00d4aa" stop-opacity="0.7"/>
+      <stop offset="0%" stop-color="#c9965c" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#e8c685" stop-opacity="0.7"/>
     </linearGradient>
     <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
       <feGaussianBlur stdDeviation="6" result="blur"/>
@@ -36,8 +36,8 @@
     filter="url(#glow)"/>
 
   <!-- Dot at peak (the "coast" moment) -->
-  <circle cx="438" cy="212" r="28" fill="#00d4aa" filter="url(#glow)"/>
-  <circle cx="438" cy="212" r="12" fill="#0f1117"/>
+  <circle cx="438" cy="212" r="28" fill="#e8c685" filter="url(#glow)"/>
+  <circle cx="438" cy="212" r="12" fill="#0b1929"/>
 
   <!-- Wave at bottom (the "coast") -->
   <path d="M40,420 Q128,390 216,418 Q304,446 392,418 Q456,398 472,410 L472,480 Q384,496 256,486 Q128,476 40,482 Z"
