@@ -1112,6 +1112,31 @@
   </div>
 
   <!-- ══════════════════════════════════════════════
+       STRESS-TEST WITH AI (pre-filled prompt → ChatGPT / Claude)
+       Builds a prompt from the calculator state in the browser and opens
+       it in ChatGPT or Claude. Nothing is sent from our servers.
+  ══════════════════════════════════════════════ -->
+  <div class="cw" id="ai-card" style="margin-bottom:20px;display:none">
+    <div class="ct">🤖 Stress-test this with AI</div>
+    <div class="info-box" style="font-size:0.82rem;line-height:1.5;margin-bottom:12px">
+      We'll package your numbers into a ready-to-ask prompt and open it in ChatGPT or Claude. Nothing is sent from our site — the prompt is built in your browser. Use it to ask <em>"what am I missing?"</em> or stress-test your assumptions.
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <a href="#" id="ai-chatgpt" class="aff-cta"   target="_blank" rel="noopener" style="flex:1;min-width:160px;text-align:center">Ask ChatGPT →</a>
+      <a href="#" id="ai-claude"  class="aff-cta g" target="_blank" rel="noopener" style="flex:1;min-width:160px;text-align:center">Ask Claude →</a>
+      <a href="#" id="ai-copy"    class="aff-cta y" style="flex:1;min-width:160px;text-align:center">📋 Copy prompt</a>
+    </div>
+    <div id="ai-copy-status" style="display:none;font-size:0.8rem;color:var(--green);margin-bottom:8px">✓ Copied — paste it into Gemini, Perplexity, or any other AI tool.</div>
+    <details style="font-size:0.8rem;color:var(--muted)">
+      <summary style="cursor:pointer;color:var(--accent2);font-weight:600">Preview the prompt →</summary>
+      <pre id="ai-prompt-preview" style="white-space:pre-wrap;word-wrap:break-word;background:var(--surface2);padding:12px;border-radius:6px;margin-top:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.78rem;line-height:1.5;border:1px solid var(--border);color:var(--text);max-height:320px;overflow:auto"></pre>
+    </details>
+    <div style="font-size:0.75rem;color:var(--muted);margin-top:10px">
+      Reminder: AI answers aren't financial advice either. Use them as a second opinion — always verify with a qualified advisor before acting.
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
        CONTEXTUAL RECOMMENDATIONS (live — based on inputs)
   ══════════════════════════════════════════════ -->
   <div class="cw" id="ctx-card" style="margin-bottom:20px;display:none">
@@ -1867,14 +1892,22 @@ function recalc() {
   const cv = arr => arr.map((v, i) => v == null ? null : Math.round(toDisp(v, i)));
   chart.data.labels   = ages;
   chart.data.datasets = [
-    { label: 'Tax-Advantaged',          data: cv(taVals),           borderColor: '#c9965c', backgroundColor: 'rgba(201,150,92,0.08)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
-    { label: 'Brokerage (After-Tax)',   data: cv(effBrVals),        borderColor: '#e8c685', backgroundColor: 'rgba(232,198,133,0.06)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
-    { label: 'Total Portfolio',         data: cv(effTotals),        borderColor: 'rgba(232,236,241,0.6)', borderWidth: 1.5, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,2] },
-    { label: 'Coast-Only Path',         data: cv(coastPath),        borderColor: '#5f9677', borderWidth: 2,   fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [8,4] },
-    { label: 'Keep Investing — Total',  data: cv(keepInvestPath||[]),borderColor: '#ff9a9a', borderWidth: 2.5, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [6,3] },
-    { label: 'Keep Investing — Broker.',data: cv(keepBrPath||[]),   borderColor: '#d4a96c', borderWidth: 1.8, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,4] },
-    { label: 'CoastFIRE Target',        data: cv(coastTargets),     borderColor: 'rgba(95,150,119,0.45)', borderWidth: 1.5, fill: false, tension: 0.3, pointRadius: 0, borderDash: [4,3] },
-    { label: 'Net FIRE Number',         data: ages.map(() => Math.round(toDisp(netFIRE, yrs))), borderColor: 'rgba(196,112,112,0.7)', borderWidth: 1.5, fill: false, tension: 0, pointRadius: 0, borderDash: [3,3] },
+    // 1. Tax-Advantaged — COPPER (brand primary, filled area)
+    { label: 'Tax-Advantaged',          data: cv(taVals),           borderColor: '#c9965c', backgroundColor: 'rgba(201,150,92,0.14)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
+    // 2. Brokerage — TEAL (cool, distinct from copper/gold family)
+    { label: 'Brokerage (After-Tax)',   data: cv(effBrVals),        borderColor: '#4db6a8', backgroundColor: 'rgba(77,182,168,0.12)',  borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
+    // 3. Total Portfolio — WHITE (neutral summary line)
+    { label: 'Total Portfolio',         data: cv(effTotals),        borderColor: 'rgba(232,236,241,0.85)', borderWidth: 2, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,2] },
+    // 4. Coast-Only Path — SAGE GREEN (the "good outcome" line)
+    { label: 'Coast-Only Path',         data: cv(coastPath),        borderColor: '#5f9677', borderWidth: 2.2, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [8,4] },
+    // 5. Keep Investing — Total — PURPLE (cool, clearly separated from the warm family)
+    { label: 'Keep Investing — Total',  data: cv(keepInvestPath||[]),borderColor: '#a98fc9', borderWidth: 2.5, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [6,3] },
+    // 6. Keep Investing — Broker. — SKY BLUE (distinct sub-line under the purple total)
+    { label: 'Keep Investing — Broker.',data: cv(keepBrPath||[]),   borderColor: '#7ba8d4', borderWidth: 1.8, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,4] },
+    // 7. CoastFIRE Target — GOLD (the target line — "what you're aiming at")
+    { label: 'CoastFIRE Target',        data: cv(coastTargets),     borderColor: 'rgba(232,198,133,0.75)', borderWidth: 1.8, fill: false, tension: 0.3, pointRadius: 0, borderDash: [4,3] },
+    // 8. Net FIRE Number — PINK (distinct from red + neutral; horizontal reference)
+    { label: 'Net FIRE Number',         data: ages.map(() => Math.round(toDisp(netFIRE, yrs))), borderColor: 'rgba(212,107,138,0.8)', borderWidth: 1.8, fill: false, tension: 0, pointRadius: 0, borderDash: [3,3] },
   ];
   chart.update();
 
@@ -1994,6 +2027,7 @@ function recalc() {
   set('save-status', 'All inputs auto-saved ✓');
 
   updateContextual(R);
+  updateAiPrompt(R);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2134,6 +2168,133 @@ function updateContextual(R) {
         <a href="${a.url}" class="aff-cta ${a.ctaCls}" target="_blank" rel="noopener sponsored">${a.cta}</a>
       </div>`;
   }).join('');
+  card.style.display = '';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  STRESS-TEST WITH AI
+//  Builds a pre-filled prompt from the current calculator state and opens it
+//  in ChatGPT or Claude in a new tab. No data leaves the browser on our end.
+// ─────────────────────────────────────────────────────────────────────────────
+function updateAiPrompt(R) {
+  const card = document.getElementById('ai-card');
+  if (!card) return;
+
+  const {
+    cage, rage, taBal, brBal, taCont, brCont,
+    totalContribs, totalIncome, savingsRate,
+    nom, inf, swr, totalMatch, netFIRE, coastToday, effNow, coastAge,
+    nomSpend, penEnabled, pen, ssEnabled, ssPrimary,
+    ssSpouseEnabled, ssSpouse, spouseEnabled,
+  } = R;
+
+  const fmt0 = n => '$' + Math.round(n).toLocaleString();
+  const pctS = n => (n * 100).toFixed(1) + '%';
+  const realReturn = ((1 + nom) / (1 + inf) - 1);
+
+  // Pull Monte Carlo success rates from the DOM if the user ran a simulation.
+  const mcCoast = (document.getElementById('mc-coast-success')?.textContent || '—').trim();
+  const mcKeep  = (document.getElementById('mc-keep-success')?.textContent  || '—').trim();
+  const mcLine  = (mcCoast !== '—' || mcKeep !== '—')
+    ? `\n- Monte Carlo success rate: ${mcCoast} if I coast, ${mcKeep} if I keep investing`
+    : '';
+
+  let coastLine;
+  if (coastAge === null) {
+    coastLine = `- CoastFIRE: not reached before my retirement age on current inputs`;
+  } else if (coastAge <= cage) {
+    coastLine = `- CoastFIRE: already reached — I could stop contributing now in theory`;
+  } else {
+    coastLine = `- CoastFIRE age: ${coastAge} (${coastAge - cage} years from now) on current inputs`;
+  }
+
+  const situation = [
+    `- Age: ${cage}${spouseEnabled ? ' (with spouse)' : ''}`,
+    `- Target retirement age: ${rage}`,
+    `- Tax-advantaged balance: ${fmt0(taBal)}`,
+    `- Taxable/brokerage balance: ${fmt0(brBal)}`,
+    `- Annual contributions: ${fmt0(taCont)} tax-advantaged + ${fmt0(brCont)} brokerage = ${fmt0(totalContribs)} total` +
+      (totalMatch > 0 ? ` (plus ${fmt0(totalMatch)} employer match)` : ''),
+  ];
+  if (totalIncome > 0) {
+    situation.push(`- Household income: ${fmt0(totalIncome)}/yr · Savings rate: ${pctS(savingsRate)}`);
+  }
+  situation.push(`- Retirement spending target: ${fmt0(nomSpend)}/yr in today's dollars`);
+  if (penEnabled       && pen > 0)       situation.push(`- Pension expected: ${fmt0(pen)}/yr (today's dollars)`);
+  if (ssEnabled        && ssPrimary > 0) situation.push(`- Social Security (me): ${fmt0(ssPrimary)}/yr projected`);
+  if (ssSpouseEnabled  && ssSpouse > 0)  situation.push(`- Social Security (spouse): ${fmt0(ssSpouse)}/yr projected`);
+
+  const prompt =
+`I'm using a CoastFIRE calculator and want you to stress-test my plan. Be direct — tell me what's risky, what I'm probably wrong about, and what I should consider that the calculator can't model.
+
+My situation:
+${situation.join('\n')}
+
+My assumptions:
+- Nominal return: ${pctS(nom)}
+- Inflation: ${pctS(inf)}
+- Real return: ${pctS(realReturn)}
+- Safe withdrawal rate: ${pctS(swr)}
+
+Calculator output:
+${coastLine}
+- CoastFIRE target today: ${fmt0(coastToday)}
+- Current effective portfolio: ${fmt0(effNow)}
+- Net FIRE number at retirement: ${fmt0(netFIRE)}${mcLine}
+
+Please answer:
+1. Given my age, savings rate, and assumed return, what's the single biggest risk I'm underweighting?
+2. Are my return and inflation assumptions reasonable for the next 20–40 years, or am I being too optimistic?
+3. What does this calculator likely NOT account for that I should factor in (e.g. sequence-of-returns risk, health care, long-term care, tax law changes)?
+4. If you had to change one thing about my plan, what would it be and why?
+
+Be blunt. I'd rather hear a hard truth now than discover it at 65.`;
+
+  // Show the preview and wire up the links.
+  const preview = document.getElementById('ai-prompt-preview');
+  if (preview) preview.textContent = prompt;
+
+  const encoded   = encodeURIComponent(prompt);
+  const chatgptEl = document.getElementById('ai-chatgpt');
+  const claudeEl  = document.getElementById('ai-claude');
+  const copyEl    = document.getElementById('ai-copy');
+  const statusEl  = document.getElementById('ai-copy-status');
+  if (chatgptEl) chatgptEl.href = `https://chatgpt.com/?q=${encoded}`;
+  if (claudeEl)  claudeEl.href  = `https://claude.ai/new?q=${encoded}`;
+
+  // Copy-to-clipboard with async Clipboard API + legacy fallback.
+  if (copyEl) {
+    copyEl.onclick = async (e) => {
+      e.preventDefault();
+      let ok = false;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(prompt);
+          ok = true;
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = prompt;
+          ta.style.position = 'fixed';
+          ta.style.opacity  = '0';
+          document.body.appendChild(ta);
+          ta.focus(); ta.select();
+          ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+      } catch (_) { ok = false; }
+
+      if (statusEl) {
+        statusEl.textContent = ok
+          ? '✓ Copied — paste it into Gemini, Perplexity, or any other AI tool.'
+          : '⚠ Couldn\'t copy automatically — open the preview below and copy manually.';
+        statusEl.style.color = ok ? 'var(--green)' : 'var(--red)';
+        statusEl.style.display = '';
+        clearTimeout(copyEl._t);
+        copyEl._t = setTimeout(() => { statusEl.style.display = 'none'; }, 4000);
+      }
+    };
+  }
+
   card.style.display = '';
 }
 
