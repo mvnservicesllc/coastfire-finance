@@ -1123,6 +1123,19 @@
     <canvas id="chart" height="230"></canvas>
   </div>
 
+  <div class="cw" id="age59-section" style="display:none">
+    <div class="ct">🔐 Portfolio at Age 59½ <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Penalty-free access</span></div>
+    <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
+      At 59½ you can tap 401(k)/IRA without the 10% early-withdrawal penalty. Brokerage accounts you can tap anytime — that's your <strong>bridge</strong> between stopping work and retirement accounts opening up.
+    </div>
+    <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
+      <div class="rb"><div class="lbl">Total Portfolio</div><div class="val g" id="age59-total">—</div><div class="sub">All accounts combined</div></div>
+      <div class="rb"><div class="lbl">Retirement Only</div><div class="val p" id="age59-retire">—</div><div class="sub">Trad + Roth (no brokerage)</div></div>
+      <div class="rb"><div class="lbl">Brokerage Bridge</div><div class="val y" id="age59-bridge">—</div><div class="sub">Available pre-59½</div></div>
+    </div>
+    <div class="info-box" id="age59-footer" style="font-size:0.82rem;line-height:1.6"></div>
+  </div>
+
   <div class="cw" id="keep-invest-section" style="display:none">
     <div class="ct">📈 What if you keep investing after CoastFIRE?</div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
@@ -2066,6 +2079,68 @@ function recalc() {
   const keepDollarEl = document.getElementById('n-keep-dollar');
   if (keepDollarEl && document.activeElement !== keepDollarEl) {
     keepDollarEl.value = Math.round(keepTotalAdd);
+  }
+
+  // ──────────────────────────────────────────────────────
+  //  PORTFOLIO AT AGE 59½ (penalty-free access milestone)
+  // ──────────────────────────────────────────────────────
+  const age59Section = document.getElementById('age59-section');
+  const TARGET_AGE   = 59.5;
+  const yrs59        = TARGET_AGE - cage;
+  // Only show when the milestone is ahead of the user and inside the sim window.
+  if (yrs59 > 0 && yrs59 <= yrs) {
+    age59Section.style.display = '';
+    const lo = Math.floor(yrs59);       // index where age = 59 (or wherever the floor is)
+    const hi = Math.min(lo + 1, yrs);
+    const frac = yrs59 - lo;
+    const lerp = (arr) => {
+      if (!arr || arr[lo] == null) return null;
+      if (arr[hi] == null) return arr[lo];
+      return arr[lo] + frac * (arr[hi] - arr[lo]);
+    };
+    const ta59   = lerp(taVals)   ?? 0;
+    const roth59 = lerp(rothVals) ?? 0;
+    const br59   = lerp(effBrVals)?? 0;
+    const retire59 = ta59 + roth59;
+    const total59  = retire59 + br59;
+
+    const d59 = v => toDisp(v, yrs59);
+    set('age59-total',  fmt(d59(total59)));
+    set('age59-retire', fmt(d59(retire59)));
+    set('age59-bridge', fmt(d59(br59)));
+
+    // Footer narrative
+    const yrsToBridge = coastAge !== null ? Math.max(0, TARGET_AGE - coastAge) : null;
+    const yearlySpend = nomSpend > 0 ? nomSpend : 0;
+    // Years of spending the brokerage would cover (in today's dollars basis — use disp-adjusted spend)
+    const spendAt59 = toDisp((S.spend || 0) * Math.pow(1 + inf, yrs59), yrs59);
+    const bridgeYrs = spendAt59 > 0 ? (d59(br59) / spendAt59) : null;
+
+    let footer = '';
+    if (coastAge !== null && coastAge < TARGET_AGE) {
+      footer += `Based on your plan: coast at <strong>${coastAge}</strong>, no more contributions for ${Math.max(0,(TARGET_AGE - coastAge)).toFixed(1)} year${yrsToBridge !== 1 ? 's' : ''} until retirement accounts unlock at 59½. `;
+    } else if (coastAge !== null && coastAge >= TARGET_AGE) {
+      footer += `Your CoastFIRE age (${coastAge}) is after 59½, so you're still contributing up to this point. `;
+    } else {
+      footer += `You haven't hit CoastFIRE in this sim, so you're contributing the whole way. `;
+    }
+    if (bridgeYrs != null && bridgeYrs > 0 && yearlySpend > 0) {
+      footer += `Your brokerage bridge covers roughly <strong>${bridgeYrs.toFixed(1)} year${bridgeYrs >= 1.5 ? 's' : ''}</strong> of spending at ${fmt(spendAt59)}/yr (today's dollars).`;
+    }
+    // Keep-invest comparison
+    if (keepInvestPath && keepBrPath && keepInvestPath[lo] != null && keepInvestPath[hi] != null) {
+      const keepTotal59  = keepInvestPath[lo] + frac * (keepInvestPath[hi] - keepInvestPath[lo]);
+      const keepBr59     = keepBrPath[lo]     + frac * (keepBrPath[hi]     - keepBrPath[lo]);
+      const keepRetire59 = keepTotal59 - keepBr59;
+      const deltaTotal   = keepTotal59 - total59;
+      if (Math.abs(deltaTotal) > 1) {
+        const pctLabel = Math.round((keepInvestPct || 0) * 100);
+        footer += `<br><br><span style="color:var(--muted);font-size:0.78rem">💪 If you keep investing at ${pctLabel}% after CoastFIRE: total at 59½ would be <strong>${fmt(d59(keepTotal59))}</strong> (${deltaTotal >= 0 ? '+' : ''}${fmt(d59(deltaTotal))}), with <strong>${fmt(d59(keepBr59))}</strong> in the brokerage bridge.</span>`;
+      }
+    }
+    document.getElementById('age59-footer').innerHTML = footer;
+  } else {
+    age59Section.style.display = 'none';
   }
 
   const kiSection = document.getElementById('keep-invest-section');
