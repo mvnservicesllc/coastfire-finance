@@ -1129,6 +1129,19 @@
       Where your spending comes from on day one of retirement. The <strong>portfolio withdrawal</strong> is grossed up using your retirement tax rate (blended across Trad/Roth/LTCG). <strong>Pension and Social Security are shown at face value</strong> — how this calculator treats them throughout, as net-of-tax offsets to spending (see note below).
     </div>
 
+    <div class="bbar-lbl" style="margin-bottom:6px">Portfolio balance at retirement</div>
+    <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
+      <div class="rb"><div class="lbl">Total Portfolio</div><div class="val p" id="ib-bal-total">—</div><div class="sub" id="ib-bal-total-sub">At age — · all accounts</div></div>
+      <div class="rb"><div class="lbl">Trad + Roth</div><div class="val g" id="ib-bal-ret">—</div><div class="sub">Retirement accounts</div></div>
+      <div class="rb"><div class="lbl">Brokerage</div><div class="val y" id="ib-bal-br">—</div><div class="sub">After LTCG drag</div></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:10px;margin:10px 0 14px 0;padding:10px 12px;border-radius:6px;background:rgba(201,150,92,0.06);border:1px solid rgba(201,150,92,0.2);font-size:0.82rem" id="ib-fire-check">
+      <span id="ib-fire-icon" style="font-size:1.1rem">🎯</span>
+      <span id="ib-fire-msg" style="flex:1;color:var(--text);line-height:1.5">—</span>
+    </div>
+
+    <div class="bbar-lbl" style="margin-bottom:6px">Annual income flow</div>
     <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:18px">
       <div class="rb"><div class="lbl">Total Income at Retirement</div><div class="val p" id="ib-gross">—</div><div class="sub">Portfolio (pre-tax) + Pension/SS (face)</div></div>
       <div class="rb"><div class="lbl">Net Spending Target</div><div class="val g" id="ib-net">—</div><div class="sub">What you live on after tax</div></div>
@@ -2302,6 +2315,42 @@ function recalc() {
   // ──────────────────────────────────────────────────────
   {
     set('ib-rage', rage);
+
+    // Portfolio balance AT retirement (year index = yrs)
+    const balRet   = (taVals[yrs] || 0) + (rothVals[yrs] || 0);
+    const balBr    = effBrVals[yrs] || 0;
+    const balTotal = balRet + balBr;
+    set('ib-bal-total', fmt(toDisp(balTotal, yrs)));
+    set('ib-bal-ret',   fmt(toDisp(balRet,   yrs)));
+    set('ib-bal-br',    fmt(toDisp(balBr,    yrs)));
+    set('ib-bal-total-sub', 'At age ' + rage + ' · all accounts');
+
+    // FIRE-check strip: compare balance at retirement vs Net FIRE #
+    const fireMsgEl  = document.getElementById('ib-fire-msg');
+    const fireIconEl = document.getElementById('ib-fire-icon');
+    const fireBoxEl  = document.getElementById('ib-fire-check');
+    const balDisp    = toDisp(balTotal, yrs);
+    const netFireDisp = toDisp(netFIRE, yrs);
+    const gap         = balDisp - netFireDisp;
+    if (netFIRE <= 0) {
+      fireIconEl.textContent = '📊';
+      fireMsgEl.innerHTML = `Portfolio target is $0 (pension/SS fully cover spending) — your balance at retirement is a <strong>pure surplus</strong>.`;
+      fireBoxEl.style.background = 'rgba(95,150,119,0.08)';
+      fireBoxEl.style.borderColor = 'rgba(95,150,119,0.3)';
+    } else if (gap >= 0) {
+      const over = (gap / netFireDisp) * 100;
+      fireIconEl.textContent = '✅';
+      fireMsgEl.innerHTML = `You're <strong style="color:var(--green)">on track</strong> — balance at retirement (${fmt(balDisp)}) is <strong>${fmt(gap)}</strong> above your Net FIRE # of ${fmt(netFireDisp)} (+${over.toFixed(0)}% cushion).`;
+      fireBoxEl.style.background = 'rgba(95,150,119,0.08)';
+      fireBoxEl.style.borderColor = 'rgba(95,150,119,0.3)';
+    } else {
+      const short = -gap;
+      const shortPct = (short / netFireDisp) * 100;
+      fireIconEl.textContent = '⚠️';
+      fireMsgEl.innerHTML = `Balance at retirement (${fmt(balDisp)}) is <strong style="color:var(--yellow)">${fmt(short)} short</strong> of your Net FIRE # of ${fmt(netFireDisp)} (-${shortPct.toFixed(0)}%). Consider delaying retirement, raising contributions, or tightening spending.`;
+      fireBoxEl.style.background = 'rgba(232,198,133,0.08)';
+      fireBoxEl.style.borderColor = 'rgba(232,198,133,0.3)';
+    }
 
     // Inflation factor helper: value "today's dollars" -> nominal at target age
     const inflTo = (age) => Math.pow(1 + inf, Math.max(0, age - cage));
