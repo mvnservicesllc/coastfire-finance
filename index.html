@@ -1142,13 +1142,21 @@
       Trad + Roth combined, from today through age 80. Contributions follow your plan until retirement; after retirement, balances grow <strong>untouched</strong> at your nominal return (no withdrawals modeled here) — useful for seeing how much is waiting for you at 59½, RMDs at 73, and beyond.
     </div>
     <canvas id="retire-chart" height="220"></canvas>
+    <div id="retire-chart-legend" style="display:none;margin-top:10px;font-size:0.78rem;color:var(--muted);text-align:center">
+      <span style="display:inline-flex;align-items:center;margin:0 10px">
+        <span style="display:inline-block;width:18px;height:3px;background:#c9965c;margin-right:6px;border-radius:2px"></span>Stop contributing at CoastFIRE
+      </span>
+      <span style="display:inline-flex;align-items:center;margin:0 10px">
+        <span style="display:inline-block;width:18px;height:3px;margin-right:6px;background:repeating-linear-gradient(to right,#a98fc9 0,#a98fc9 5px,transparent 5px,transparent 9px)"></span>Keep investing past CoastFIRE
+      </span>
+    </div>
     <div class="rg" style="grid-template-columns:repeat(3,1fr);margin-top:16px;gap:8px">
-      <div class="rb"><div class="lbl">Age 60</div><div class="val g"  id="rg-60">—</div><div class="sub">Penalty-free access window</div></div>
-      <div class="rb"><div class="lbl">Age 65</div><div class="val g"  id="rg-65">—</div><div class="sub">Medicare eligibility</div></div>
-      <div class="rb"><div class="lbl">Age 70</div><div class="val g"  id="rg-70">—</div><div class="sub">Max SS delay credit</div></div>
-      <div class="rb"><div class="lbl">Age 73</div><div class="val y"  id="rg-73">—</div><div class="sub">RMDs begin (SECURE 2.0)</div></div>
-      <div class="rb"><div class="lbl">Age 75</div><div class="val p"  id="rg-75">—</div><div class="sub">Mid-retirement checkpoint</div></div>
-      <div class="rb"><div class="lbl">Age 80</div><div class="val p"  id="rg-80">—</div><div class="sub">Late-retirement buffer</div></div>
+      <div class="rb"><div class="lbl">Age 60</div><div class="val g"  id="rg-60">—</div><div class="sub" id="rg-60-alt">Penalty-free access window</div></div>
+      <div class="rb"><div class="lbl">Age 65</div><div class="val g"  id="rg-65">—</div><div class="sub" id="rg-65-alt">Medicare eligibility</div></div>
+      <div class="rb"><div class="lbl">Age 70</div><div class="val g"  id="rg-70">—</div><div class="sub" id="rg-70-alt">Max SS delay credit</div></div>
+      <div class="rb"><div class="lbl">Age 73</div><div class="val y"  id="rg-73">—</div><div class="sub" id="rg-73-alt">RMDs begin (SECURE 2.0)</div></div>
+      <div class="rb"><div class="lbl">Age 75</div><div class="val p"  id="rg-75">—</div><div class="sub" id="rg-75-alt">Mid-retirement checkpoint</div></div>
+      <div class="rb"><div class="lbl">Age 80</div><div class="val p"  id="rg-80">—</div><div class="sub" id="rg-80-alt">Late-retirement buffer</div></div>
     </div>
     <div class="info-box" id="retire-growth-footer" style="font-size:0.82rem;line-height:1.6;margin-top:14px"></div>
   </div>
@@ -1772,41 +1780,56 @@ function set(id, v)  { const el = document.getElementById(id); if (el) el.textCo
 // ─────────────────────────────────────────────────────────────────────────────
 //  CHART
 // ─────────────────────────────────────────────────────────────────────────────
-function renderRetireChart(ages, vals, horizonYears) {
+function renderRetireChart(ages, vals, horizonYears, keepVals) {
   const canvas = document.getElementById('retire-chart');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
   // Discount to display mode
   const displayVals = vals.map((v, i) => toDisp(v, i));
+  const displayKeep = keepVals ? keepVals.map((v, i) => toDisp(v, i)) : null;
 
-  // Build a subtle gradient fill
+  // Build a subtle gradient fill for the base dataset
   const grad = ctx.createLinearGradient(0, 0, 0, canvas.height || 220);
   grad.addColorStop(0, 'rgba(201, 150, 92, 0.35)');
   grad.addColorStop(1, 'rgba(201, 150, 92, 0.02)');
 
-  // Vertical annotation at retirement age (where contributions stop in this view)
-  const rageIdx = Math.min(horizonYears, Math.max(0, Math.round(S.rage - S.cage)));
+  const isMilestone = (a) => (a === 60 || a === 65 || a === 70 || a === 73 || a === 75 || a === 80);
 
-  const data = {
-    labels: ages,
-    datasets: [{
-      label: 'Retirement (Trad + Roth)',
-      data: displayVals,
-      borderColor: '#c9965c',
-      backgroundColor: grad,
+  const datasets = [{
+    label: 'Stop at CoastFIRE',
+    data: displayVals,
+    borderColor: '#c9965c',
+    backgroundColor: grad,
+    borderWidth: 2.5,
+    fill: true,
+    tension: 0.25,
+    pointRadius: (c) => isMilestone(ages[c.dataIndex]) ? 4 : 0,
+    pointBackgroundColor: '#e8c685',
+    pointBorderColor: '#0b1929',
+    pointBorderWidth: 1.5,
+    order: 2,
+  }];
+
+  if (displayKeep) {
+    datasets.push({
+      label: 'Keep investing past CoastFIRE',
+      data: displayKeep,
+      borderColor: '#a98fc9',
+      backgroundColor: 'rgba(169, 143, 201, 0.08)',
       borderWidth: 2.5,
-      fill: true,
+      borderDash: [6, 4],
+      fill: false,
       tension: 0.25,
-      pointRadius: (c) => {
-        const a = ages[c.dataIndex];
-        return (a === 60 || a === 65 || a === 70 || a === 73 || a === 75 || a === 80) ? 4 : 0;
-      },
-      pointBackgroundColor: '#e8c685',
+      pointRadius: (c) => isMilestone(ages[c.dataIndex]) ? 4 : 0,
+      pointBackgroundColor: '#c8afe0',
       pointBorderColor: '#0b1929',
       pointBorderWidth: 1.5,
-    }]
-  };
+      order: 1,
+    });
+  }
+
+  const data = { labels: ages, datasets };
 
   if (retireChart) {
     retireChart.data = data;
@@ -2329,16 +2352,16 @@ function recalc() {
   if (cage < END_AGE) {
     retireSection.style.display = '';
     const horizonYears = END_AGE - cage;
-    const rgAges = [], rgVals = [];
+    const rgAges = [], rgVals = [], rgKeepVals = [];
+
+    // Base case: stop contributing at CoastFIRE (main sim), grow untouched after retirement.
     let lastRet = (taVals[0] || 0) + (rothVals[0] || 0);
     for (let y = 0; y <= horizonYears; y++) {
       const age = cage + y;
       let v;
       if (y <= yrs) {
-        // Inside the main sim window
         v = (taVals[y] || 0) + (rothVals[y] || 0);
       } else {
-        // Post-retirement: grow untouched at nominal return
         v = lastRet * (1 + nom);
       }
       lastRet = v;
@@ -2346,21 +2369,73 @@ function recalc() {
       rgVals.push(v);
     }
 
-    // Milestone grid — discount each value to the display mode's basis at that year index
-    const milestoneSet = (id, targetAge) => {
+    // Keep-investing case: retirement portion only (keepInvestPath - keepBrPath inside window),
+    // then grow untouched after retirement. Only meaningful if user reached CoastFIRE AND is
+    // keeping retirement contributions going (kiRet > 0). Otherwise identical to base.
+    const kiRet = Math.max(0, keepInvestPctRet || 0);
+    const showKeep = coastAge !== null && kiRet > 0 && keepInvestPath && keepBrPath;
+    if (showKeep) {
+      let lastKeep = (taVals[0] || 0) + (rothVals[0] || 0);
+      for (let y = 0; y <= horizonYears; y++) {
+        let v;
+        if (y <= yrs) {
+          // Before coastAge the two paths are identical; keepInvestPath is populated only from ci onward.
+          if (keepInvestPath[y] != null && keepBrPath[y] != null) {
+            v = keepInvestPath[y] - keepBrPath[y];
+          } else {
+            v = (taVals[y] || 0) + (rothVals[y] || 0);
+          }
+        } else {
+          v = lastKeep * (1 + nom);
+        }
+        lastKeep = v;
+        rgKeepVals.push(v);
+      }
+    }
+
+    // Toggle legend visibility
+    document.getElementById('retire-chart-legend').style.display = showKeep ? '' : 'none';
+
+    // Milestone grid — discount each value to the display mode's basis at that year index.
+    // When keep-invest is showing, primary number stays base case; sub-line shows keep-invest value.
+    const milestoneSet = (valId, altId, targetAge) => {
       const idx = targetAge - cage;
+      const altEl = document.getElementById(altId);
       if (idx < 0 || idx >= rgVals.length) {
-        set(id, '—');
+        set(valId, '—');
         return;
       }
-      set(id, fmt(toDisp(rgVals[idx], idx)));
+      set(valId, fmt(toDisp(rgVals[idx], idx)));
+      if (showKeep && rgKeepVals[idx] != null) {
+        const baseDisp = toDisp(rgVals[idx], idx);
+        const keepDisp = toDisp(rgKeepVals[idx], idx);
+        const extra    = keepDisp - baseDisp;
+        if (altEl) altEl.innerHTML = `Keep: <strong style="color:#a98fc9">${fmt(keepDisp)}</strong> <span style="color:var(--muted)">(${extra >= 0 ? '+' : ''}${fmt(extra)})</span>`;
+      }
+      // If !showKeep, leave the default contextual text alone (don't overwrite it here).
     };
-    milestoneSet('rg-60', 60);
-    milestoneSet('rg-65', 65);
-    milestoneSet('rg-70', 70);
-    milestoneSet('rg-73', 73);
-    milestoneSet('rg-75', 75);
-    milestoneSet('rg-80', 80);
+
+    // Reset sub-lines to defaults first so switching from keep-invest to base clears stale text.
+    if (!showKeep) {
+      const defaults = {
+        'rg-60-alt': 'Penalty-free access window',
+        'rg-65-alt': 'Medicare eligibility',
+        'rg-70-alt': 'Max SS delay credit',
+        'rg-73-alt': 'RMDs begin (SECURE 2.0)',
+        'rg-75-alt': 'Mid-retirement checkpoint',
+        'rg-80-alt': 'Late-retirement buffer',
+      };
+      for (const id in defaults) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = defaults[id];
+      }
+    }
+    milestoneSet('rg-60', 'rg-60-alt', 60);
+    milestoneSet('rg-65', 'rg-65-alt', 65);
+    milestoneSet('rg-70', 'rg-70-alt', 70);
+    milestoneSet('rg-73', 'rg-73-alt', 73);
+    milestoneSet('rg-75', 'rg-75-alt', 75);
+    milestoneSet('rg-80', 'rg-80-alt', 80);
 
     // Footer — dollar figure at 80 plus growth multiple vs today
     const v80  = rgVals[rgVals.length - 1];
@@ -2373,10 +2448,17 @@ function recalc() {
     if (rage < END_AGE) {
       rgFooter += `Post-retirement (after age ${rage}), this chart assumes you leave retirement accounts untouched and let them keep compounding at ${(nom * 100).toFixed(1)}% nominal. In reality you'll draw some down — but RMDs at 73 and longevity risk make it worth seeing the upper bound.`;
     }
+    if (showKeep && rgKeepVals.length) {
+      const k80  = rgKeepVals[rgKeepVals.length - 1];
+      const k80d = toDisp(k80, horizonYears);
+      const diff = k80d - v80d;
+      const retPct = Math.round(kiRet * 100);
+      rgFooter += `<br><br><span style="color:#a98fc9">💪 <strong>Keep investing ${retPct}%</strong> in retirement accounts past CoastFIRE → at 80 you'd have <strong>${fmt(k80d)}</strong> (${diff >= 0 ? '+' : ''}${fmt(diff)} vs stopping at CoastFIRE).</span>`;
+    }
     document.getElementById('retire-growth-footer').innerHTML = rgFooter;
 
     // Chart
-    renderRetireChart(rgAges, rgVals, horizonYears);
+    renderRetireChart(rgAges, rgVals, horizonYears, showKeep ? rgKeepVals : null);
   } else {
     retireSection.style.display = 'none';
   }
