@@ -1126,7 +1126,19 @@
   <div class="cw" id="keep-invest-section" style="display:none">
     <div class="ct">📈 What if you keep investing after CoastFIRE?</div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      Compares stopping contributions at CoastFIRE vs continuing the same contributions all the way to retirement.
+      Compares stopping contributions at CoastFIRE vs continuing to invest all the way to retirement. Dial in exactly how much you'd keep contributing.
+    </div>
+    <div class="field" style="margin-bottom:14px">
+      <label class="field-label">After CoastFIRE, keep investing at</label>
+      <div class="field-wrap g">
+        <input type="number" id="n-keep-pct" min="0" max="200" value="100" step="10" inputmode="numeric">
+        <span class="field-sfx">%</span>
+        <div class="field-steps">
+          <button onclick="step('n-keep-pct',10)">▲</button>
+          <button onclick="step('n-keep-pct',-10)">▼</button>
+        </div>
+      </div>
+      <div class="field-hint">of your current contribution rate · 100% = today's pace · 50% = partial coast (BaristaFIRE-style) · 0% = fully coast. Scaled amount: <strong id="keep-dollar-preview">—</strong>/yr</div>
     </div>
     <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:8px">Total Portfolio</div>
     <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
@@ -1523,6 +1535,7 @@ const S = {
   ssEnabled: false, ssPrimary: 2000, ssAge: 67,
   ssSpouseEnabled: false, ssSpouse: 1500, ssSpouseAge: 67,
   spend: 60000, nom: 0.07, inf: 0.03, swr: 0.04,
+  keepInvestPct: 1.0,
 };
 
 let dispMode = 'nom';
@@ -1594,6 +1607,7 @@ bindNum('n-spend',       'spend',        null);
 bindNum('n-nom',         'nom',          v => v/100);
 bindNum('n-inf',         'inf',          v => v/100);
 bindNum('n-swr',         'swr',          v => v/100);
+bindNum('n-keep-pct',    'keepInvestPct',v => v/100);
 bindNum('n-ss-primary',    'ssPrimary',  null);
 bindNum('n-ss-age',        'ssAge',      null);
 bindNum('n-ss-spouse',     'ssSpouse',   null);
@@ -1677,6 +1691,7 @@ function runCalc() {
     penEnabled, pen, pAge, cola,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
     spend, nom, inf, swr,
+    keepInvestPct,
   } = S;
 
   if (rage <= cage) return null;
@@ -1797,6 +1812,12 @@ function runCalc() {
   const keepBrPath     = new Array(ages.length).fill(null);
   let keepFinalTotal = null, keepBrFinal = null, extraAtRetirement = null;
 
+  const kipct     = Math.max(0, keepInvestPct || 0);
+  const keepTaAdd = effectiveTaCont   * kipct;
+  const keepRoAdd = effectiveRothCont * kipct;
+  const keepBrAdd = brCont            * kipct;
+  const keepTotalAdd = keepTaAdd + keepRoAdd + keepBrAdd;
+
   if (coastAge !== null) {
     const ci = coastAge - cage;
     let kTa = coastTa, kRoth = coastRoth, kBr = coastBr, kBasis = brBal;
@@ -1806,10 +1827,10 @@ function runCalc() {
       const effKBr = kBr - g * ltcg;
       keepInvestPath[y] = kTa + kRoth + effKBr;
       keepBrPath[y]     = effKBr;
-      kTa    = kTa   * (1 + nom) + effectiveTaCont;
-      kRoth  = kRoth * (1 + nom) + effectiveRothCont;
-      kBr    = kBr   * (1 + nom - divDrag) + brCont;
-      kBasis = kBasis + brCont;
+      kTa    = kTa   * (1 + nom) + keepTaAdd;
+      kRoth  = kRoth * (1 + nom) + keepRoAdd;
+      kBr    = kBr   * (1 + nom - divDrag) + keepBrAdd;
+      kBasis = kBasis + keepBrAdd;
     }
     keepFinalTotal    = keepInvestPath[yrs];
     keepBrFinal       = keepBrPath[yrs];
@@ -1824,6 +1845,7 @@ function runCalc() {
     annualMatch, sAnnualMatch, totalMatch,
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
+    keepInvestPct, keepTotalAdd,
     nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
     ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
     penEnabled, pen, pAge, cola,
@@ -1866,6 +1888,7 @@ function recalc() {
     annualMatch, sAnnualMatch, totalMatch,
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
+    keepInvestPct, keepTotalAdd,
     nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
     ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
     penEnabled, pen, pAge, cola,
@@ -1992,6 +2015,9 @@ function recalc() {
         : 'No spouse employer match configured.';
   }
 
+  // Dollar preview for the "keep investing %" slider (works whether or not the section is visible)
+  set('keep-dollar-preview', fmt(keepTotalAdd));
+
   const kiSection = document.getElementById('keep-invest-section');
   if (coastAge !== null && keepFinalTotal !== null) {
     kiSection.style.display = '';
@@ -2012,8 +2038,9 @@ function recalc() {
     set('ki-br-extra', brExtra > 0 ? '+' + fmt(dFinal(brExtra)) : fmt(dFinal(brExtra)));
 
     const yrsInvesting = rage - coastAge;
+    const pctLabel = Math.round((keepInvestPct || 0) * 100);
     let summary = `By coasting at age <strong>${coastAge}</strong> you'd have <strong>${fmt(dFinal(finalEffTotal))}</strong> at retirement. `;
-    summary += `If you kept investing <strong>${fmt(effectiveTaCont + brCont)}/yr</strong> for ${yrsInvesting} more year${yrsInvesting !== 1 ? 's' : ''}, `;
+    summary += `If you kept investing <strong>${fmt(keepTotalAdd)}/yr</strong> (${pctLabel}% of your current pace) for ${yrsInvesting} more year${yrsInvesting !== 1 ? 's' : ''}, `;
     summary += `you'd arrive at <strong style="color:#a98fc9">${fmt(dFinal(keepFinalTotal))}</strong> — <strong>+${pctMore}% more</strong> (${fmt(dFinal(extra))} extra).`;
     if (extraYrs) summary += ` That's roughly <strong>${extraYrs} extra years</strong> of retirement spending.`;
     summary += `<br><span style="color:var(--muted);font-size:0.72rem">⚠️ CoastFIRE means you <em>don't need</em> to keep working — the choice to invest more is purely optional upside.</span>`;
@@ -2511,6 +2538,7 @@ const INPUT_MAP = [
   { id:'n-nom',          key:'nom',           m:100 },
   { id:'n-inf',          key:'inf',           m:100 },
   { id:'n-swr',          key:'swr',           m:100 },
+  { id:'n-keep-pct',     key:'keepInvestPct', m:100 },
 ];
 
 function saveState() {
@@ -2609,10 +2637,10 @@ function runMonteCarlo() {
     // The simulation starts AT THE MOMENT you hit CoastFIRE (or now, if already past it)
     // and projects forward to retirement age — answering: "What happens to your money
     // after you hit CoastFIRE, whether you keep investing or coast?"
-    const { cage, rage, yrs, taBal, brBal, effectiveTaCont, brCont, nom, inf, netFIRE, coastAge, coastToday } = R;
+    const { cage, rage, yrs, taBal, brBal, effectiveTaCont, effectiveRothCont, brCont, nom, inf, netFIRE, coastAge, coastToday, keepTotalAdd } = R;
     const fireTarget   = netFIRE;
     const effNow       = taBal + brBal;
-    const annualCont   = effectiveTaCont + brCont;
+    const annualCont   = keepTotalAdd;  // scaled by "keep investing %" slider, incl. Roth
     const volatility   = 0.15;
     const runs         = 1000;
 
