@@ -1119,7 +1119,10 @@
   </div>
 
   <div class="cw">
-    <div class="ct">Portfolio Projection</div>
+    <div class="ct">Portfolio Projection <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Accumulation → drawdown through age 80</span></div>
+    <div style="font-size:0.76rem;color:var(--muted);margin-bottom:10px;line-height:1.5">
+      Stacked areas (Trad / Roth / Brokerage) show <strong>accumulation</strong> through retirement age. Past retirement, only the summary lines continue — the <strong>Total</strong>, <strong>Coast-Only</strong>, and <strong>Keep Investing</strong> paths are drawn down using your inflation-adjusted spending need (net of pension/SS as they kick in).
+    </div>
     <canvas id="chart" height="230"></canvas>
   </div>
 
@@ -2127,6 +2130,87 @@ function runCalc() {
     keepFinalTotal    = keepInvestPath[yrs];
     keepBrFinal       = keepBrPath[yrs];
     extraAtRetirement = keepFinalTotal - effTotals[yrs];
+  }
+
+  // ──────────────────────────────────────────────────────
+  //  POST-RETIREMENT DRAWDOWN EXTENSION (ages rage..80)
+  //  Extends the summary lines (Total, Coast, Keep-Invest, targets)
+  //  past retirement with a simple drawdown model so the Portfolio
+  //  Projection chart reaches age 80. Per-bucket (Trad/Roth/Brokerage)
+  //  filled areas stop at rage — drawdown order/mechanics don't
+  //  translate cleanly to stacked buckets without extra assumptions.
+  // ──────────────────────────────────────────────────────
+  const HORIZON_AGE = 80;
+  const horizonYears = Math.max(yrs, HORIZON_AGE - cage);
+
+  // Per-year gross-portfolio-draw calculator (accounts for pension/SS timing,
+  // inflation-adjusted spending, and the blended tax gross-up).
+  const grossDrawAt = (age) => {
+    const pen_y = (penEnabled && pen > 0 && pAge <= age)
+      ? (cola ? pen * Math.pow(1 + inf, age - cage) : pen)
+      : 0;
+    const ss1_y = (ssEnabled && ssPrimary > 0 && ssAge <= age)
+      ? ssPrimaryAnnual * Math.pow(1 + inf, age - cage)
+      : 0;
+    const ss2_y = (ssEnabled && ssSpouseEnabled && ssSpouse > 0 && ssSpouseAge <= age)
+      ? ssSpouseAnnual * Math.pow(1 + inf, age - cage)
+      : 0;
+    const offsets_y    = pen_y + ss1_y + ss2_y;
+    const spend_y      = nomSpend * Math.pow(1 + inf, age - rage);
+    const grossTotal_y = spend_y * taxGrossUp;
+    return Math.max(grossTotal_y - offsets_y, 0);
+  };
+
+  if (horizonYears > yrs) {
+    // Extend axis + per-bucket arrays with nulls (filled areas stop at rage).
+    for (let y = yrs + 1; y <= horizonYears; y++) {
+      const age = cage + y;
+      ages.push(age);
+      taVals.push(null);
+      rothVals.push(null);
+      brVals.push(null);
+      effBrVals.push(null);
+      phases.push('retired');
+      // CoastFIRE Target is an accumulation-phase concept — stop drawing it past rage.
+      coastTargets.push(null);
+    }
+
+    // Total portfolio drawdown
+    let totBal = effTotals[yrs];
+    for (let y = yrs + 1; y <= horizonYears; y++) {
+      const age = cage + y;
+      totBal = Math.max(totBal * (1 + nom) - grossDrawAt(age), 0);
+      effTotals.push(totBal);
+    }
+
+    // Coast-only path drawdown (grown coast balance at rage → drawdown)
+    if (coastAge !== null && coastPath[yrs] != null) {
+      let coBal = coastPath[yrs];
+      for (let y = yrs + 1; y <= horizonYears; y++) {
+        const age = cage + y;
+        coBal = Math.max(coBal * (1 + nom) - grossDrawAt(age), 0);
+        coastPath.push(coBal);
+      }
+    } else {
+      // Keep coastPath array length in sync with ages
+      for (let y = yrs + 1; y <= horizonYears; y++) coastPath.push(null);
+    }
+
+    // Keep-investing path drawdown
+    if (coastAge !== null && keepInvestPath[yrs] != null) {
+      let kiBal = keepInvestPath[yrs];
+      for (let y = yrs + 1; y <= horizonYears; y++) {
+        const age = cage + y;
+        kiBal = Math.max(kiBal * (1 + nom) - grossDrawAt(age), 0);
+        keepInvestPath.push(kiBal);
+        keepBrPath.push(null); // brokerage-only tracking past rage omitted
+      }
+    } else {
+      for (let y = yrs + 1; y <= horizonYears; y++) {
+        keepInvestPath.push(null);
+        keepBrPath.push(null);
+      }
+    }
   }
 
   return {
