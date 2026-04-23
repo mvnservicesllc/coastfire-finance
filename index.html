@@ -1142,32 +1142,69 @@
       Compares stopping contributions at CoastFIRE vs continuing to invest all the way to retirement. Dial in exactly how much you'd keep contributing.
     </div>
     <div style="margin-bottom:14px">
-      <label class="field-label">After CoastFIRE, keep investing at</label>
-      <div class="field-row">
-        <div class="field">
-          <div class="field-wrap g">
-            <input type="number" id="n-keep-pct" min="0" max="200" value="100" step="10" inputmode="numeric">
-            <span class="field-sfx">%</span>
-            <div class="field-steps">
-              <button onclick="step('n-keep-pct',10)">▲</button>
-              <button onclick="step('n-keep-pct',-10)">▼</button>
-            </div>
-          </div>
-          <div class="field-hint">of today's rate</div>
+      <label class="field-label">After CoastFIRE, keep investing...</label>
+
+      <div style="margin-top:10px;margin-bottom:12px">
+        <div style="font-size:0.7rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">
+          🏦 Retirement Funds (Trad + Roth)
         </div>
-        <div class="field">
-          <div class="field-wrap g">
-            <span class="field-pfx">$</span>
-            <input type="number" id="n-keep-dollar" min="0" max="500000" value="0" step="500" inputmode="numeric">
-            <div class="field-steps">
-              <button onclick="step('n-keep-dollar',500)">▲</button>
-              <button onclick="step('n-keep-dollar',-500)">▼</button>
+        <div class="field-row">
+          <div class="field">
+            <div class="field-wrap g">
+              <input type="number" id="n-keep-ret-pct" min="0" max="200" value="100" step="10" inputmode="numeric">
+              <span class="field-sfx">%</span>
+              <div class="field-steps">
+                <button onclick="step('n-keep-ret-pct',10)">▲</button>
+                <button onclick="step('n-keep-ret-pct',-10)">▼</button>
+              </div>
             </div>
+            <div class="field-hint">of today's rate</div>
           </div>
-          <div class="field-hint">per year (all buckets)</div>
+          <div class="field">
+            <div class="field-wrap g">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-keep-ret-dollar" min="0" max="500000" value="0" step="500" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-keep-ret-dollar',500)">▲</button>
+                <button onclick="step('n-keep-ret-dollar',-500)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">per year (incl. match)</div>
+          </div>
         </div>
       </div>
-      <div class="field-hint" style="margin-top:6px">100% = today's pace · 50% = partial coast (BaristaFIRE-style) · 0% = fully coast. Editing either box updates the other.</div>
+
+      <div style="margin-bottom:10px">
+        <div style="font-size:0.7rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">
+          📈 Brokerage
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <div class="field-wrap y">
+              <input type="number" id="n-keep-br-pct" min="0" max="200" value="100" step="10" inputmode="numeric">
+              <span class="field-sfx">%</span>
+              <div class="field-steps">
+                <button onclick="step('n-keep-br-pct',10)">▲</button>
+                <button onclick="step('n-keep-br-pct',-10)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">of today's rate</div>
+          </div>
+          <div class="field">
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-keep-br-dollar" min="0" max="500000" value="0" step="500" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-keep-br-dollar',500)">▲</button>
+                <button onclick="step('n-keep-br-dollar',-500)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">per year (taxable)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="field-hint" style="margin-top:6px">100% = today's pace · 50% = partial coast (BaristaFIRE-style) · 0% = fully coast. Editing % or $ in either row updates the other.</div>
     </div>
     <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:8px">Total Portfolio</div>
     <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
@@ -1564,7 +1601,7 @@ const S = {
   ssEnabled: false, ssPrimary: 2000, ssAge: 67,
   ssSpouseEnabled: false, ssSpouse: 1500, ssSpouseAge: 67,
   spend: 60000, nom: 0.07, inf: 0.03, swr: 0.04,
-  keepInvestPct: 1.0,
+  keepInvestPctRet: 1.0, keepInvestPctBr: 1.0,
 };
 
 let dispMode = 'nom';
@@ -1636,38 +1673,43 @@ bindNum('n-spend',       'spend',        null);
 bindNum('n-nom',         'nom',          v => v/100);
 bindNum('n-inf',         'inf',          v => v/100);
 bindNum('n-swr',         'swr',          v => v/100);
-bindNum('n-keep-pct',    'keepInvestPct',v => v/100);
+bindNum('n-keep-ret-pct','keepInvestPctRet', v => v/100);
+bindNum('n-keep-br-pct', 'keepInvestPctBr',  v => v/100);
 
-// Paired dollar input: converts $/yr → keepInvestPct using the live contribution base.
-function currentContribBase() {
+// Live contribution bases for the paired $ inputs.
+function currentRetContribBase() {
   const pMatch = Math.min((S.taCont || 0), (S.primaryIncome || 0) * (S.matchCap || 0)) * (S.matchRate || 0);
   const sMatch = S.spouseEnabled
     ? Math.min((S.sTaCont || 0), (S.spouseIncome || 0) * (S.sMatchCap || 0)) * (S.sMatchRate || 0)
     : 0;
   const trad = (S.taCont || 0) + pMatch + (S.spouseEnabled ? (S.sTaCont || 0) : 0) + sMatch;
   const roth = (S.rothCont || 0) + (S.spouseEnabled ? (S.sRothCont || 0) : 0);
-  const brk  = (S.brCont || 0);
-  return trad + roth + brk;
+  return trad + roth;
 }
-(function bindKeepDollar() {
-  const el = document.getElementById('n-keep-dollar');
+function currentBrContribBase() { return S.brCont || 0; }
+
+// Paired $ → % handler factory.
+function wireKeepDollar(dollarId, pctId, stateKey, baseFn) {
+  const el = document.getElementById(dollarId);
   if (!el) return;
   const upd = () => {
     const raw = parseFloat(el.value);
     if (isNaN(raw)) return;
-    const base = currentContribBase();
+    const base = baseFn();
     if (base > 0) {
-      S.keepInvestPct = Math.max(0, Math.min(2, raw / base));
-      const pctEl = document.getElementById('n-keep-pct');
+      S[stateKey] = Math.max(0, Math.min(2, raw / base));
+      const pctEl = document.getElementById(pctId);
       if (pctEl && document.activeElement !== pctEl) {
-        pctEl.value = +(S.keepInvestPct * 100).toFixed(1);
+        pctEl.value = +(S[stateKey] * 100).toFixed(1);
       }
     }
     recalc();
   };
   el.addEventListener('input',  upd);
   el.addEventListener('change', upd);
-})();
+}
+wireKeepDollar('n-keep-ret-dollar', 'n-keep-ret-pct', 'keepInvestPctRet', currentRetContribBase);
+wireKeepDollar('n-keep-br-dollar',  'n-keep-br-pct',  'keepInvestPctBr',  currentBrContribBase);
 bindNum('n-ss-primary',    'ssPrimary',  null);
 bindNum('n-ss-age',        'ssAge',      null);
 bindNum('n-ss-spouse',     'ssSpouse',   null);
@@ -1751,7 +1793,7 @@ function runCalc() {
     penEnabled, pen, pAge, cola,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
     spend, nom, inf, swr,
-    keepInvestPct,
+    keepInvestPctRet, keepInvestPctBr,
   } = S;
 
   if (rage <= cage) return null;
@@ -1872,11 +1914,13 @@ function runCalc() {
   const keepBrPath     = new Array(ages.length).fill(null);
   let keepFinalTotal = null, keepBrFinal = null, extraAtRetirement = null;
 
-  const kipct     = Math.max(0, keepInvestPct || 0);
-  const keepTaAdd = effectiveTaCont   * kipct;
-  const keepRoAdd = effectiveRothCont * kipct;
-  const keepBrAdd = brCont            * kipct;
-  const keepTotalAdd = keepTaAdd + keepRoAdd + keepBrAdd;
+  const kiRet = Math.max(0, keepInvestPctRet || 0);
+  const kiBr  = Math.max(0, keepInvestPctBr  || 0);
+  const keepTaAdd = effectiveTaCont   * kiRet;
+  const keepRoAdd = effectiveRothCont * kiRet;
+  const keepBrAdd = brCont            * kiBr;
+  const keepRetAdd   = keepTaAdd + keepRoAdd;
+  const keepTotalAdd = keepRetAdd + keepBrAdd;
 
   if (coastAge !== null) {
     const ci = coastAge - cage;
@@ -1905,7 +1949,7 @@ function runCalc() {
     annualMatch, sAnnualMatch, totalMatch,
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
-    keepInvestPct, keepTotalAdd,
+    keepInvestPctRet, keepInvestPctBr, keepRetAdd, keepBrAdd, keepTotalAdd,
     nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
     ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
     penEnabled, pen, pAge, cola,
@@ -1948,7 +1992,7 @@ function recalc() {
     annualMatch, sAnnualMatch, totalMatch,
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
-    keepInvestPct, keepTotalAdd,
+    keepInvestPctRet, keepInvestPctBr, keepRetAdd, keepBrAdd, keepTotalAdd,
     nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
     ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
     penEnabled, pen, pAge, cola,
@@ -2075,10 +2119,14 @@ function recalc() {
         : 'No spouse employer match configured.';
   }
 
-  // Sync the "$ / yr" input next to the % slider (unless the user is actively typing in it)
-  const keepDollarEl = document.getElementById('n-keep-dollar');
-  if (keepDollarEl && document.activeElement !== keepDollarEl) {
-    keepDollarEl.value = Math.round(keepTotalAdd);
+  // Sync the "$ / yr" inputs next to each % slider (unless the user is actively typing)
+  const keepRetDollarEl = document.getElementById('n-keep-ret-dollar');
+  if (keepRetDollarEl && document.activeElement !== keepRetDollarEl) {
+    keepRetDollarEl.value = Math.round(keepRetAdd);
+  }
+  const keepBrDollarEl = document.getElementById('n-keep-br-dollar');
+  if (keepBrDollarEl && document.activeElement !== keepBrDollarEl) {
+    keepBrDollarEl.value = Math.round(keepBrAdd);
   }
 
   // ──────────────────────────────────────────────────────
@@ -2166,8 +2214,10 @@ function recalc() {
       const keepBr59    = keepBrPath[lo]     + frac * (keepBrPath[hi]     - keepBrPath[lo]);
       const deltaTotal  = keepTotal59 - total59;
       if (Math.abs(deltaTotal) > 1) {
-        const pctLabel = Math.round((keepInvestPct || 0) * 100);
-        footer += `<br><br><span style="color:var(--muted);font-size:0.78rem">💪 If you keep investing at ${pctLabel}% after CoastFIRE: total at 59½ would be <strong>${fmt(d59(keepTotal59))}</strong> (${deltaTotal >= 0 ? '+' : ''}${fmt(d59(deltaTotal))}), with <strong>${fmt(d59(keepBr59))}</strong> in the brokerage bridge.</span>`;
+        const rPct = Math.round((keepInvestPctRet || 0) * 100);
+        const bPct = Math.round((keepInvestPctBr  || 0) * 100);
+        const pctLabel = (rPct === bPct) ? `${rPct}%` : `${rPct}% retirement / ${bPct}% brokerage`;
+        footer += `<br><br><span style="color:var(--muted);font-size:0.78rem">💪 If you keep investing at ${pctLabel} after CoastFIRE: total at 59½ would be <strong>${fmt(d59(keepTotal59))}</strong> (${deltaTotal >= 0 ? '+' : ''}${fmt(d59(deltaTotal))}), with <strong>${fmt(d59(keepBr59))}</strong> in the brokerage bridge.</span>`;
       }
     }
     document.getElementById('age59-footer').innerHTML = footer;
@@ -2196,9 +2246,13 @@ function recalc() {
     set('ki-br-extra', brExtra > 0 ? '+' + fmt(dFinal(brExtra)) : fmt(dFinal(brExtra)));
 
     const yrsInvesting = rage - coastAge;
-    const pctLabel = Math.round((keepInvestPct || 0) * 100);
+    const rPct = Math.round((keepInvestPctRet || 0) * 100);
+    const bPct = Math.round((keepInvestPctBr  || 0) * 100);
+    const paceLabel = (rPct === bPct)
+      ? `${rPct}% of your current pace`
+      : `${rPct}% into retirement + ${bPct}% into brokerage`;
     let summary = `By coasting at age <strong>${coastAge}</strong> you'd have <strong>${fmt(dFinal(finalEffTotal))}</strong> at retirement. `;
-    summary += `If you kept investing <strong>${fmt(keepTotalAdd)}/yr</strong> (${pctLabel}% of your current pace) for ${yrsInvesting} more year${yrsInvesting !== 1 ? 's' : ''}, `;
+    summary += `If you kept investing <strong>${fmt(keepTotalAdd)}/yr</strong> (${paceLabel}) for ${yrsInvesting} more year${yrsInvesting !== 1 ? 's' : ''}, `;
     summary += `you'd arrive at <strong style="color:#a98fc9">${fmt(dFinal(keepFinalTotal))}</strong> — <strong>+${pctMore}% more</strong> (${fmt(dFinal(extra))} extra).`;
     if (extraYrs) summary += ` That's roughly <strong>${extraYrs} extra years</strong> of retirement spending.`;
     summary += `<br><span style="color:var(--muted);font-size:0.72rem">⚠️ CoastFIRE means you <em>don't need</em> to keep working — the choice to invest more is purely optional upside.</span>`;
@@ -2696,7 +2750,8 @@ const INPUT_MAP = [
   { id:'n-nom',          key:'nom',           m:100 },
   { id:'n-inf',          key:'inf',           m:100 },
   { id:'n-swr',          key:'swr',           m:100 },
-  { id:'n-keep-pct',     key:'keepInvestPct', m:100 },
+  { id:'n-keep-ret-pct', key:'keepInvestPctRet', m:100 },
+  { id:'n-keep-br-pct',  key:'keepInvestPctBr',  m:100 },
 ];
 
 function saveState() {
@@ -2732,6 +2787,11 @@ function loadState() {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) { set('save-status', 'No saved data — using defaults'); return; }
     const saved = JSON.parse(raw);
+    // Backward-compat: older saves used a single `keepInvestPct` for both buckets.
+    if ('keepInvestPct' in saved) {
+      if (!('keepInvestPctRet' in saved)) saved.keepInvestPctRet = saved.keepInvestPct;
+      if (!('keepInvestPctBr'  in saved)) saved.keepInvestPctBr  = saved.keepInvestPct;
+    }
     Object.keys(S).forEach(k => { if (k in saved) S[k] = saved[k]; });
     syncUIFromState();
     set('save-status', 'Inputs loaded from last session');
