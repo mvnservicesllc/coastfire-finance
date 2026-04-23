@@ -671,14 +671,17 @@
     </div>
   </div>
 
-  <!-- ── TAX-ADVANTAGED ── -->
+  <!-- ── TAX-ADVANTAGED (TRADITIONAL / PRE-TAX) ── -->
   <div class="acc">
     <div class="acc-hdr" onclick="toggle('ta')">
-      <span class="acc-title">🏦 Tax-Advantaged <span class="tl-tag tag-p">401k / IRA</span></span>
+      <span class="acc-title">🏦 Tax-Advantaged (Traditional) <span class="tl-tag tag-p">Pre-tax</span></span>
       <span class="acc-arrow open" id="arr-ta">▶</span>
     </div>
     <div class="acc-body open" id="body-ta">
       <div class="acc-inner">
+        <div class="info-box" style="font-size:0.72rem;line-height:1.5;margin-bottom:10px;color:var(--muted)">
+          💡 Include <strong>pre-tax retirement accounts</strong>: Traditional 401(k), Traditional IRA, 403(b), 457(b), SEP/SIMPLE IRA, HSA. Withdrawals are taxed as ordinary income. Roth accounts go in the next section.
+        </div>
         <div class="sub-hdr">Primary 401k / IRA</div>
         <div class="field">
           <label class="field-label">Current Balance</label>
@@ -730,6 +733,44 @@
         <div class="info-box info-box-g">
           Primary match: <strong id="match-amt">—</strong>/yr · Total into 401k: <strong id="match-total">—</strong>/yr
           <div style="font-size:0.69rem;color:var(--muted);margin-top:3px" id="match-note"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ROTH (POST-TAX RETIREMENT) ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('roth')">
+      <span class="acc-title">🌱 Roth IRA / Roth 401k <span class="tl-tag tag-g">Tax-free</span></span>
+      <span class="acc-arrow" id="arr-roth">▶</span>
+    </div>
+    <div class="acc-body" id="body-roth">
+      <div class="acc-inner">
+        <div class="info-box" style="font-size:0.72rem;line-height:1.5;margin-bottom:10px;color:var(--muted)">
+          💡 Include <strong>post-tax retirement accounts</strong>: Roth IRA, Roth 401(k), Roth 403(b). Contributions are made with after-tax money; qualified withdrawals (including growth) are 100% tax-free in retirement. Roth IRA contributions can also be withdrawn penalty-free at any age.
+        </div>
+        <div class="field">
+          <label class="field-label">Current Balance</label>
+          <div class="field-wrap g">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-roth-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-roth-bal',5000)">▲</button>
+              <button onclick="step('n-roth-bal',-5000)">▼</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Your Annual Contributions</label>
+          <div class="field-wrap g">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-roth-cont" min="0" max="50000" value="0" step="500" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-roth-cont',500)">▲</button>
+              <button onclick="step('n-roth-cont',-500)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">2026 Roth IRA limit: $7,000 ($8,000 if 50+). Roth 401(k) limit: $23,500 ($31,000 if 50+). Combine if you use both.</div>
         </div>
       </div>
     </div>
@@ -980,6 +1021,18 @@
             </div>
           </div>
           <div class="field-hint">4% = Trinity study standard; 3.5% = conservative</div>
+        </div>
+        <div class="field">
+          <label class="field-label">Effective Retirement Tax Rate</label>
+          <div class="field-wrap">
+            <input type="number" id="n-ret-tax" min="0" max="40" value="0" step="1" inputmode="decimal">
+            <span class="field-sfx">%</span>
+            <div class="field-steps">
+              <button onclick="step('n-ret-tax',1)">▲</button>
+              <button onclick="step('n-ret-tax',-1)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">Estimated tax on <strong>Traditional</strong> withdrawals in retirement. Roth withdrawals are tax-free, so this only applies to the pre-tax portion of your portfolio. Leave 0% if your spending input already includes taxes. Typical: 10–15%.</div>
         </div>
       </div>
     </div>
@@ -1395,6 +1448,14 @@
         </span>
         <span class="blog-arrow">→</span>
       </a>
+      <a href="blog/roth-ira-coastfire.html" class="blog-row">
+        <span class="blog-emoji">🌱</span>
+        <span class="blog-text">
+          <span class="blog-title">Does Roth Money Count for CoastFIRE?</span>
+          <span class="blog-meta">By Minh · 8 min read</span>
+        </span>
+        <span class="blog-arrow">→</span>
+      </a>
     </div>
   </div>
 
@@ -1424,7 +1485,9 @@ const S = {
   spouseEnabled: false, spouseIncome: 60000,
   sTaBal: 0, sTaCont: 10000, sMatchRate: 0.50, sMatchCap: 0.06,
   taBal: 50000, taCont: 15000, matchRate: 0.50, matchCap: 0.06,
+  rothBal: 0, rothCont: 0,
   brBal: 0, brCont: 0, divDrag: 0.003, ltcg: 0.15,
+  retTaxRate: 0,
   penEnabled: false, pen: 24000, pAge: 65, cola: true,
   ssEnabled: false, ssPrimary: 2000, ssAge: 67,
   ssSpouseEnabled: false, ssSpouse: 1500, ssSpouseAge: 67,
@@ -1485,8 +1548,11 @@ bindNum('n-ta-bal',      'taBal',        null);
 bindNum('n-ta-cont',     'taCont',       null);
 bindNum('n-match-rate',  'matchRate',    v => v/100);
 bindNum('n-match-cap',   'matchCap',     v => v/100);
+bindNum('n-roth-bal',    'rothBal',      null);
+bindNum('n-roth-cont',   'rothCont',     null);
 bindNum('n-br-bal',      'brBal',        null);
 bindNum('n-br-cont',     'brCont',       null);
+bindNum('n-ret-tax',     'retTaxRate',   v => v/100);
 bindNum('n-div-drag',    'divDrag',      v => v/100);
 bindNum('n-ltcg',        'ltcg',         v => v/100);
 bindNum('n-pen',         'pen',          null);
@@ -1568,7 +1634,9 @@ function runCalc() {
     cage, rage,
     primaryIncome, spouseEnabled, spouseIncome, sTaBal, sTaCont, sMatchRate, sMatchCap,
     taBal, taCont, matchRate, matchCap,
+    rothBal, rothCont,
     brBal, brCont, divDrag, ltcg,
+    retTaxRate,
     penEnabled, pen, pAge, cola,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
     spend, nom, inf, swr,
@@ -1586,7 +1654,7 @@ function runCalc() {
   const sAnnualMatch  = spouseEnabled ? Math.min(sTaCont, sMatchCeil) * sMatchRate : 0;
   const totalMatch       = annualMatch + sAnnualMatch;
   const effectiveTaCont  = taCont + annualMatch + (spouseEnabled ? sTaCont : 0) + sAnnualMatch;
-  const totalContribs    = effectiveTaCont + brCont;
+  const totalContribs    = effectiveTaCont + rothCont + brCont;
   const savingsRate      = totalIncome > 0 ? totalContribs / totalIncome : 0;
 
   const nomSpend = spend * Math.pow(1 + inf, yrs);
@@ -1612,16 +1680,33 @@ function runCalc() {
 
   const totalNomOffset = nomPension + nomSS;
   const netSpend   = Math.max(nomSpend - totalNomOffset, 0);
-  const grossFIRE  = nomSpend / swr;
-  const netFIRE    = netSpend  / swr;
+
+  // Estimate Traditional share of the retirement-account portfolio at retirement.
+  // Uses a simple "keep investing" annuity projection (conservative ceiling on both buckets;
+  // the share ratio is what matters, not the absolute dollar figures).
+  const combinedTaBalForTax = taBal + (spouseEnabled ? sTaBal : 0);
+  const combinedTaContForTax = taCont + annualMatch + (spouseEnabled ? sTaCont : 0) + sAnnualMatch;
+  const cf = nom > 0 ? ((Math.pow(1 + nom, yrs) - 1) / nom) : yrs;
+  const projTrad = combinedTaBalForTax * Math.pow(1 + nom, yrs) + combinedTaContForTax * cf;
+  const projRoth = rothBal              * Math.pow(1 + nom, yrs) + rothCont            * cf;
+  const totalProjTA = projTrad + projRoth;
+  const tradShare = totalProjTA > 0 ? projTrad / totalProjTA : 1;
+
+  // Blended effective tax rate on retirement-account withdrawals.
+  // Brokerage is treated separately via ltcg (already in the effBr calc below).
+  const effTax = Math.min(Math.max(tradShare * retTaxRate, 0), 0.95);
+  const taxGrossUp = 1 / (1 - effTax);
+
+  const grossFIRE  = (nomSpend / swr) * taxGrossUp;
+  const netFIRE    = (netSpend  / swr) * taxGrossUp;
   const coastToday = netFIRE / Math.pow(1 + nom, yrs);
 
-  const ages = [], taVals = [], brVals = [], effBrVals = [],
+  const ages = [], taVals = [], rothVals = [], brVals = [], effBrVals = [],
         effTotals = [], coastTargets = [], phases = [];
 
   const combinedTaBal = taBal + (spouseEnabled ? sTaBal : 0);
-  let ta = combinedTaBal, br = brBal, basis = brBal;
-  let coastAge = null, coastTa = null, coastBr = null;
+  let ta = combinedTaBal, roth = rothBal, br = brBal, basis = brBal;
+  let coastAge = null, coastTa = null, coastRoth = null, coastBr = null;
 
   for (let y = 0; y <= yrs; y++) {
     const age     = cage + y;
@@ -1629,35 +1714,41 @@ function runCalc() {
     const target  = netFIRE / Math.pow(1 + nom, yrsLeft);
     const gains   = Math.max(br - basis, 0);
     const effBr   = br - gains * ltcg;
-    const effTot  = ta + effBr;
+    const effTot  = ta + roth + effBr;
 
     ages.push(age);
     taVals.push(ta);
+    rothVals.push(roth);
     brVals.push(br);
     effBrVals.push(effBr);
     effTotals.push(effTot);
     coastTargets.push(target);
 
-    if (coastAge === null && effTot >= target) { coastAge = age; coastTa = ta; coastBr = br; }
+    if (coastAge === null && effTot >= target) {
+      coastAge  = age; coastTa   = ta; coastRoth = roth; coastBr = br;
+    }
     phases.push(coastAge !== null ? 'coast' : 'accum');
 
-    const addTa = coastAge === null ? effectiveTaCont : 0;
-    const addBr = coastAge === null ? brCont          : 0;
-    ta    = ta * (1 + nom) + addTa;
-    br    = br * (1 + nom - divDrag) + addBr;
+    const addTa   = coastAge === null ? effectiveTaCont : 0;
+    const addRoth = coastAge === null ? rothCont        : 0;
+    const addBr   = coastAge === null ? brCont          : 0;
+    ta    = ta   * (1 + nom) + addTa;
+    roth  = roth * (1 + nom) + addRoth;
+    br    = br   * (1 + nom - divDrag) + addBr;
     basis = basis + addBr;
   }
 
   const coastPath = new Array(ages.length).fill(null);
   if (coastAge !== null) {
     const ci = coastAge - cage;
-    let cTa = coastTa, cBr = coastBr, cBasis = brBal;
+    let cTa = coastTa, cRoth = coastRoth, cBr = coastBr, cBasis = brBal;
     for (let y = 0; y < ci; y++) cBasis += brCont;
     for (let y = ci; y <= yrs; y++) {
       const g = Math.max(cBr - cBasis, 0);
-      coastPath[y] = cTa + (cBr - g * ltcg);
-      cTa = cTa * (1 + nom);
-      cBr = cBr * (1 + nom - divDrag);
+      coastPath[y] = cTa + cRoth + (cBr - g * ltcg);
+      cTa   = cTa   * (1 + nom);
+      cRoth = cRoth * (1 + nom);
+      cBr   = cBr   * (1 + nom - divDrag);
     }
   }
 
@@ -1667,15 +1758,16 @@ function runCalc() {
 
   if (coastAge !== null) {
     const ci = coastAge - cage;
-    let kTa = coastTa, kBr = coastBr, kBasis = brBal;
+    let kTa = coastTa, kRoth = coastRoth, kBr = coastBr, kBasis = brBal;
     for (let y = 0; y < ci; y++) kBasis += brCont;
     for (let y = ci; y <= yrs; y++) {
       const g = Math.max(kBr - kBasis, 0);
       const effKBr = kBr - g * ltcg;
-      keepInvestPath[y] = kTa + effKBr;
+      keepInvestPath[y] = kTa + kRoth + effKBr;
       keepBrPath[y]     = effKBr;
-      kTa    = kTa * (1 + nom) + effectiveTaCont;
-      kBr    = kBr * (1 + nom - divDrag) + brCont;
+      kTa    = kTa   * (1 + nom) + effectiveTaCont;
+      kRoth  = kRoth * (1 + nom) + rothCont;
+      kBr    = kBr   * (1 + nom - divDrag) + brCont;
       kBasis = kBasis + brCont;
     }
     keepFinalTotal    = keepInvestPath[yrs];
@@ -1689,12 +1781,13 @@ function runCalc() {
     sTaBal, sTaCont, sMatchRate, sMatchCap,
     annualMatch, sAnnualMatch, totalMatch,
     effectiveTaCont, totalContribs, savingsRate, matchRate, matchCap,
+    rothBal, rothCont, retTaxRate, tradShare, effTax,
     nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
     ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
     penEnabled, pen, pAge, cola,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
     combinedTaBal,
-    ages, taVals, brVals, effBrVals, effTotals, coastTargets, phases, coastPath,
+    ages, taVals, rothVals, brVals, effBrVals, effTotals, coastTargets, phases, coastPath,
     keepInvestPath, keepBrPath, keepFinalTotal, keepBrFinal, extraAtRetirement,
     coastAge, effNow: effTotals[0],
     finalEffTotal: effTotals[yrs],
@@ -1729,12 +1822,13 @@ function recalc() {
     sTaBal, sTaCont, sMatchRate, sMatchCap,
     annualMatch, sAnnualMatch, totalMatch,
     effectiveTaCont, totalContribs, savingsRate, matchRate, matchCap,
+    rothBal, rothCont, retTaxRate, tradShare, effTax,
     nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
     ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
     penEnabled, pen, pAge, cola,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
     combinedTaBal,
-    ages, taVals, brVals, effBrVals, effTotals, coastTargets, phases, coastPath,
+    ages, taVals, rothVals, brVals, effBrVals, effTotals, coastTargets, phases, coastPath,
     keepInvestPath, keepBrPath, keepFinalTotal, keepBrFinal, extraAtRetirement,
     coastAge, effNow, finalEffTotal, finalEffBr,
   } = R;
@@ -1802,14 +1896,21 @@ function recalc() {
     cYrEl.textContent  = 'Not reached before retirement';
   }
 
-  const total = (combinedTaBal + brBal) || 1;
-  const taP   = (combinedTaBal / total * 100).toFixed(1);
+  const total = (combinedTaBal + rothBal + brBal) || 1;
+  const taP   = ((combinedTaBal + rothBal) / total * 100).toFixed(1);
   const brP   = (brBal / total * 100).toFixed(1);
   document.getElementById('bar-adv').style.width = taP + '%';
   document.getElementById('bar-brk').style.width = brP + '%';
-  const taLabel = spouseEnabled && sTaBal > 0
-    ? fmt(combinedTaBal) + ' (' + fmt(taBal) + ' primary + ' + fmt(sTaBal) + ' spouse)'
-    : fmt(combinedTaBal);
+  const taParts = [];
+  if (combinedTaBal > 0) {
+    taParts.push(spouseEnabled && sTaBal > 0
+      ? fmt(taBal) + ' Trad primary + ' + fmt(sTaBal) + ' Trad spouse'
+      : fmt(combinedTaBal) + ' Traditional');
+  }
+  if (rothBal > 0) taParts.push(fmt(rothBal) + ' Roth');
+  const taLabel = taParts.length > 1
+    ? fmt(combinedTaBal + rothBal) + ' (' + taParts.join(' + ') + ')'
+    : fmt(combinedTaBal + rothBal);
   set('bar-adv-lbl', taLabel + ' (' + taP + '%)');
   set('bar-brk-lbl', fmt(brBal) + ' (' + brP + '%)');
 
@@ -1866,7 +1967,7 @@ function recalc() {
     const yrsInvesting = rage - coastAge;
     let summary = `By coasting at age <strong>${coastAge}</strong> you'd have <strong>${fmt(dFinal(finalEffTotal))}</strong> at retirement. `;
     summary += `If you kept investing <strong>${fmt(effectiveTaCont + brCont)}/yr</strong> for ${yrsInvesting} more year${yrsInvesting !== 1 ? 's' : ''}, `;
-    summary += `you'd arrive at <strong style="color:#ff9a9a">${fmt(dFinal(keepFinalTotal))}</strong> — <strong>+${pctMore}% more</strong> (${fmt(dFinal(extra))} extra).`;
+    summary += `you'd arrive at <strong style="color:#a98fc9">${fmt(dFinal(keepFinalTotal))}</strong> — <strong>+${pctMore}% more</strong> (${fmt(dFinal(extra))} extra).`;
     if (extraYrs) summary += ` That's roughly <strong>${extraYrs} extra years</strong> of retirement spending.`;
     summary += `<br><span style="color:var(--muted);font-size:0.72rem">⚠️ CoastFIRE means you <em>don't need</em> to keep working — the choice to invest more is purely optional upside.</span>`;
     document.getElementById('ki-summary').innerHTML = summary;
@@ -1890,11 +1991,14 @@ function recalc() {
   }
 
   const cv = arr => arr.map((v, i) => v == null ? null : Math.round(toDisp(v, i)));
+  const hasRoth = rothBal > 0 || rothCont > 0;
   chart.data.labels   = ages;
   chart.data.datasets = [
-    // 1. Tax-Advantaged — COPPER (brand primary, filled area)
-    { label: 'Tax-Advantaged',          data: cv(taVals),           borderColor: '#c9965c', backgroundColor: 'rgba(201,150,92,0.14)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
-    // 2. Brokerage — TEAL (cool, distinct from copper/gold family)
+    // 1. Traditional (pre-tax) — COPPER (brand primary, filled area)
+    { label: 'Traditional (Pre-Tax)',    data: cv(taVals),           borderColor: '#c9965c', backgroundColor: 'rgba(201,150,92,0.14)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
+    // 2. Roth IRA / Roth 401k — SALMON (warm, tax-free cousin of Traditional)
+    ...(hasRoth ? [{ label: 'Roth (Tax-Free)',          data: cv(rothVals),         borderColor: '#e89b7b', backgroundColor: 'rgba(232,155,123,0.12)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 }] : []),
+    // 3. Brokerage — TEAL (cool, distinct from copper/gold family)
     { label: 'Brokerage (After-Tax)',   data: cv(effBrVals),        borderColor: '#4db6a8', backgroundColor: 'rgba(77,182,168,0.12)',  borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
     // 3. Total Portfolio — WHITE (neutral summary line)
     { label: 'Total Portfolio',         data: cv(effTotals),        borderColor: 'rgba(232,236,241,0.85)', borderWidth: 2, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,2] },
@@ -1916,7 +2020,7 @@ function recalc() {
   for (let i = 0; i <= yrs; i++) {
     const age = ages[i];
     const ph  = phases[i];
-    const ta  = toDisp(taVals[i],      i);
+    const ta  = toDisp(taVals[i] + (rothVals[i] || 0), i);  // Traditional + Roth combined for table display
     const eb  = toDisp(effBrVals[i],   i);
     const et  = toDisp(effTotals[i],   i);
     const ct  = toDisp(coastTargets[i],i);
@@ -1944,12 +2048,16 @@ function recalc() {
   }
 
   const items = [];
+  const todayBreakdown = [`${fmt(taBal)} Traditional`];
+  if (rothBal > 0) todayBreakdown.push(`${fmt(rothBal)} Roth`);
+  if (brBal > 0)   todayBreakdown.push(`${fmt(brBal)} brokerage`);
   items.push({ ico: '📍', title: `Today — Age ${cage}`,
     detail: [
-      `Portfolio: <strong>${fmt(effNow)}</strong> (${fmt(taBal)} tax-adv + ${fmt(brBal)} brokerage)`,
+      `Portfolio: <strong>${fmt(effNow)}</strong> (${todayBreakdown.join(' + ')})`,
       totalIncome > 0 ? `Household income: <strong>${fmt(totalIncome)}/yr</strong> · Savings rate: <strong>${pct(savingsRate)}</strong>` : '',
-      `Your contributions: <strong>${fmt(taCont + brCont + (spouseEnabled ? sTaCont : 0))}/yr</strong>` +
+      `Your contributions: <strong>${fmt(taCont + rothCont + brCont + (spouseEnabled ? sTaCont : 0))}/yr</strong>` +
         (totalMatch > 0 ? ` + employer match: <strong>${fmt(totalMatch)}/yr</strong> = <strong>${fmt(totalContribs)}/yr</strong> total` : ''),
+      retTaxRate > 0 ? `Tax model: <strong>${pct(retTaxRate)}</strong> on Traditional withdrawals · blended effective rate <strong>${pct(effTax)}</strong> (Roth share: ${pct(1-tradShare)})` : '',
       `CoastFIRE target today: <strong>${fmt(coastToday)}</strong>`,
     ].filter(Boolean).join('<br>')
   });
@@ -2182,6 +2290,7 @@ function updateAiPrompt(R) {
 
   const {
     cage, rage, taBal, brBal, taCont, brCont,
+    rothBal, rothCont, retTaxRate, tradShare, effTax,
     totalContribs, totalIncome, savingsRate,
     nom, inf, swr, totalMatch, netFIRE, coastToday, effNow, coastAge,
     nomSpend, penEnabled, pen, ssEnabled, ssPrimary,
@@ -2211,9 +2320,10 @@ function updateAiPrompt(R) {
   const situation = [
     `- Age: ${cage}${spouseEnabled ? ' (with spouse)' : ''}`,
     `- Target retirement age: ${rage}`,
-    `- Tax-advantaged balance: ${fmt0(taBal)}`,
+    `- Traditional (pre-tax) balance: ${fmt0(taBal)}`,
+    `- Roth (tax-free) balance: ${fmt0(rothBal)}`,
     `- Taxable/brokerage balance: ${fmt0(brBal)}`,
-    `- Annual contributions: ${fmt0(taCont)} tax-advantaged + ${fmt0(brCont)} brokerage = ${fmt0(totalContribs)} total` +
+    `- Annual contributions: ${fmt0(taCont)} Traditional + ${fmt0(rothCont)} Roth + ${fmt0(brCont)} brokerage = ${fmt0(totalContribs)} total` +
       (totalMatch > 0 ? ` (plus ${fmt0(totalMatch)} employer match)` : ''),
   ];
   if (totalIncome > 0) {
@@ -2235,6 +2345,7 @@ My assumptions:
 - Inflation: ${pctS(inf)}
 - Real return: ${pctS(realReturn)}
 - Safe withdrawal rate: ${pctS(swr)}
+- Effective retirement tax rate on Traditional withdrawals: ${pctS(retTaxRate)}${retTaxRate > 0 ? ` (blended: ${pctS(effTax)} after accounting for ${pctS(1-tradShare)} Roth share)` : ' (not modeled — spending already assumed post-tax)'}
 
 Calculator output:
 ${coastLine}
@@ -2326,8 +2437,11 @@ const INPUT_MAP = [
   { id:'n-ta-cont',      key:'taCont',        m:1   },
   { id:'n-match-rate',   key:'matchRate',     m:100 },
   { id:'n-match-cap',    key:'matchCap',      m:100 },
+  { id:'n-roth-bal',     key:'rothBal',       m:1   },
+  { id:'n-roth-cont',    key:'rothCont',      m:1   },
   { id:'n-br-bal',       key:'brBal',         m:1   },
   { id:'n-br-cont',      key:'brCont',        m:1   },
+  { id:'n-ret-tax',      key:'retTaxRate',    m:100 },
   { id:'n-div-drag',     key:'divDrag',       m:100 },
   { id:'n-ltcg',         key:'ltcg',          m:100 },
   { id:'n-pen',          key:'pen',           m:1   },
