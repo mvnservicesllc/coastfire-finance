@@ -1123,6 +1123,52 @@
     <canvas id="chart" height="230"></canvas>
   </div>
 
+  <div class="cw" id="income-breakdown-section">
+    <div class="ct">💰 Estimated Retirement Income <span style="font-size:0.7rem;color:var(--muted);font-weight:400">At age <span id="ib-rage">—</span> · year one of retirement</span></div>
+    <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
+      Where your spending comes from on day one of retirement. Portfolio withdrawal is grossed up for taxes so the <strong>net</strong> figure matches your target spending. Pension and Social Security are shown at their inflation-adjusted value at retirement.
+    </div>
+
+    <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:18px">
+      <div class="rb"><div class="lbl">Gross Income Needed</div><div class="val p" id="ib-gross">—</div><div class="sub">Pre-tax, all sources</div></div>
+      <div class="rb"><div class="lbl">Net Spending Target</div><div class="val g" id="ib-net">—</div><div class="sub">After-tax, what you live on</div></div>
+      <div class="rb"><div class="lbl">Portfolio Withdrawal</div><div class="val y" id="ib-port">—</div><div class="sub">Gross · per year</div></div>
+    </div>
+
+    <div class="bbar-wrap">
+      <div class="bbar-lbl">Income Composition (gross)</div>
+      <div class="bbar" id="ib-bar" style="height:14px">
+        <div id="ib-bar-port" style="background:var(--accent)"></div>
+        <div id="ib-bar-pen"  style="background:var(--yellow)"></div>
+        <div id="ib-bar-ss1"  style="background:var(--green)"></div>
+        <div id="ib-bar-ss2"  style="background:#7ba8d4"></div>
+      </div>
+      <div class="bbar-key">
+        <span><span style="color:var(--accent)">■</span> Portfolio: <strong id="ib-key-port">—</strong></span>
+        <span id="ib-key-pen-wrap"  style="display:none"><span style="color:var(--yellow)">■</span> Pension: <strong id="ib-key-pen">—</strong></span>
+        <span id="ib-key-ss1-wrap"  style="display:none"><span style="color:var(--green)">■</span> SS (you): <strong id="ib-key-ss1">—</strong></span>
+        <span id="ib-key-ss2-wrap"  style="display:none"><span style="color:#7ba8d4">■</span> SS (spouse): <strong id="ib-key-ss2">—</strong></span>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left">
+            <th style="padding:8px 10px;font-weight:600">Source</th>
+            <th style="padding:8px 10px;font-weight:600;text-align:right">Monthly</th>
+            <th style="padding:8px 10px;font-weight:600;text-align:right">Annual</th>
+            <th style="padding:8px 10px;font-weight:600;text-align:right">% of gross</th>
+            <th style="padding:8px 10px;font-weight:600">Status at retirement</th>
+          </tr>
+        </thead>
+        <tbody id="ib-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="info-box" id="ib-footer" style="font-size:0.82rem;line-height:1.6;margin-top:14px"></div>
+  </div>
+
   <div class="cw" id="age59-section" style="display:none">
     <div class="ct">🔐 Portfolio at Age 59½ <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Penalty-free access</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
@@ -2242,6 +2288,196 @@ function recalc() {
   const keepBrDollarEl = document.getElementById('n-keep-br-dollar');
   if (keepBrDollarEl && document.activeElement !== keepBrDollarEl) {
     keepBrDollarEl.value = Math.round(keepBrAdd);
+  }
+
+  // ──────────────────────────────────────────────────────
+  //  ESTIMATED RETIREMENT INCOME BREAKDOWN
+  //  Shows the composition of income at retirement age:
+  //  portfolio withdrawal + pension + SS (primary & spouse).
+  // ──────────────────────────────────────────────────────
+  {
+    set('ib-rage', rage);
+
+    // Inflation factor helper: value "today's dollars" -> nominal at target age
+    const inflTo = (age) => Math.pow(1 + inf, Math.max(0, age - cage));
+
+    // Year-1-of-retirement values (nominal at rage). nomPension/nomSSPrimary/nomSSSpouse
+    // from runCalc are already zeroed-out for sources not yet started at rage.
+    const penAtRage = nomPension;      // 0 if pension not yet started
+    const ss1AtRage = nomSSPrimary;    // 0 if primary SS not yet started
+    const ss2AtRage = nomSSSpouse;     // 0 if spouse SS not yet started
+    const offsetsAtRage = penAtRage + ss1AtRage + ss2AtRage;
+
+    // Portfolio withdrawal needed to fill the gap (net), then gross up for taxes.
+    const netFromPortfolio  = Math.max(nomSpend - offsetsAtRage, 0);
+    const taxGrossUp        = (effTax > 0 && effTax < 1) ? 1 / (1 - effTax) : 1;
+    const grossFromPortfolio = netFromPortfolio * taxGrossUp;
+    const grossTotal        = grossFromPortfolio + offsetsAtRage;
+
+    // Display-mode conversion — these values are at year `yrs` (retirement).
+    const dRetAmt = v => toDisp(v, yrs);
+    set('ib-gross', fmt(dRetAmt(grossTotal))       + '/yr');
+    set('ib-net',   fmt(dRetAmt(nomSpend))         + '/yr');
+    set('ib-port',  fmt(dRetAmt(grossFromPortfolio)) + '/yr');
+
+    // Stacked bar widths (by % of gross income)
+    const pctOf = (v) => grossTotal > 0 ? (v / grossTotal * 100) : 0;
+    const wPort = pctOf(grossFromPortfolio);
+    const wPen  = pctOf(penAtRage);
+    const wSs1  = pctOf(ss1AtRage);
+    const wSs2  = pctOf(ss2AtRage);
+    document.getElementById('ib-bar-port').style.width = wPort.toFixed(2) + '%';
+    document.getElementById('ib-bar-pen').style.width  = wPen.toFixed(2)  + '%';
+    document.getElementById('ib-bar-ss1').style.width  = wSs1.toFixed(2)  + '%';
+    document.getElementById('ib-bar-ss2').style.width  = wSs2.toFixed(2)  + '%';
+
+    // Bar legend key
+    set('ib-key-port', fmt(dRetAmt(grossFromPortfolio)) + '/yr (' + wPort.toFixed(0) + '%)');
+    const keyPenEl = document.getElementById('ib-key-pen-wrap');
+    if (penEnabled && pen > 0) {
+      keyPenEl.style.display = '';
+      set('ib-key-pen', penAtRage > 0
+        ? fmt(dRetAmt(penAtRage)) + '/yr (' + wPen.toFixed(0) + '%)'
+        : 'starts at ' + pAge);
+    } else {
+      keyPenEl.style.display = 'none';
+    }
+    const keySs1El = document.getElementById('ib-key-ss1-wrap');
+    if (ssEnabled && ssPrimary > 0) {
+      keySs1El.style.display = '';
+      set('ib-key-ss1', ss1AtRage > 0
+        ? fmt(dRetAmt(ss1AtRage)) + '/yr (' + wSs1.toFixed(0) + '%)'
+        : 'starts at ' + ssAge);
+    } else {
+      keySs1El.style.display = 'none';
+    }
+    const keySs2El = document.getElementById('ib-key-ss2-wrap');
+    if (ssEnabled && ssSpouseEnabled && ssSpouse > 0) {
+      keySs2El.style.display = '';
+      set('ib-key-ss2', ss2AtRage > 0
+        ? fmt(dRetAmt(ss2AtRage)) + '/yr (' + wSs2.toFixed(0) + '%)'
+        : 'starts at ' + ssSpouseAge);
+    } else {
+      keySs2El.style.display = 'none';
+    }
+
+    // Table rows
+    const tbody = document.getElementById('ib-tbody');
+    const rows = [];
+    const pushRow = (src, monthly, annual, pctVal, status, boldStatus = false) => {
+      const mo = monthly != null ? fmt(dRetAmt(monthly)) : '—';
+      const yr = annual  != null ? fmt(dRetAmt(annual))  : '—';
+      const pcStr = pctVal != null ? pctVal.toFixed(1) + '%' : '—';
+      rows.push(
+        `<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">` +
+          `<td style="padding:8px 10px">${src}</td>` +
+          `<td style="padding:8px 10px;text-align:right;color:var(--text);font-variant-numeric:tabular-nums">${mo}</td>` +
+          `<td style="padding:8px 10px;text-align:right;color:var(--text);font-variant-numeric:tabular-nums">${yr}</td>` +
+          `<td style="padding:8px 10px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums">${pcStr}</td>` +
+          `<td style="padding:8px 10px;color:${boldStatus ? 'var(--yellow)' : 'var(--muted)'};font-size:0.8rem">${status}</td>` +
+        `</tr>`
+      );
+    };
+
+    pushRow('<strong style="color:var(--accent)">📊 Portfolio</strong>',
+      grossFromPortfolio / 12, grossFromPortfolio, wPort,
+      'Active from day 1 · gross of tax');
+
+    if (penEnabled && pen > 0) {
+      if (penAtRage > 0) {
+        pushRow('<strong style="color:var(--yellow)">🎯 Pension</strong>',
+          penAtRage / 12, penAtRage, wPen,
+          `Active (started age ${pAge})`);
+      } else {
+        const penAtStart = cola ? pen * inflTo(pAge) : pen;
+        pushRow('<strong style="color:var(--yellow)">🎯 Pension</strong>',
+          0, 0, 0,
+          `Starts at age ${pAge} → ${fmt(toDisp(penAtStart, pAge - cage))}/yr`, true);
+      }
+    }
+
+    if (ssEnabled && ssPrimary > 0) {
+      if (ss1AtRage > 0) {
+        pushRow('<strong style="color:var(--green)">🏛️ Social Security (you)</strong>',
+          ss1AtRage / 12, ss1AtRage, wSs1,
+          `Active (started age ${ssAge})`);
+      } else {
+        const ss1AtStart = ssPrimaryAnnual * inflTo(ssAge);
+        pushRow('<strong style="color:var(--green)">🏛️ Social Security (you)</strong>',
+          0, 0, 0,
+          `Starts at age ${ssAge} → ${fmt(toDisp(ss1AtStart, ssAge - cage))}/yr`, true);
+      }
+    }
+
+    if (ssEnabled && ssSpouseEnabled && ssSpouse > 0) {
+      if (ss2AtRage > 0) {
+        pushRow('<strong style="color:#7ba8d4">🏛️ Social Security (spouse)</strong>',
+          ss2AtRage / 12, ss2AtRage, wSs2,
+          `Active (started age ${ssSpouseAge})`);
+      } else {
+        const ss2AtStart = ssSpouseAnnual * inflTo(ssSpouseAge);
+        pushRow('<strong style="color:#7ba8d4">🏛️ Social Security (spouse)</strong>',
+          0, 0, 0,
+          `Starts at age ${ssSpouseAge} → ${fmt(toDisp(ss2AtStart, ssSpouseAge - cage))}/yr`, true);
+      }
+    }
+
+    // Totals row
+    rows.push(
+      `<tr style="border-top:2px solid var(--border);background:rgba(201,150,92,0.04)">` +
+        `<td style="padding:10px;font-weight:700;color:var(--text)">Total Gross Income</td>` +
+        `<td style="padding:10px;text-align:right;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums">${fmt(dRetAmt(grossTotal/12))}</td>` +
+        `<td style="padding:10px;text-align:right;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums">${fmt(dRetAmt(grossTotal))}</td>` +
+        `<td style="padding:10px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums">100%</td>` +
+        `<td style="padding:10px;color:var(--muted);font-size:0.8rem">Pre-tax total at age ${rage}</td>` +
+      `</tr>`
+    );
+    tbody.innerHTML = rows.join('');
+
+    // Footer: bridge-the-gap narrative + "stable state" income once all sources active
+    let footer = '';
+
+    // Identify the latest-starting enabled source that hasn't kicked in by rage
+    const deferred = [];
+    if (penEnabled && pen > 0 && pAge > rage) deferred.push({ name: 'pension', age: pAge });
+    if (ssEnabled  && ssPrimary > 0 && ssAge > rage) deferred.push({ name: 'SS (you)', age: ssAge });
+    if (ssEnabled  && ssSpouseEnabled && ssSpouse > 0 && ssSpouseAge > rage) deferred.push({ name: 'SS (spouse)', age: ssSpouseAge });
+
+    if (deferred.length > 0) {
+      const stableAge = Math.max(...deferred.map(d => d.age), rage);
+      // Compute gross income at stableAge: all sources now active, each inflated to their start age
+      const penStable = penEnabled && pen > 0
+        ? (cola ? pen * inflTo(pAge) * Math.pow(1 + inf, stableAge - Math.max(pAge, rage)) : pen)
+        : 0;
+      const ss1Stable = ssEnabled && ssPrimary > 0
+        ? ssPrimaryAnnual * inflTo(Math.max(ssAge, rage)) * Math.pow(1 + inf, stableAge - Math.max(ssAge, rage))
+        : 0;
+      const ss2Stable = ssEnabled && ssSpouseEnabled && ssSpouse > 0
+        ? ssSpouseAnnual * inflTo(Math.max(ssSpouseAge, rage)) * Math.pow(1 + inf, stableAge - Math.max(ssSpouseAge, rage))
+        : 0;
+      const offsetsStable = penStable + ss1Stable + ss2Stable;
+      const spendStable   = (S.spend || 0) * inflTo(stableAge);
+      const netFromPortStable  = Math.max(spendStable - offsetsStable, 0);
+      const grossFromPortStable = netFromPortStable * taxGrossUp;
+      const grossTotalStable    = grossFromPortStable + offsetsStable;
+      const stableIdx = stableAge - cage;
+
+      const names = deferred.map(d => `${d.name} at ${d.age}`).join(', ');
+      footer  = `⏳ <strong>${names}</strong> kick${deferred.length === 1 ? 's' : ''} in after retirement — until then, your portfolio shoulders the full spending gap. `;
+      footer += `Once all sources are active at <strong>age ${stableAge}</strong>, your income mix shifts to roughly <strong>${fmt(toDisp(grossTotalStable, stableIdx))}/yr gross</strong> `;
+      footer += `(portfolio: ${fmt(toDisp(grossFromPortStable, stableIdx))}, other: ${fmt(toDisp(offsetsStable, stableIdx))}). `;
+      const reduction = grossFromPortfolio - grossFromPortStable;
+      if (reduction > 0) {
+        footer += `That reduces the portfolio draw by <strong>${fmt(toDisp(reduction, stableIdx))}/yr</strong> — big SWR relief in the later years.`;
+      }
+    } else if (offsetsAtRage > 0) {
+      const offsetPct = pctOf(offsetsAtRage);
+      footer = `✅ All income sources are active at retirement. Pension + Social Security covers <strong>${offsetPct.toFixed(0)}%</strong> of your gross income need — your portfolio only has to generate the remaining <strong>${fmt(dRetAmt(grossFromPortfolio))}/yr</strong>.`;
+    } else {
+      footer = `Your portfolio covers <strong>100%</strong> of retirement income in this scenario. Adding a pension or projecting Social Security (in the Results section below) can meaningfully reduce how much you need to save.`;
+    }
+
+    document.getElementById('ib-footer').innerHTML = footer;
   }
 
   // ──────────────────────────────────────────────────────
