@@ -910,6 +910,13 @@
             </div>
             <label class="sw"><input type="checkbox" class="g" id="sw-cola" checked onchange="recalc()"><span class="sw-track"></span></label>
           </div>
+          <div class="sw-row">
+            <div>
+              <div>Taxable</div>
+              <div class="sw-row-sub">Off = after-tax annuity or tax-exempt pension (delivered as net cash)</div>
+            </div>
+            <label class="sw"><input type="checkbox" class="g" id="sw-pen-taxable" checked onchange="recalc()"><span class="sw-track"></span></label>
+          </div>
         </div>
       </div>
     </div>
@@ -991,6 +998,64 @@
           </div>
           <div class="info-box info-box-g" id="ss-preview">
             <div id="ss-preview-text">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OTHER INCOME ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('oi')">
+      <span class="acc-title">💵 Other Income</span>
+      <span class="acc-arrow" id="arr-oi">▶</span>
+    </div>
+    <div class="acc-body" id="body-oi">
+      <div class="acc-inner">
+        <div class="sw-row">
+          <div>
+            <div>Include Other Recurring Income</div>
+            <div class="sw-row-sub">Rental, royalties, part-time work, trust distributions, etc.</div>
+          </div>
+          <label class="sw"><input type="checkbox" class="p" id="sw-oi" onchange="recalc()"><span class="sw-track"></span></label>
+        </div>
+        <div id="oi-block" style="display:none">
+          <div class="field">
+            <label class="field-label">Annual Other Income (Today's $)</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-oi" min="0" max="500000" value="0" step="500" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-oi',500)">▲</button>
+                <button onclick="step('n-oi',-500)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">Recurring passive/semi-passive income. One-time windfalls don't belong here.</div>
+          </div>
+          <div class="field">
+            <label class="field-label">Income Starts at Age</label>
+            <div class="field-wrap y">
+              <input type="number" id="n-oi-age" min="30" max="90" value="60" step="1" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-oi-age',1)">▲</button>
+                <button onclick="step('n-oi-age',-1)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">Typically your retirement age — but rental income can start earlier.</div>
+          </div>
+          <div class="sw-row">
+            <div>
+              <div>COLA — Inflation-Adjusted</div>
+              <div class="sw-row-sub">On = keeps up with inflation (typical for rents). Off = fixed nominal.</div>
+            </div>
+            <label class="sw"><input type="checkbox" class="g" id="sw-oi-cola" checked onchange="recalc()"><span class="sw-track"></span></label>
+          </div>
+          <div class="sw-row">
+            <div>
+              <div>Taxable</div>
+              <div class="sw-row-sub">Off = tax-free (e.g. muni bond coupons, Roth-funded annuity, HSA-qualified)</div>
+            </div>
+            <label class="sw"><input type="checkbox" class="g" id="sw-oi-taxable" checked onchange="recalc()"><span class="sw-track"></span></label>
           </div>
         </div>
       </div>
@@ -1129,7 +1194,7 @@
   <div class="cw" id="income-breakdown-section">
     <div class="ct">💰 Estimated Retirement Income <span style="font-size:0.7rem;color:var(--muted);font-weight:400">At age <span id="ib-rage">—</span> · year one of retirement</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      Where your spending comes from on day one of retirement. All income sources — portfolio withdrawal, pension, and Social Security — are treated as <strong>pre-tax</strong> and taxed at your blended retirement rate. Your net spending target is what's left after tax on the full total.
+      Where your spending comes from on day one of retirement. Portfolio withdrawals and Social Security are treated as <strong>pre-tax</strong> and taxed at your blended retirement rate. <strong>Pension</strong> and <strong>Other Income</strong> each have a Taxable toggle — switch off for tax-free streams (after-tax annuities, muni bond coupons, HSA-qualified, etc.).
     </div>
 
     <div class="bbar-lbl" style="margin-bottom:6px">Portfolio balance at retirement</div>
@@ -1152,18 +1217,20 @@
     </div>
 
     <div class="bbar-wrap">
-      <div class="bbar-lbl">Income Composition <span style="text-transform:none;font-weight:400;opacity:0.8">· all sources pre-tax</span></div>
+      <div class="bbar-lbl">Income Composition <span style="text-transform:none;font-weight:400;opacity:0.8">· face-value of each source</span></div>
       <div class="bbar" id="ib-bar" style="height:14px">
         <div id="ib-bar-port" style="background:var(--accent)"></div>
         <div id="ib-bar-pen"  style="background:var(--yellow)"></div>
         <div id="ib-bar-ss1"  style="background:var(--green)"></div>
         <div id="ib-bar-ss2"  style="background:#7ba8d4"></div>
+        <div id="ib-bar-oi"   style="background:#b38ad9"></div>
       </div>
       <div class="bbar-key">
         <span><span style="color:var(--accent)">■</span> Portfolio: <strong id="ib-key-port">—</strong></span>
         <span id="ib-key-pen-wrap"  style="display:none"><span style="color:var(--yellow)">■</span> Pension: <strong id="ib-key-pen">—</strong></span>
         <span id="ib-key-ss1-wrap"  style="display:none"><span style="color:var(--green)">■</span> SS (you): <strong id="ib-key-ss1">—</strong></span>
         <span id="ib-key-ss2-wrap"  style="display:none"><span style="color:#7ba8d4">■</span> SS (spouse): <strong id="ib-key-ss2">—</strong></span>
+        <span id="ib-key-oi-wrap"   style="display:none"><span style="color:#b38ad9">■</span> Other Income: <strong id="ib-key-oi">—</strong></span>
       </div>
     </div>
 
@@ -1186,7 +1253,7 @@
 
     <div style="font-size:0.74rem;color:var(--muted);margin-top:12px;line-height:1.6;padding:10px 12px;background:rgba(255,255,255,0.02);border-left:2px solid var(--border);border-radius:4px">
       <strong style="color:var(--text)">📋 Tax treatment note.</strong>
-      All income at retirement — portfolio withdrawal, pension, and Social Security — is treated as <strong>pre-tax</strong> and taxed at your blended retirement rate (from the Tax-Advantaged tab). So Total Income × (1 − tax) = Net Spending. This is a <strong>conservative</strong> assumption because in reality SS is only 0–85% federally taxable depending on combined income, and some pensions have after-tax basis or are exempt at the state level. If your actual tax exposure is lower, your required FIRE number is lower too — but planning to the conservative side builds in a safety margin. The Net FIRE # and CoastFIRE Target in the Results section use this same assumption.
+      By default, portfolio withdrawals, pension, Other Income, and Social Security are treated as <strong>pre-tax</strong> and taxed at your blended retirement rate (from the Tax-Advantaged tab). Both <strong>Pension</strong> and <strong>Other Income</strong> have a <strong>Taxable toggle</strong> — switch Off to treat the stream as <strong>tax-free net cash</strong> (e.g. after-tax annuity, tax-exempt pension, muni bond coupons, HSA-qualified withdrawals). Tax-free streams reduce your net spending need dollar-for-dollar before gross-up, which lowers your required FIRE number. SS is federally taxable on 0–85% of the benefit depending on combined income, so treating it as fully pre-tax is a <strong>conservative</strong> safety margin. The Net FIRE # and CoastFIRE Target in the Results section use this same model.
     </div>
   </div>
 
@@ -1689,9 +1756,10 @@ const S = {
   rothBal: 0, rothCont: 0,
   brBal: 0, brCont: 0, divDrag: 0.003, ltcg: 0.15,
   retTaxRate: 0,
-  penEnabled: false, pen: 24000, pAge: 65, cola: true,
+  penEnabled: false, pen: 24000, pAge: 65, cola: true, penTaxable: true,
   ssEnabled: false, ssPrimary: 2000, ssAge: 67,
   ssSpouseEnabled: false, ssSpouse: 1500, ssSpouseAge: 67,
+  oiEnabled: false, oi: 0, oiAge: 60, oiCola: true, oiTaxable: true,
   spend: 60000, nom: 0.07, inf: 0.03, swr: 0.04,
   keepInvestPctRet: 1.0, keepInvestPctBr: 1.0,
 };
@@ -1762,6 +1830,8 @@ bindNum('n-div-drag',    'divDrag',      v => v/100);
 bindNum('n-ltcg',        'ltcg',         v => v/100);
 bindNum('n-pen',         'pen',          null);
 bindNum('n-page',        'pAge',         null);
+bindNum('n-oi',          'oi',           null);
+bindNum('n-oi-age',      'oiAge',        null);
 bindNum('n-spend',       'spend',        null);
 bindNum('n-nom',         'nom',          v => v/100);
 bindNum('n-inf',         'inf',          v => v/100);
@@ -1810,6 +1880,10 @@ bindNum('n-ss-spouse-age', 'ssSpouseAge',null);
 
 document.getElementById('sw-pen').addEventListener('change',  e => { S.penEnabled = e.target.checked; recalc(); });
 document.getElementById('sw-cola').addEventListener('change', e => { S.cola       = e.target.checked; recalc(); });
+document.getElementById('sw-pen-taxable').addEventListener('change', e => { S.penTaxable = e.target.checked; recalc(); });
+document.getElementById('sw-oi').addEventListener('change',         e => { S.oiEnabled  = e.target.checked; document.getElementById('oi-block').style.display = S.oiEnabled ? '' : 'none'; recalc(); });
+document.getElementById('sw-oi-cola').addEventListener('change',    e => { S.oiCola     = e.target.checked; recalc(); });
+document.getElementById('sw-oi-taxable').addEventListener('change', e => { S.oiTaxable  = e.target.checked; recalc(); });
 
 function toggleSpouse() {
   S.spouseEnabled = document.getElementById('sw-spouse').checked;
@@ -1972,8 +2046,9 @@ function runCalc() {
     rothBal, rothCont,
     brBal, brCont, divDrag, ltcg,
     retTaxRate,
-    penEnabled, pen, pAge, cola,
+    penEnabled, pen, pAge, cola, penTaxable,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
+    oiEnabled, oi, oiAge, oiCola, oiTaxable,
     spend, nom, inf, swr,
     keepInvestPctRet, keepInvestPctBr,
   } = S;
@@ -2015,12 +2090,26 @@ function runCalc() {
     }
   }
 
-  const totalNomOffset = nomPension + nomSS;
-  // `netSpend` is kept for back-compat exports. Under the current (conservative)
-  // model we treat pension + SS as PRE-TAX income (taxed at the same blended
-  // retirement rate as the portfolio), so this variable is no longer used
-  // inside netFIRE — see below.
-  const netSpend   = Math.max(nomSpend - totalNomOffset, 0);
+  // Split pension into taxable (pre-tax) vs non-taxable (net cash) based on toggle.
+  const nomPensionTaxable    = penTaxable ? nomPension : 0;
+  const nomPensionNonTaxable = penTaxable ? 0 : nomPension;
+
+  // Other Income (rental, royalties, part-time, muni coupons, etc.)
+  let nomOtherIncome = 0;
+  if (oiEnabled && oi > 0 && oiAge <= rage) {
+    nomOtherIncome = oiCola ? oi * Math.pow(1 + inf, rage - cage) : oi;
+  }
+  const nomOtherTaxable    = oiTaxable ? nomOtherIncome : 0;
+  const nomOtherNonTaxable = oiTaxable ? 0 : nomOtherIncome;
+
+  // `totalNomOffset` = pre-tax offsets only (taxable pension + SS + taxable other).
+  const totalNomOffset = nomPensionTaxable + nomSS + nomOtherTaxable;
+  // `totalNomIncome`  = all retirement income dollars (for display / "% of total" math).
+  const totalNomIncome = nomPension + nomSS + nomOtherIncome;
+  // Sum of non-taxable streams (reduce net spend need dollar-for-dollar).
+  const totalNonTaxable = nomPensionNonTaxable + nomOtherNonTaxable;
+  // `netSpend` kept for back-compat exports.
+  const netSpend   = Math.max(nomSpend - totalNomIncome, 0);
 
   // Estimate Traditional share of the retirement-account portfolio at retirement.
   // Uses a simple "keep investing" annuity projection (conservative ceiling on both buckets;
@@ -2040,11 +2129,16 @@ function runCalc() {
   const effTax = Math.min(Math.max(tradShare * retTaxRate, 0), 0.95);
   const taxGrossUp = 1 / (1 - effTax);
 
-  // Pre-tax total spending need: if you live on `nomSpend` net and face `effTax`
-  // blended on ALL income sources, you need `nomSpend / (1 - effTax)` pre-tax.
-  const grossSpend = nomSpend * taxGrossUp;
+  // Non-taxable income streams (after-tax annuity / tax-exempt pension / muni
+  // bond coupons / etc.) are delivered as net cash, so they reduce the net
+  // spending need directly — dollar-for-dollar — before gross-up. Remaining
+  // taxable need is grossed up for blended income tax.
+  const taxableNeedNet   = Math.max(nomSpend - totalNonTaxable, 0);
+  const taxableNeedGross = taxableNeedNet * taxGrossUp;
+  // Pre-tax total "need" shown on FIRE lines (portfolio + taxable offsets).
+  const grossSpend = taxableNeedGross;
   const grossFIRE  = grossSpend / swr;                                          // target if no pen/SS
-  // Pension + SS are pre-tax offsets against the gross spend requirement.
+  // Taxable pension + SS are pre-tax offsets against the gross spend requirement.
   // Whatever remains must come (pre-tax) from the portfolio.
   const netFIRE    = Math.max((grossSpend - totalNomOffset) / swr, 0);
   const coastToday = netFIRE / Math.pow(1 + nom, yrs);
@@ -2146,19 +2240,28 @@ function runCalc() {
   // Per-year gross-portfolio-draw calculator (accounts for pension/SS timing,
   // inflation-adjusted spending, and the blended tax gross-up).
   const grossDrawAt = (age) => {
-    const pen_y = (penEnabled && pen > 0 && pAge <= age)
+    const pen_y_raw = (penEnabled && pen > 0 && pAge <= age)
       ? (cola ? pen * Math.pow(1 + inf, age - cage) : pen)
       : 0;
+    const penTax_y    = penTaxable ? pen_y_raw : 0;
+    const penNonTax_y = penTaxable ? 0 : pen_y_raw;
     const ss1_y = (ssEnabled && ssPrimary > 0 && ssAge <= age)
       ? ssPrimaryAnnual * Math.pow(1 + inf, age - cage)
       : 0;
     const ss2_y = (ssEnabled && ssSpouseEnabled && ssSpouse > 0 && ssSpouseAge <= age)
       ? ssSpouseAnnual * Math.pow(1 + inf, age - cage)
       : 0;
-    const offsets_y    = pen_y + ss1_y + ss2_y;
-    const spend_y      = nomSpend * Math.pow(1 + inf, age - rage);
-    const grossTotal_y = spend_y * taxGrossUp;
-    return Math.max(grossTotal_y - offsets_y, 0);
+    const oi_y_raw = (oiEnabled && oi > 0 && oiAge <= age)
+      ? (oiCola ? oi * Math.pow(1 + inf, age - cage) : oi)
+      : 0;
+    const oiTax_y    = oiTaxable ? oi_y_raw : 0;
+    const oiNonTax_y = oiTaxable ? 0 : oi_y_raw;
+    const taxOffsets_y    = penTax_y + ss1_y + ss2_y + oiTax_y;
+    const nonTaxOffsets_y = penNonTax_y + oiNonTax_y;
+    const spend_y         = nomSpend * Math.pow(1 + inf, age - rage);
+    const taxableNeedNet_y   = Math.max(spend_y - nonTaxOffsets_y, 0);
+    const taxableNeedGross_y = taxableNeedNet_y * taxGrossUp;
+    return Math.max(taxableNeedGross_y - taxOffsets_y, 0);
   };
 
   if (horizonYears > yrs) {
@@ -2222,10 +2325,13 @@ function runCalc() {
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
     keepInvestPctRet, keepInvestPctBr, keepRetAdd, keepBrAdd, keepTotalAdd,
-    nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
+    nomSpend, nomPension, nomPensionTaxable, nomPensionNonTaxable,
+    nomOtherIncome, nomOtherTaxable, nomOtherNonTaxable, totalNonTaxable,
+    netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset, totalNomIncome,
     ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
-    penEnabled, pen, pAge, cola,
+    penEnabled, pen, pAge, cola, penTaxable,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
+    oiEnabled, oi, oiAge, oiCola, oiTaxable,
     combinedTaBal, combinedRothBal,
     ages, taVals, rothVals, brVals, effBrVals, effTotals, coastTargets, phases, coastPath,
     keepInvestPath, keepBrPath, keepFinalTotal, keepBrFinal, extraAtRetirement,
@@ -2265,10 +2371,13 @@ function recalc() {
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
     keepInvestPctRet, keepInvestPctBr, keepRetAdd, keepBrAdd, keepTotalAdd,
-    nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
+    nomSpend, nomPension, nomPensionTaxable, nomPensionNonTaxable,
+    nomOtherIncome, nomOtherTaxable, nomOtherNonTaxable, totalNonTaxable,
+    netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset, totalNomIncome,
     ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
-    penEnabled, pen, pAge, cola,
+    penEnabled, pen, pAge, cola, penTaxable,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
+    oiEnabled, oi, oiAge, oiCola, oiTaxable,
     combinedTaBal, combinedRothBal,
     ages, taVals, rothVals, brVals, effBrVals, effTotals, coastTargets, phases, coastPath,
     keepInvestPath, keepBrPath, keepFinalTotal, keepBrFinal, extraAtRetirement,
@@ -2279,6 +2388,7 @@ function recalc() {
   const dRet = v => toDisp(v, yrs);
   const hasPen = penEnabled && nomPension > 0;
   const hasSS  = ssEnabled  && nomSS > 0;
+  const hasOI  = oiEnabled  && nomOtherIncome > 0;
 
   set('r-fire-g',    fmt(dRet(grossFIRE)));
   set('r-fire-n',    fmt(dRet(netFIRE)));
@@ -2292,17 +2402,18 @@ function recalc() {
 
   const penOffEl  = document.getElementById('r-pen-off');
   const penOffSub = document.getElementById('r-pen-off-sub');
-  if (hasPen || hasSS) {
-    set('r-pen-off', fmt(dRet(totalNomOffset)) + '/yr');
+  if (hasPen || hasSS || hasOI) {
+    set('r-pen-off', fmt(dRet(totalNomIncome)) + '/yr');
     penOffEl.className = 'val y';
     const parts = [];
-    if (hasPen) parts.push('Pension: ' + fmt(dRet(nomPension)) + '/yr');
-    if (hasSS)  parts.push('SS: '      + fmt(dRet(nomSS))      + '/yr');
+    if (hasPen) parts.push('Pension: ' + fmt(dRet(nomPension))      + '/yr' + (penTaxable ? '' : ' (tax-free)'));
+    if (hasSS)  parts.push('SS: '      + fmt(dRet(nomSS))           + '/yr');
+    if (hasOI)  parts.push('Other: '   + fmt(dRet(nomOtherIncome))  + '/yr' + (oiTaxable  ? '' : ' (tax-free)'));
     penOffSub.textContent = parts.join(' · ');
   } else {
     set('r-pen-off', 'None');
     penOffEl.className = 'val w';
-    penOffSub.textContent = 'Pension + SS / yr';
+    penOffSub.textContent = 'Pension + SS + Other / yr';
   }
 
   if (ssEnabled) {
@@ -2450,18 +2561,29 @@ function recalc() {
 
     // Year-1-of-retirement values (nominal at rage). nomPension/nomSSPrimary/nomSSSpouse
     // from runCalc are already zeroed-out for sources not yet started at rage.
-    const penAtRage = nomPension;      // 0 if pension not yet started
+    const penAtRage       = nomPension;      // 0 if pension not yet started
+    const penTaxAtRage    = penTaxable ? penAtRage : 0;
+    const penNonTaxAtRage = penTaxable ? 0 : penAtRage;
     const ss1AtRage = nomSSPrimary;    // 0 if primary SS not yet started
     const ss2AtRage = nomSSSpouse;     // 0 if spouse SS not yet started
-    const offsetsAtRage = penAtRage + ss1AtRage + ss2AtRage;
+    const oiAtRage       = nomOtherIncome;  // 0 if not yet started
+    const oiTaxAtRage    = oiTaxable ? oiAtRage : 0;
+    const oiNonTaxAtRage = oiTaxable ? 0 : oiAtRage;
+    const offsetsAtRage    = penAtRage + ss1AtRage + ss2AtRage + oiAtRage;   // all sources (display)
+    const taxableOffsets   = penTaxAtRage + ss1AtRage + ss2AtRage + oiTaxAtRage; // pre-tax offsets (math)
+    const nonTaxableOffsets = penNonTaxAtRage + oiNonTaxAtRage;
 
-    // All income (portfolio, pension, SS) is treated as pre-tax. User's
-    // net spending target = nomSpend; total pre-tax need = nomSpend / (1 - effTax).
-    // Portfolio fills whatever pension + SS don't cover.
+    // Model: portfolio + taxable sources are PRE-TAX; non-taxable sources are NET CASH.
+    // Required net: nomSpend. Non-taxable streams reduce net need dollar-for-dollar.
+    // Remaining net need must come from (portfolio + taxable offsets) × (1 - effTax).
     const taxGrossUp         = (effTax > 0 && effTax < 1) ? 1 / (1 - effTax) : 1;
-    const grossTotal         = nomSpend * taxGrossUp;
-    const grossFromPortfolio = Math.max(grossTotal - offsetsAtRage, 0);
-    const totalTaxBill       = grossTotal - nomSpend;  // effTax × grossTotal, shown in footer
+    const taxableNeedNet     = Math.max(nomSpend - nonTaxableOffsets, 0);
+    const taxableNeedGross   = taxableNeedNet * taxGrossUp;
+    const grossFromPortfolio = Math.max(taxableNeedGross - taxableOffsets, 0);
+    // Total gross income = portfolio (pre-tax) + all income sources face value.
+    const grossTotal         = grossFromPortfolio + penAtRage + ss1AtRage + ss2AtRage + oiAtRage;
+    // Tax applies only to taxable sources (portfolio + taxable offsets).
+    const totalTaxBill       = grossTotal - nomSpend;
 
     // Display-mode conversion — these values are at year `yrs` (retirement).
     const dRetAmt = v => toDisp(v, yrs);
@@ -2471,9 +2593,13 @@ function recalc() {
     // Dynamically reflect the tax rate being applied
     const netSubEl = document.getElementById('ib-net-sub');
     if (netSubEl) {
-      netSubEl.textContent = effTax > 0
-        ? `= Total × (1 − ${(effTax * 100).toFixed(1)}%) after tax`
-        : 'No retirement tax rate set';
+      if (effTax <= 0) {
+        netSubEl.textContent = 'No retirement tax rate set';
+      } else if (nonTaxableOffsets > 0) {
+        netSubEl.textContent = `Taxable sources × (1 − ${(effTax * 100).toFixed(1)}%) + tax-free income`;
+      } else {
+        netSubEl.textContent = `= Total × (1 − ${(effTax * 100).toFixed(1)}%) after tax`;
+      }
     }
 
     // Stacked bar widths (by % of gross income)
@@ -2482,10 +2608,12 @@ function recalc() {
     const wPen  = pctOf(penAtRage);
     const wSs1  = pctOf(ss1AtRage);
     const wSs2  = pctOf(ss2AtRage);
+    const wOi   = pctOf(oiAtRage);
     document.getElementById('ib-bar-port').style.width = wPort.toFixed(2) + '%';
     document.getElementById('ib-bar-pen').style.width  = wPen.toFixed(2)  + '%';
     document.getElementById('ib-bar-ss1').style.width  = wSs1.toFixed(2)  + '%';
     document.getElementById('ib-bar-ss2').style.width  = wSs2.toFixed(2)  + '%';
+    document.getElementById('ib-bar-oi').style.width   = wOi.toFixed(2)   + '%';
 
     // Bar legend key
     set('ib-key-port', fmt(dRetAmt(grossFromPortfolio)) + '/yr (' + wPort.toFixed(0) + '%)');
@@ -2516,6 +2644,15 @@ function recalc() {
     } else {
       keySs2El.style.display = 'none';
     }
+    const keyOiEl = document.getElementById('ib-key-oi-wrap');
+    if (oiEnabled && oi > 0) {
+      keyOiEl.style.display = '';
+      set('ib-key-oi', oiAtRage > 0
+        ? fmt(dRetAmt(oiAtRage)) + '/yr (' + wOi.toFixed(0) + '%)'
+        : 'starts at ' + oiAge);
+    } else {
+      keyOiEl.style.display = 'none';
+    }
 
     // Table rows
     const tbody = document.getElementById('ib-tbody');
@@ -2540,15 +2677,18 @@ function recalc() {
       'Active from day 1 · gross of tax');
 
     if (penEnabled && pen > 0) {
+      const penLabel = penTaxable
+        ? '<strong style="color:var(--yellow)">🎯 Pension</strong> <span style="font-size:0.75rem;color:var(--muted);font-weight:400">(taxable)</span>'
+        : '<strong style="color:var(--yellow)">🎯 Pension / Annuity</strong> <span style="font-size:0.75rem;color:var(--green);font-weight:400">(tax-free)</span>';
       if (penAtRage > 0) {
-        pushRow('<strong style="color:var(--yellow)">🎯 Pension</strong>',
+        pushRow(penLabel,
           penAtRage / 12, penAtRage, wPen,
-          `Active (started age ${pAge})`);
+          `Active (started age ${pAge})${penTaxable ? '' : ' · net cash'}`);
       } else {
         const penAtStart = cola ? pen * inflTo(pAge) : pen;
-        pushRow('<strong style="color:var(--yellow)">🎯 Pension</strong>',
+        pushRow(penLabel,
           0, 0, 0,
-          `Starts at age ${pAge} → ${fmt(toDisp(penAtStart, pAge - cage))}/yr`, true);
+          `Starts at age ${pAge} → ${fmt(toDisp(penAtStart, pAge - cage))}/yr${penTaxable ? '' : ' (net)'}`, true);
       }
     }
 
@@ -2578,6 +2718,22 @@ function recalc() {
       }
     }
 
+    if (oiEnabled && oi > 0) {
+      const oiLabel = oiTaxable
+        ? '<strong style="color:#b38ad9">💵 Other Income</strong> <span style="font-size:0.75rem;color:var(--muted);font-weight:400">(taxable)</span>'
+        : '<strong style="color:#b38ad9">💵 Other Income</strong> <span style="font-size:0.75rem;color:var(--green);font-weight:400">(tax-free)</span>';
+      if (oiAtRage > 0) {
+        pushRow(oiLabel,
+          oiAtRage / 12, oiAtRage, wOi,
+          `Active (started age ${oiAge})${oiTaxable ? '' : ' · net cash'}`);
+      } else {
+        const oiAtStart = oiCola ? oi * inflTo(oiAge) : oi;
+        pushRow(oiLabel,
+          0, 0, 0,
+          `Starts at age ${oiAge} → ${fmt(toDisp(oiAtStart, oiAge - cage))}/yr${oiTaxable ? '' : ' (net)'}`, true);
+      }
+    }
+
     // Totals row (pre-tax) and derived net row
     rows.push(
       `<tr style="border-top:2px solid var(--border);background:rgba(201,150,92,0.04)">` +
@@ -2590,13 +2746,16 @@ function recalc() {
     );
     if (totalTaxBill > 0) {
       const taxPct = (effTax * 100).toFixed(1);
+      const taxNote = nonTaxableOffsets > 0
+        ? 'Applied to taxable sources only'
+        : 'Applied to full income';
       rows.push(
         `<tr style="border-bottom:1px solid rgba(255,255,255,0.04)">` +
           `<td style="padding:8px 10px;color:var(--muted)">Less: blended tax (${taxPct}%)</td>` +
           `<td style="padding:8px 10px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums">−${fmt(dRetAmt(totalTaxBill/12))}</td>` +
           `<td style="padding:8px 10px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums">−${fmt(dRetAmt(totalTaxBill))}</td>` +
           `<td style="padding:8px 10px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums">−${(totalTaxBill / grossTotal * 100).toFixed(1)}%</td>` +
-          `<td style="padding:8px 10px;color:var(--muted);font-size:0.8rem">Applied to full income</td>` +
+          `<td style="padding:8px 10px;color:var(--muted);font-size:0.8rem">${taxNote}</td>` +
         `</tr>`
       );
       rows.push(
@@ -2619,6 +2778,7 @@ function recalc() {
     if (penEnabled && pen > 0 && pAge > rage) deferred.push({ name: 'pension', age: pAge });
     if (ssEnabled  && ssPrimary > 0 && ssAge > rage) deferred.push({ name: 'SS (you)', age: ssAge });
     if (ssEnabled  && ssSpouseEnabled && ssSpouse > 0 && ssSpouseAge > rage) deferred.push({ name: 'SS (spouse)', age: ssSpouseAge });
+    if (oiEnabled  && oi > 0 && oiAge > rage) deferred.push({ name: 'other income', age: oiAge });
 
     if (deferred.length > 0) {
       const stableAge = Math.max(...deferred.map(d => d.age), rage);
@@ -2626,16 +2786,26 @@ function recalc() {
       const penStable = penEnabled && pen > 0
         ? (cola ? pen * inflTo(pAge) * Math.pow(1 + inf, stableAge - Math.max(pAge, rage)) : pen)
         : 0;
+      const penStableTax    = penTaxable ? penStable : 0;
+      const penStableNonTax = penTaxable ? 0 : penStable;
       const ss1Stable = ssEnabled && ssPrimary > 0
         ? ssPrimaryAnnual * inflTo(Math.max(ssAge, rage)) * Math.pow(1 + inf, stableAge - Math.max(ssAge, rage))
         : 0;
       const ss2Stable = ssEnabled && ssSpouseEnabled && ssSpouse > 0
         ? ssSpouseAnnual * inflTo(Math.max(ssSpouseAge, rage)) * Math.pow(1 + inf, stableAge - Math.max(ssSpouseAge, rage))
         : 0;
-      const offsetsStable = penStable + ss1Stable + ss2Stable;
-      const spendStable   = (S.spend || 0) * inflTo(stableAge);
-      const grossTotalStable    = spendStable * taxGrossUp;
-      const grossFromPortStable = Math.max(grossTotalStable - offsetsStable, 0);
+      const oiStable = oiEnabled && oi > 0
+        ? (oiCola ? oi * inflTo(oiAge) * Math.pow(1 + inf, stableAge - Math.max(oiAge, rage)) : oi)
+        : 0;
+      const oiStableTax    = oiTaxable ? oiStable : 0;
+      const oiStableNonTax = oiTaxable ? 0 : oiStable;
+      const offsetsStable        = penStable + ss1Stable + ss2Stable + oiStable;
+      const taxableOffsetsStable = penStableTax + ss1Stable + ss2Stable + oiStableTax;
+      const nonTaxStable         = penStableNonTax + oiStableNonTax;
+      const spendStable          = (S.spend || 0) * inflTo(stableAge);
+      const taxableNeedStable    = Math.max(spendStable - nonTaxStable, 0) * taxGrossUp;
+      const grossFromPortStable  = Math.max(taxableNeedStable - taxableOffsetsStable, 0);
+      const grossTotalStable     = grossFromPortStable + offsetsStable;
       const stableIdx = stableAge - cage;
 
       const names = deferred.map(d => `${d.name} at ${d.age}`).join(', ');
@@ -2648,7 +2818,12 @@ function recalc() {
       }
     } else if (offsetsAtRage > 0) {
       const offsetPct = pctOf(offsetsAtRage);
-      footer = `✅ All income sources are active at retirement. Pension + Social Security provides <strong>${offsetPct.toFixed(0)}%</strong> of your pre-tax retirement income — your portfolio only has to generate the remaining <strong>${fmt(dRetAmt(grossFromPortfolio))}/yr</strong> pre-tax. `;
+      const sources = [];
+      if (penAtRage > 0) sources.push('Pension');
+      if (ss1AtRage > 0 || ss2AtRage > 0) sources.push('Social Security');
+      if (oiAtRage > 0) sources.push('Other Income');
+      const sourcesLabel = sources.join(' + ');
+      footer = `✅ All income sources are active at retirement. ${sourcesLabel} provides <strong>${offsetPct.toFixed(0)}%</strong> of your retirement income — your portfolio only has to generate the remaining <strong>${fmt(dRetAmt(grossFromPortfolio))}/yr</strong> pre-tax. `;
       if (totalTaxBill > 0) {
         footer += `After an estimated ${fmt(dRetAmt(totalTaxBill))}/yr in taxes on the full income, you're left with ${fmt(dRetAmt(nomSpend))} to spend.`;
       }
@@ -3001,11 +3176,35 @@ function recalc() {
   });
 
   if (penEnabled && pen > 0 && pAge <= rage) {
-    items.push({ ico: '🎯', title: `Pension / Annuity — Starts Age ${pAge} <span class="tl-tag tag-y">${cola ? 'COLA' : 'Fixed'}</span>`,
+    const taxGrossUpForTl = (effTax > 0 && effTax < 1) ? 1 / (1 - effTax) : 1;
+    const fireReduction = penTaxable
+      ? nomPension / swr
+      : (nomPension * taxGrossUpForTl) / swr;
+    const taxTag = penTaxable
+      ? `<span class="tl-tag tag-y">Taxable</span>`
+      : `<span class="tl-tag tag-g">Tax-Free</span>`;
+    items.push({ ico: '🎯', title: `Pension / Annuity — Starts Age ${pAge} <span class="tl-tag tag-y">${cola ? 'COLA' : 'Fixed'}</span> ${taxTag}`,
       detail: [
-        `Income: <strong>${fmt(pen)}/yr</strong> today's dollars`,
+        `Income: <strong>${fmt(pen)}/yr</strong> today's dollars${penTaxable ? '' : ' (net cash)'}`,
         cola ? `At retirement (nominal): <strong>${fmt(dRet(nomPension))}/yr</strong>` : `Fixed nominal: <strong>${fmt(pen)}/yr</strong> (loses purchasing power)`,
-        `Reduces FIRE number by: <strong>${fmt(dRet(nomPension / swr))}</strong>`,
+        `Reduces FIRE number by: <strong>${fmt(dRet(fireReduction))}</strong>` + (penTaxable ? '' : ' <span style="color:var(--green)">(tax-free offset)</span>'),
+      ].join('<br>')
+    });
+  }
+
+  if (oiEnabled && oi > 0 && oiAge <= rage) {
+    const taxGrossUpForTl = (effTax > 0 && effTax < 1) ? 1 / (1 - effTax) : 1;
+    const oiFireReduction = oiTaxable
+      ? nomOtherIncome / swr
+      : (nomOtherIncome * taxGrossUpForTl) / swr;
+    const oiTaxTag = oiTaxable
+      ? `<span class="tl-tag tag-y">Taxable</span>`
+      : `<span class="tl-tag tag-g">Tax-Free</span>`;
+    items.push({ ico: '💵', title: `Other Income — Starts Age ${oiAge} <span class="tl-tag tag-y">${oiCola ? 'COLA' : 'Fixed'}</span> ${oiTaxTag}`,
+      detail: [
+        `Income: <strong>${fmt(oi)}/yr</strong> today's dollars${oiTaxable ? '' : ' (net cash)'}`,
+        oiCola ? `At retirement (nominal): <strong>${fmt(dRet(nomOtherIncome))}/yr</strong>` : `Fixed nominal: <strong>${fmt(oi)}/yr</strong> (loses purchasing power)`,
+        `Reduces FIRE number by: <strong>${fmt(dRet(oiFireReduction))}</strong>` + (oiTaxable ? '' : ' <span style="color:var(--green)">(tax-free offset)</span>'),
       ].join('<br>')
     });
   }
@@ -3054,11 +3253,12 @@ function recalc() {
     `Net FIRE number: <strong>${fmt(nd)}</strong>`,
     `Surplus / shortfall: <strong style="color:${fd >= nd ? 'var(--green)' : 'var(--red)'}">${fd >= nd ? '+' : ''}${fmt(fd - nd)}</strong>`,
   ];
-  if ((hasPen || hasSS) && totalNomOffset > 0) {
+  if ((hasPen || hasSS || hasOI) && totalNomIncome > 0) {
     const offParts = [];
-    if (hasPen) offParts.push(`Pension <strong>${fmt(dRet(nomPension))}/yr</strong>`);
+    if (hasPen) offParts.push(`Pension <strong>${fmt(dRet(nomPension))}/yr</strong>${penTaxable ? '' : ' <span style="color:var(--green);font-weight:400">(tax-free)</span>'}`);
     if (hasSS)  offParts.push(`SS <strong>${fmt(dRet(nomSS))}/yr</strong>`);
-    retirementDetails.push(`Income offsets: ${offParts.join(' + ')} = <strong>${fmt(dRet(totalNomOffset))}/yr</strong> of your <strong>${fmt(dRet(nomSpend))}/yr</strong> spending.`);
+    if (hasOI)  offParts.push(`Other <strong>${fmt(dRet(nomOtherIncome))}/yr</strong>${oiTaxable ? '' : ' <span style="color:var(--green);font-weight:400">(tax-free)</span>'}`);
+    retirementDetails.push(`Income offsets: ${offParts.join(' + ')} = <strong>${fmt(dRet(totalNomIncome))}/yr</strong> of your <strong>${fmt(dRet(nomSpend))}/yr</strong> spending.`);
   }
   items.push({ ico: '🏖️', title: `Full FIRE — Age ${rage} (${nowYear + yrs})`, detail: retirementDetails.join('<br>') });
 
@@ -3159,7 +3359,7 @@ function updateContextual(R) {
   };
 
   const { cage, coastAge, effNow, coastToday, brCont, brBal,
-          penEnabled, ssEnabled, savingsRate } = R;
+          penEnabled, ssEnabled, oiEnabled, savingsRate } = R;
 
   const alreadyCoast = effNow >= coastToday && coastToday > 0;
   const yearsToCoast = coastAge !== null ? Math.max(0, coastAge - cage) : null;
@@ -3187,8 +3387,8 @@ function updateContextual(R) {
   if (brCont > 0 || brBal > 0) {
     add('wealthfront', 'You have taxable savings — a HYSA is a better home for your emergency fund.');
   }
-  if (penEnabled || ssEnabled) {
-    add('empower', 'With pension/SS income streams, a unified dashboard helps you see the full picture.');
+  if (penEnabled || ssEnabled || oiEnabled) {
+    add('empower', 'With pension/SS/other income streams, a unified dashboard helps you see the full picture.');
   }
   if (typeof savingsRate === 'number' && savingsRate < 0.15) {
     add('ynab',       'Savings rate is tight — YNAB helps you find room in your budget without feeling squeezed.');
@@ -3232,8 +3432,9 @@ function updateAiPrompt(R) {
     sTaBal, sTaCont, sRothBal, sRothCont,
     totalContribs, totalIncome, savingsRate,
     nom, inf, swr, totalMatch, netFIRE, coastToday, effNow, coastAge,
-    nomSpend, penEnabled, pen, ssEnabled, ssPrimary,
+    nomSpend, penEnabled, pen, penTaxable, ssEnabled, ssPrimary,
     ssSpouseEnabled, ssSpouse, spouseEnabled,
+    oiEnabled, oi, oiTaxable,
   } = R;
 
   const fmt0 = n => '$' + Math.round(n).toLocaleString();
@@ -3276,7 +3477,8 @@ function updateAiPrompt(R) {
     situation.push(`- Household income: ${fmt0(totalIncome)}/yr · Savings rate: ${pctS(savingsRate)}`);
   }
   situation.push(`- Retirement spending target: ${fmt0(nomSpend)}/yr in today's dollars`);
-  if (penEnabled       && pen > 0)       situation.push(`- Pension expected: ${fmt0(pen)}/yr (today's dollars)`);
+  if (penEnabled       && pen > 0)       situation.push(`- Pension expected: ${fmt0(pen)}/yr (today's dollars) — ${penTaxable ? 'taxable' : 'tax-free (net cash)'}`);
+  if (oiEnabled        && oi > 0)        situation.push(`- Other income expected: ${fmt0(oi)}/yr (today's dollars) — ${oiTaxable ? 'taxable' : 'tax-free (net cash)'}`);
   if (ssEnabled        && ssPrimary > 0) situation.push(`- Social Security (me): ${fmt0(ssPrimary)}/yr projected`);
   if (ssSpouseEnabled  && ssSpouse > 0)  situation.push(`- Social Security (spouse): ${fmt0(ssSpouse)}/yr projected`);
 
@@ -3398,6 +3600,8 @@ const INPUT_MAP = [
   { id:'n-ss-age',       key:'ssAge',         m:1   },
   { id:'n-ss-spouse',    key:'ssSpouse',      m:1   },
   { id:'n-ss-spouse-age',key:'ssSpouseAge',   m:1   },
+  { id:'n-oi',           key:'oi',            m:1   },
+  { id:'n-oi-age',       key:'oiAge',         m:1   },
   { id:'n-spend',        key:'spend',         m:1   },
   { id:'n-nom',          key:'nom',           m:100 },
   { id:'n-inf',          key:'inf',           m:100 },
@@ -3424,14 +3628,19 @@ function syncUIFromState() {
   cb('sw-spouse',    S.spouseEnabled);
   cb('sw-pen',       S.penEnabled);
   cb('sw-cola',      S.cola);
+  cb('sw-pen-taxable', S.penTaxable);
   cb('sw-ss',        S.ssEnabled);
   cb('sw-ss-spouse', S.ssSpouseEnabled);
+  cb('sw-oi',         S.oiEnabled);
+  cb('sw-oi-cola',    S.oiCola);
+  cb('sw-oi-taxable', S.oiTaxable);
   show('spouse-block',      S.spouseEnabled);
   show('spouse-ta-block',   S.spouseEnabled);
   show('spouse-roth-block', S.spouseEnabled);
   show('ilbl-s-wrap',       S.spouseEnabled);
   show('ss-block',        S.ssEnabled);
   show('ss-spouse-block', S.ssSpouseEnabled);
+  show('oi-block',        S.oiEnabled);
 }
 
 function loadState() {
