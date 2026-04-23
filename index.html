@@ -589,17 +589,6 @@
         <div id="spouse-block" style="display:none">
           <div class="sub-hdr">Spouse / Partner</div>
           <div class="field">
-            <label class="field-label">Current 401k / IRA Balance</label>
-            <div class="field-wrap y">
-              <span class="field-pfx">$</span>
-              <input type="number" id="n-s-ta-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
-              <div class="field-steps">
-                <button onclick="step('n-s-ta-bal',5000)">▲</button>
-                <button onclick="step('n-s-ta-bal',-5000)">▼</button>
-              </div>
-            </div>
-          </div>
-          <div class="field">
             <label class="field-label">Annual Income</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
@@ -609,46 +598,7 @@
                 <button onclick="step('n-s-inc',-1000)">▼</button>
               </div>
             </div>
-            <div class="field-hint">Up to $300,000/yr</div>
-          </div>
-          <div class="field">
-            <label class="field-label">Spouse 401k Contributions / yr</label>
-            <div class="field-wrap y">
-              <span class="field-pfx">$</span>
-              <input type="number" id="n-s-ta-cont" min="0" max="150000" value="10000" step="500" inputmode="numeric">
-              <div class="field-steps">
-                <button onclick="step('n-s-ta-cont',500)">▲</button>
-                <button onclick="step('n-s-ta-cont',-500)">▼</button>
-              </div>
-            </div>
-          </div>
-          <div class="field-row">
-            <div class="field">
-              <label class="field-label">Spouse Match Rate</label>
-              <div class="field-wrap y">
-                <input type="number" id="n-s-match-rate" min="0" max="200" value="50" step="25" inputmode="decimal">
-                <span class="field-sfx">%</span>
-                <div class="field-steps">
-                  <button onclick="step('n-s-match-rate',25)">▲</button>
-                  <button onclick="step('n-s-match-rate',-25)">▼</button>
-                </div>
-              </div>
-            </div>
-            <div class="field">
-              <label class="field-label">Match Cap (% salary)</label>
-              <div class="field-wrap y">
-                <input type="number" id="n-s-match-cap" min="0" max="15" value="6" step="0.5" inputmode="decimal">
-                <span class="field-sfx">%</span>
-                <div class="field-steps">
-                  <button onclick="step('n-s-match-cap',0.5)">▲</button>
-                  <button onclick="step('n-s-match-cap',-0.5)">▼</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="info-box info-box-y" id="spouse-match-preview">
-            Spouse match: <strong id="s-match-amt">—</strong>/yr · Spouse total into 401k: <strong id="s-match-total">—</strong>/yr
-            <div style="font-size:0.69rem;color:var(--muted);margin-top:3px" id="s-match-note"></div>
+            <div class="field-hint">Up to $300,000/yr. Spouse 401(k)/IRA balances &amp; contributions go in the Tax-Advantaged and Roth sections below.</div>
           </div>
         </div>
 
@@ -734,6 +684,60 @@
           Primary match: <strong id="match-amt">—</strong>/yr · Total into 401k: <strong id="match-total">—</strong>/yr
           <div style="font-size:0.69rem;color:var(--muted);margin-top:3px" id="match-note"></div>
         </div>
+
+        <div id="spouse-ta-block" style="display:none">
+          <div class="sub-hdr" style="margin-top:16px">Spouse 401k / IRA <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
+          <div class="field">
+            <label class="field-label">Current Balance</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-ta-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-ta-bal',5000)">▲</button>
+                <button onclick="step('n-s-ta-bal',-5000)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Spouse Annual Contributions</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-ta-cont" min="0" max="150000" value="10000" step="500" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-ta-cont',500)">▲</button>
+                <button onclick="step('n-s-ta-cont',-500)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label">Spouse Match Rate</label>
+              <div class="field-wrap y">
+                <input type="number" id="n-s-match-rate" min="0" max="200" value="50" step="25" inputmode="decimal">
+                <span class="field-sfx">%</span>
+                <div class="field-steps">
+                  <button onclick="step('n-s-match-rate',25)">▲</button>
+                  <button onclick="step('n-s-match-rate',-25)">▼</button>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Match Cap (% salary)</label>
+              <div class="field-wrap y">
+                <input type="number" id="n-s-match-cap" min="0" max="15" value="6" step="0.5" inputmode="decimal">
+                <span class="field-sfx">%</span>
+                <div class="field-steps">
+                  <button onclick="step('n-s-match-cap',0.5)">▲</button>
+                  <button onclick="step('n-s-match-cap',-0.5)">▼</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="info-box info-box-y" id="spouse-match-preview">
+            Spouse match: <strong id="s-match-amt">—</strong>/yr · Spouse total into 401k: <strong id="s-match-total">—</strong>/yr
+            <div style="font-size:0.69rem;color:var(--muted);margin-top:3px" id="s-match-note"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -771,6 +775,32 @@
             </div>
           </div>
           <div class="field-hint">2026 Roth IRA limit: $7,000 ($8,000 if 50+). Roth 401(k) limit: $23,500 ($31,000 if 50+). Combine if you use both.</div>
+        </div>
+
+        <div id="spouse-roth-block" style="display:none">
+          <div class="sub-hdr" style="margin-top:16px">Spouse Roth <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
+          <div class="field">
+            <label class="field-label">Current Balance</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-roth-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-roth-bal',5000)">▲</button>
+                <button onclick="step('n-s-roth-bal',-5000)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Spouse Annual Contributions</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-roth-cont" min="0" max="50000" value="0" step="500" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-roth-cont',500)">▲</button>
+                <button onclick="step('n-s-roth-cont',-500)">▼</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1484,6 +1514,7 @@ const S = {
   primaryIncome: 80000,
   spouseEnabled: false, spouseIncome: 60000,
   sTaBal: 0, sTaCont: 10000, sMatchRate: 0.50, sMatchCap: 0.06,
+  sRothBal: 0, sRothCont: 0,
   taBal: 50000, taCont: 15000, matchRate: 0.50, matchCap: 0.06,
   rothBal: 0, rothCont: 0,
   brBal: 0, brCont: 0, divDrag: 0.003, ltcg: 0.15,
@@ -1544,6 +1575,8 @@ bindNum('n-s-ta-bal',    'sTaBal',       null);
 bindNum('n-s-ta-cont',   'sTaCont',      null);
 bindNum('n-s-match-rate','sMatchRate',   v => v/100);
 bindNum('n-s-match-cap', 'sMatchCap',    v => v/100);
+bindNum('n-s-roth-bal',  'sRothBal',     null);
+bindNum('n-s-roth-cont', 'sRothCont',    null);
 bindNum('n-ta-bal',      'taBal',        null);
 bindNum('n-ta-cont',     'taCont',       null);
 bindNum('n-match-rate',  'matchRate',    v => v/100);
@@ -1571,8 +1604,11 @@ document.getElementById('sw-cola').addEventListener('change', e => { S.cola     
 
 function toggleSpouse() {
   S.spouseEnabled = document.getElementById('sw-spouse').checked;
-  document.getElementById('spouse-block').style.display = S.spouseEnabled ? '' : 'none';
-  document.getElementById('ilbl-s-wrap').style.display  = S.spouseEnabled ? '' : 'none';
+  const vis = S.spouseEnabled ? '' : 'none';
+  document.getElementById('spouse-block').style.display      = vis;
+  document.getElementById('spouse-ta-block').style.display   = vis;
+  document.getElementById('spouse-roth-block').style.display = vis;
+  document.getElementById('ilbl-s-wrap').style.display       = vis;
   recalc();
 }
 function toggleSS() {
@@ -1633,6 +1669,7 @@ function runCalc() {
   const {
     cage, rage,
     primaryIncome, spouseEnabled, spouseIncome, sTaBal, sTaCont, sMatchRate, sMatchCap,
+    sRothBal, sRothCont,
     taBal, taCont, matchRate, matchCap,
     rothBal, rothCont,
     brBal, brCont, divDrag, ltcg,
@@ -1654,7 +1691,8 @@ function runCalc() {
   const sAnnualMatch  = spouseEnabled ? Math.min(sTaCont, sMatchCeil) * sMatchRate : 0;
   const totalMatch       = annualMatch + sAnnualMatch;
   const effectiveTaCont  = taCont + annualMatch + (spouseEnabled ? sTaCont : 0) + sAnnualMatch;
-  const totalContribs    = effectiveTaCont + rothCont + brCont;
+  const effectiveRothCont= rothCont + (spouseEnabled ? sRothCont : 0);
+  const totalContribs    = effectiveTaCont + effectiveRothCont + brCont;
   const savingsRate      = totalIncome > 0 ? totalContribs / totalIncome : 0;
 
   const nomSpend = spend * Math.pow(1 + inf, yrs);
@@ -1686,9 +1724,11 @@ function runCalc() {
   // the share ratio is what matters, not the absolute dollar figures).
   const combinedTaBalForTax = taBal + (spouseEnabled ? sTaBal : 0);
   const combinedTaContForTax = taCont + annualMatch + (spouseEnabled ? sTaCont : 0) + sAnnualMatch;
+  const combinedRothBalForTax  = rothBal  + (spouseEnabled ? sRothBal  : 0);
+  const combinedRothContForTax = rothCont + (spouseEnabled ? sRothCont : 0);
   const cf = nom > 0 ? ((Math.pow(1 + nom, yrs) - 1) / nom) : yrs;
-  const projTrad = combinedTaBalForTax * Math.pow(1 + nom, yrs) + combinedTaContForTax * cf;
-  const projRoth = rothBal              * Math.pow(1 + nom, yrs) + rothCont            * cf;
+  const projTrad = combinedTaBalForTax   * Math.pow(1 + nom, yrs) + combinedTaContForTax   * cf;
+  const projRoth = combinedRothBalForTax * Math.pow(1 + nom, yrs) + combinedRothContForTax * cf;
   const totalProjTA = projTrad + projRoth;
   const tradShare = totalProjTA > 0 ? projTrad / totalProjTA : 1;
 
@@ -1704,8 +1744,9 @@ function runCalc() {
   const ages = [], taVals = [], rothVals = [], brVals = [], effBrVals = [],
         effTotals = [], coastTargets = [], phases = [];
 
-  const combinedTaBal = taBal + (spouseEnabled ? sTaBal : 0);
-  let ta = combinedTaBal, roth = rothBal, br = brBal, basis = brBal;
+  const combinedTaBal   = taBal   + (spouseEnabled ? sTaBal   : 0);
+  const combinedRothBal = rothBal + (spouseEnabled ? sRothBal : 0);
+  let ta = combinedTaBal, roth = combinedRothBal, br = brBal, basis = brBal;
   let coastAge = null, coastTa = null, coastRoth = null, coastBr = null;
 
   for (let y = 0; y <= yrs; y++) {
@@ -1729,9 +1770,9 @@ function runCalc() {
     }
     phases.push(coastAge !== null ? 'coast' : 'accum');
 
-    const addTa   = coastAge === null ? effectiveTaCont : 0;
-    const addRoth = coastAge === null ? rothCont        : 0;
-    const addBr   = coastAge === null ? brCont          : 0;
+    const addTa   = coastAge === null ? effectiveTaCont   : 0;
+    const addRoth = coastAge === null ? effectiveRothCont : 0;
+    const addBr   = coastAge === null ? brCont            : 0;
     ta    = ta   * (1 + nom) + addTa;
     roth  = roth * (1 + nom) + addRoth;
     br    = br   * (1 + nom - divDrag) + addBr;
@@ -1766,7 +1807,7 @@ function runCalc() {
       keepInvestPath[y] = kTa + kRoth + effKBr;
       keepBrPath[y]     = effKBr;
       kTa    = kTa   * (1 + nom) + effectiveTaCont;
-      kRoth  = kRoth * (1 + nom) + rothCont;
+      kRoth  = kRoth * (1 + nom) + effectiveRothCont;
       kBr    = kBr   * (1 + nom - divDrag) + brCont;
       kBasis = kBasis + brCont;
     }
@@ -1779,14 +1820,15 @@ function runCalc() {
     cage, rage, yrs, nowYear, taBal, taCont, brBal, brCont, nom, inf, swr,
     totalIncome, primaryIncome, spouseEnabled, spouseIncome,
     sTaBal, sTaCont, sMatchRate, sMatchCap,
+    sRothBal, sRothCont,
     annualMatch, sAnnualMatch, totalMatch,
-    effectiveTaCont, totalContribs, savingsRate, matchRate, matchCap,
+    effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
     nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
     ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
     penEnabled, pen, pAge, cola,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
-    combinedTaBal,
+    combinedTaBal, combinedRothBal,
     ages, taVals, rothVals, brVals, effBrVals, effTotals, coastTargets, phases, coastPath,
     keepInvestPath, keepBrPath, keepFinalTotal, keepBrFinal, extraAtRetirement,
     coastAge, effNow: effTotals[0],
@@ -1820,14 +1862,15 @@ function recalc() {
     cage, rage, yrs, nowYear, taBal, taCont, brBal, brCont, nom, inf, swr,
     totalIncome, primaryIncome, spouseEnabled, spouseIncome,
     sTaBal, sTaCont, sMatchRate, sMatchCap,
+    sRothBal, sRothCont,
     annualMatch, sAnnualMatch, totalMatch,
-    effectiveTaCont, totalContribs, savingsRate, matchRate, matchCap,
+    effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
     nomSpend, nomPension, netSpend, nomSS, nomSSPrimary, nomSSSpouse, totalNomOffset,
     ssPrimaryAnnual, ssSpouseAnnual, grossFIRE, netFIRE, coastToday,
     penEnabled, pen, pAge, cola,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
-    combinedTaBal,
+    combinedTaBal, combinedRothBal,
     ages, taVals, rothVals, brVals, effBrVals, effTotals, coastTargets, phases, coastPath,
     keepInvestPath, keepBrPath, keepFinalTotal, keepBrFinal, extraAtRetirement,
     coastAge, effNow, finalEffTotal, finalEffBr,
@@ -1896,8 +1939,8 @@ function recalc() {
     cYrEl.textContent  = 'Not reached before retirement';
   }
 
-  const total = (combinedTaBal + rothBal + brBal) || 1;
-  const taP   = ((combinedTaBal + rothBal) / total * 100).toFixed(1);
+  const total = (combinedTaBal + combinedRothBal + brBal) || 1;
+  const taP   = ((combinedTaBal + combinedRothBal) / total * 100).toFixed(1);
   const brP   = (brBal / total * 100).toFixed(1);
   document.getElementById('bar-adv').style.width = taP + '%';
   document.getElementById('bar-brk').style.width = brP + '%';
@@ -1907,10 +1950,14 @@ function recalc() {
       ? fmt(taBal) + ' Trad primary + ' + fmt(sTaBal) + ' Trad spouse'
       : fmt(combinedTaBal) + ' Traditional');
   }
-  if (rothBal > 0) taParts.push(fmt(rothBal) + ' Roth');
+  if (combinedRothBal > 0) {
+    taParts.push(spouseEnabled && sRothBal > 0
+      ? fmt(rothBal) + ' Roth primary + ' + fmt(sRothBal) + ' Roth spouse'
+      : fmt(combinedRothBal) + ' Roth');
+  }
   const taLabel = taParts.length > 1
-    ? fmt(combinedTaBal + rothBal) + ' (' + taParts.join(' + ') + ')'
-    : fmt(combinedTaBal + rothBal);
+    ? fmt(combinedTaBal + combinedRothBal) + ' (' + taParts.join(' + ') + ')'
+    : fmt(combinedTaBal + combinedRothBal);
   set('bar-adv-lbl', taLabel + ' (' + taP + '%)');
   set('bar-brk-lbl', fmt(brBal) + ' (' + brP + '%)');
 
@@ -2291,6 +2338,7 @@ function updateAiPrompt(R) {
   const {
     cage, rage, taBal, brBal, taCont, brCont,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
+    sTaBal, sTaCont, sRothBal, sRothCont,
     totalContribs, totalIncome, savingsRate,
     nom, inf, swr, totalMatch, netFIRE, coastToday, effNow, coastAge,
     nomSpend, penEnabled, pen, ssEnabled, ssPrimary,
@@ -2317,13 +2365,20 @@ function updateAiPrompt(R) {
     coastLine = `- CoastFIRE age: ${coastAge} (${coastAge - cage} years from now) on current inputs`;
   }
 
+  const combinedTrad = taBal + (spouseEnabled ? sTaBal : 0);
+  const combinedRoth = rothBal + (spouseEnabled ? sRothBal : 0);
+  const combinedTradCont = taCont + (spouseEnabled ? sTaCont : 0);
+  const combinedRothCont = rothCont + (spouseEnabled ? sRothCont : 0);
+
   const situation = [
     `- Age: ${cage}${spouseEnabled ? ' (with spouse)' : ''}`,
     `- Target retirement age: ${rage}`,
-    `- Traditional (pre-tax) balance: ${fmt0(taBal)}`,
-    `- Roth (tax-free) balance: ${fmt0(rothBal)}`,
+    `- Traditional (pre-tax) balance: ${fmt0(combinedTrad)}` +
+      (spouseEnabled && sTaBal > 0 ? ` (${fmt0(taBal)} primary + ${fmt0(sTaBal)} spouse)` : ''),
+    `- Roth (tax-free) balance: ${fmt0(combinedRoth)}` +
+      (spouseEnabled && sRothBal > 0 ? ` (${fmt0(rothBal)} primary + ${fmt0(sRothBal)} spouse)` : ''),
     `- Taxable/brokerage balance: ${fmt0(brBal)}`,
-    `- Annual contributions: ${fmt0(taCont)} Traditional + ${fmt0(rothCont)} Roth + ${fmt0(brCont)} brokerage = ${fmt0(totalContribs)} total` +
+    `- Annual contributions: ${fmt0(combinedTradCont)} Traditional + ${fmt0(combinedRothCont)} Roth + ${fmt0(brCont)} brokerage = ${fmt0(totalContribs)} total` +
       (totalMatch > 0 ? ` (plus ${fmt0(totalMatch)} employer match)` : ''),
   ];
   if (totalIncome > 0) {
@@ -2433,6 +2488,8 @@ const INPUT_MAP = [
   { id:'n-s-ta-cont',    key:'sTaCont',       m:1   },
   { id:'n-s-match-rate', key:'sMatchRate',    m:100 },
   { id:'n-s-match-cap',  key:'sMatchCap',     m:100 },
+  { id:'n-s-roth-bal',   key:'sRothBal',      m:1   },
+  { id:'n-s-roth-cont',  key:'sRothCont',     m:1   },
   { id:'n-ta-bal',       key:'taBal',         m:1   },
   { id:'n-ta-cont',      key:'taCont',        m:1   },
   { id:'n-match-rate',   key:'matchRate',     m:100 },
@@ -2476,8 +2533,10 @@ function syncUIFromState() {
   cb('sw-cola',      S.cola);
   cb('sw-ss',        S.ssEnabled);
   cb('sw-ss-spouse', S.ssSpouseEnabled);
-  show('spouse-block',    S.spouseEnabled);
-  show('ilbl-s-wrap',     S.spouseEnabled);
+  show('spouse-block',      S.spouseEnabled);
+  show('spouse-ta-block',   S.spouseEnabled);
+  show('spouse-roth-block', S.spouseEnabled);
+  show('ilbl-s-wrap',       S.spouseEnabled);
   show('ss-block',        S.ssEnabled);
   show('ss-spouse-block', S.ssSpouseEnabled);
 }
