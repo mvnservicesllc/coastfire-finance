@@ -1136,6 +1136,23 @@
     <div class="info-box" id="age59-footer" style="font-size:0.82rem;line-height:1.6"></div>
   </div>
 
+  <div class="cw" id="retire-growth-section" style="display:none">
+    <div class="ct">🚀 401(k) / IRA Growth Through Age 80 <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Long-horizon compounding</span></div>
+    <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
+      Trad + Roth combined, from today through age 80. Contributions follow your plan until retirement; after retirement, balances grow <strong>untouched</strong> at your nominal return (no withdrawals modeled here) — useful for seeing how much is waiting for you at 59½, RMDs at 73, and beyond.
+    </div>
+    <canvas id="retire-chart" height="220"></canvas>
+    <div class="rg" style="grid-template-columns:repeat(3,1fr);margin-top:16px;gap:8px">
+      <div class="rb"><div class="lbl">Age 60</div><div class="val g"  id="rg-60">—</div><div class="sub">Penalty-free access window</div></div>
+      <div class="rb"><div class="lbl">Age 65</div><div class="val g"  id="rg-65">—</div><div class="sub">Medicare eligibility</div></div>
+      <div class="rb"><div class="lbl">Age 70</div><div class="val g"  id="rg-70">—</div><div class="sub">Max SS delay credit</div></div>
+      <div class="rb"><div class="lbl">Age 73</div><div class="val y"  id="rg-73">—</div><div class="sub">RMDs begin (SECURE 2.0)</div></div>
+      <div class="rb"><div class="lbl">Age 75</div><div class="val p"  id="rg-75">—</div><div class="sub">Mid-retirement checkpoint</div></div>
+      <div class="rb"><div class="lbl">Age 80</div><div class="val p"  id="rg-80">—</div><div class="sub">Late-retirement buffer</div></div>
+    </div>
+    <div class="info-box" id="retire-growth-footer" style="font-size:0.82rem;line-height:1.6;margin-top:14px"></div>
+  </div>
+
   <div class="cw" id="keep-invest-section" style="display:none">
     <div class="ct">📈 What if you keep investing after CoastFIRE?</div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
@@ -1607,6 +1624,7 @@ const S = {
 let dispMode = 'nom';
 let chart;
 let mcChart;
+let retireChart;
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  ACCORDION
@@ -1754,6 +1772,80 @@ function set(id, v)  { const el = document.getElementById(id); if (el) el.textCo
 // ─────────────────────────────────────────────────────────────────────────────
 //  CHART
 // ─────────────────────────────────────────────────────────────────────────────
+function renderRetireChart(ages, vals, horizonYears) {
+  const canvas = document.getElementById('retire-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  // Discount to display mode
+  const displayVals = vals.map((v, i) => toDisp(v, i));
+
+  // Build a subtle gradient fill
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height || 220);
+  grad.addColorStop(0, 'rgba(201, 150, 92, 0.35)');
+  grad.addColorStop(1, 'rgba(201, 150, 92, 0.02)');
+
+  // Vertical annotation at retirement age (where contributions stop in this view)
+  const rageIdx = Math.min(horizonYears, Math.max(0, Math.round(S.rage - S.cage)));
+
+  const data = {
+    labels: ages,
+    datasets: [{
+      label: 'Retirement (Trad + Roth)',
+      data: displayVals,
+      borderColor: '#c9965c',
+      backgroundColor: grad,
+      borderWidth: 2.5,
+      fill: true,
+      tension: 0.25,
+      pointRadius: (c) => {
+        const a = ages[c.dataIndex];
+        return (a === 60 || a === 65 || a === 70 || a === 73 || a === 75 || a === 80) ? 4 : 0;
+      },
+      pointBackgroundColor: '#e8c685',
+      pointBorderColor: '#0b1929',
+      pointBorderWidth: 1.5,
+    }]
+  };
+
+  if (retireChart) {
+    retireChart.data = data;
+    retireChart.update();
+    return;
+  }
+
+  retireChart = new Chart(ctx, {
+    type: 'line',
+    data,
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#13253e', borderColor: '#2a4060', borderWidth: 1,
+          titleColor: '#e8ecf1', bodyColor: '#8da3b8',
+          callbacks: {
+            title: c => 'Age ' + c[0].label,
+            label: c => '  ' + c.dataset.label + ': ' + fmt(c.raw)
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Age', color: '#8da3b8', font: { size: 11 } },
+          ticks: { color: '#8da3b8', font: { size: 10 }, maxTicksLimit: 12 },
+          grid: { color: 'rgba(255,255,255,0.04)' }
+        },
+        y: {
+          ticks: { color: '#8da3b8', font: { size: 10 }, callback: v => fmt(v) },
+          grid: { color: 'rgba(255,255,255,0.04)' }
+        }
+      }
+    }
+  });
+}
+
 function initChart() {
   const ctx = document.getElementById('chart').getContext('2d');
   chart = new Chart(ctx, {
@@ -2224,6 +2316,69 @@ function recalc() {
   } else {
     // Already past 59½ today — nothing to project forward to.
     age59Section.style.display = 'none';
+  }
+
+  // ──────────────────────────────────────────────────────
+  //  401(k)/IRA GROWTH THROUGH AGE 80
+  //  Long-horizon retirement-only projection. Uses the
+  //  main sim inside the accumulation window, then grows
+  //  the balance untouched at `nom` after retirement.
+  // ──────────────────────────────────────────────────────
+  const retireSection = document.getElementById('retire-growth-section');
+  const END_AGE = 80;
+  if (cage < END_AGE) {
+    retireSection.style.display = '';
+    const horizonYears = END_AGE - cage;
+    const rgAges = [], rgVals = [];
+    let lastRet = (taVals[0] || 0) + (rothVals[0] || 0);
+    for (let y = 0; y <= horizonYears; y++) {
+      const age = cage + y;
+      let v;
+      if (y <= yrs) {
+        // Inside the main sim window
+        v = (taVals[y] || 0) + (rothVals[y] || 0);
+      } else {
+        // Post-retirement: grow untouched at nominal return
+        v = lastRet * (1 + nom);
+      }
+      lastRet = v;
+      rgAges.push(age);
+      rgVals.push(v);
+    }
+
+    // Milestone grid — discount each value to the display mode's basis at that year index
+    const milestoneSet = (id, targetAge) => {
+      const idx = targetAge - cage;
+      if (idx < 0 || idx >= rgVals.length) {
+        set(id, '—');
+        return;
+      }
+      set(id, fmt(toDisp(rgVals[idx], idx)));
+    };
+    milestoneSet('rg-60', 60);
+    milestoneSet('rg-65', 65);
+    milestoneSet('rg-70', 70);
+    milestoneSet('rg-73', 73);
+    milestoneSet('rg-75', 75);
+    milestoneSet('rg-80', 80);
+
+    // Footer — dollar figure at 80 plus growth multiple vs today
+    const v80  = rgVals[rgVals.length - 1];
+    const vNow = rgVals[0];
+    const mult = vNow > 0 ? (v80 / vNow) : null;
+    const v80d = toDisp(v80, horizonYears);
+    let rgFooter = `At <strong>80</strong>, your retirement accounts are projected to be worth <strong>${fmt(v80d)}</strong>`;
+    if (mult != null) rgFooter += ` — roughly <strong>${mult.toFixed(1)}×</strong> today's combined Trad + Roth balance`;
+    rgFooter += `. `;
+    if (rage < END_AGE) {
+      rgFooter += `Post-retirement (after age ${rage}), this chart assumes you leave retirement accounts untouched and let them keep compounding at ${(nom * 100).toFixed(1)}% nominal. In reality you'll draw some down — but RMDs at 73 and longevity risk make it worth seeing the upper bound.`;
+    }
+    document.getElementById('retire-growth-footer').innerHTML = rgFooter;
+
+    // Chart
+    renderRetireChart(rgAges, rgVals, horizonYears);
+  } else {
+    retireSection.style.display = 'none';
   }
 
   const kiSection = document.getElementById('keep-invest-section');
