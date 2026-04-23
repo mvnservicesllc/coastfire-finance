@@ -1128,17 +1128,33 @@
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
       Compares stopping contributions at CoastFIRE vs continuing to invest all the way to retirement. Dial in exactly how much you'd keep contributing.
     </div>
-    <div class="field" style="margin-bottom:14px">
+    <div style="margin-bottom:14px">
       <label class="field-label">After CoastFIRE, keep investing at</label>
-      <div class="field-wrap g">
-        <input type="number" id="n-keep-pct" min="0" max="200" value="100" step="10" inputmode="numeric">
-        <span class="field-sfx">%</span>
-        <div class="field-steps">
-          <button onclick="step('n-keep-pct',10)">▲</button>
-          <button onclick="step('n-keep-pct',-10)">▼</button>
+      <div class="field-row">
+        <div class="field">
+          <div class="field-wrap g">
+            <input type="number" id="n-keep-pct" min="0" max="200" value="100" step="10" inputmode="numeric">
+            <span class="field-sfx">%</span>
+            <div class="field-steps">
+              <button onclick="step('n-keep-pct',10)">▲</button>
+              <button onclick="step('n-keep-pct',-10)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">of today's rate</div>
+        </div>
+        <div class="field">
+          <div class="field-wrap g">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-keep-dollar" min="0" max="500000" value="0" step="500" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-keep-dollar',500)">▲</button>
+              <button onclick="step('n-keep-dollar',-500)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">per year (all buckets)</div>
         </div>
       </div>
-      <div class="field-hint">of your current contribution rate · 100% = today's pace · 50% = partial coast (BaristaFIRE-style) · 0% = fully coast. Scaled amount: <strong id="keep-dollar-preview">—</strong>/yr</div>
+      <div class="field-hint" style="margin-top:6px">100% = today's pace · 50% = partial coast (BaristaFIRE-style) · 0% = fully coast. Editing either box updates the other.</div>
     </div>
     <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:8px">Total Portfolio</div>
     <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
@@ -1608,6 +1624,37 @@ bindNum('n-nom',         'nom',          v => v/100);
 bindNum('n-inf',         'inf',          v => v/100);
 bindNum('n-swr',         'swr',          v => v/100);
 bindNum('n-keep-pct',    'keepInvestPct',v => v/100);
+
+// Paired dollar input: converts $/yr → keepInvestPct using the live contribution base.
+function currentContribBase() {
+  const pMatch = Math.min((S.taCont || 0), (S.primaryIncome || 0) * (S.matchCap || 0)) * (S.matchRate || 0);
+  const sMatch = S.spouseEnabled
+    ? Math.min((S.sTaCont || 0), (S.spouseIncome || 0) * (S.sMatchCap || 0)) * (S.sMatchRate || 0)
+    : 0;
+  const trad = (S.taCont || 0) + pMatch + (S.spouseEnabled ? (S.sTaCont || 0) : 0) + sMatch;
+  const roth = (S.rothCont || 0) + (S.spouseEnabled ? (S.sRothCont || 0) : 0);
+  const brk  = (S.brCont || 0);
+  return trad + roth + brk;
+}
+(function bindKeepDollar() {
+  const el = document.getElementById('n-keep-dollar');
+  if (!el) return;
+  const upd = () => {
+    const raw = parseFloat(el.value);
+    if (isNaN(raw)) return;
+    const base = currentContribBase();
+    if (base > 0) {
+      S.keepInvestPct = Math.max(0, Math.min(2, raw / base));
+      const pctEl = document.getElementById('n-keep-pct');
+      if (pctEl && document.activeElement !== pctEl) {
+        pctEl.value = +(S.keepInvestPct * 100).toFixed(1);
+      }
+    }
+    recalc();
+  };
+  el.addEventListener('input',  upd);
+  el.addEventListener('change', upd);
+})();
 bindNum('n-ss-primary',    'ssPrimary',  null);
 bindNum('n-ss-age',        'ssAge',      null);
 bindNum('n-ss-spouse',     'ssSpouse',   null);
@@ -2015,8 +2062,11 @@ function recalc() {
         : 'No spouse employer match configured.';
   }
 
-  // Dollar preview for the "keep investing %" slider (works whether or not the section is visible)
-  set('keep-dollar-preview', fmt(keepTotalAdd));
+  // Sync the "$ / yr" input next to the % slider (unless the user is actively typing in it)
+  const keepDollarEl = document.getElementById('n-keep-dollar');
+  if (keepDollarEl && document.activeElement !== keepDollarEl) {
+    keepDollarEl.value = Math.round(keepTotalAdd);
+  }
 
   const kiSection = document.getElementById('keep-invest-section');
   if (coastAge !== null && keepFinalTotal !== null) {
