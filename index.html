@@ -1126,17 +1126,17 @@
   <div class="cw" id="income-breakdown-section">
     <div class="ct">💰 Estimated Retirement Income <span style="font-size:0.7rem;color:var(--muted);font-weight:400">At age <span id="ib-rage">—</span> · year one of retirement</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      Where your spending comes from on day one of retirement. Portfolio withdrawal is grossed up for taxes so the <strong>net</strong> figure matches your target spending. Pension and Social Security are shown at their inflation-adjusted value at retirement.
+      Where your spending comes from on day one of retirement. The <strong>portfolio withdrawal</strong> is grossed up using your retirement tax rate (blended across Trad/Roth/LTCG). <strong>Pension and Social Security are shown at face value</strong> — how this calculator treats them throughout, as net-of-tax offsets to spending (see note below).
     </div>
 
     <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:18px">
-      <div class="rb"><div class="lbl">Gross Income Needed</div><div class="val p" id="ib-gross">—</div><div class="sub">Pre-tax, all sources</div></div>
-      <div class="rb"><div class="lbl">Net Spending Target</div><div class="val g" id="ib-net">—</div><div class="sub">After-tax, what you live on</div></div>
-      <div class="rb"><div class="lbl">Portfolio Withdrawal</div><div class="val y" id="ib-port">—</div><div class="sub">Gross · per year</div></div>
+      <div class="rb"><div class="lbl">Total Income at Retirement</div><div class="val p" id="ib-gross">—</div><div class="sub">Portfolio (pre-tax) + Pension/SS (face)</div></div>
+      <div class="rb"><div class="lbl">Net Spending Target</div><div class="val g" id="ib-net">—</div><div class="sub">What you live on after tax</div></div>
+      <div class="rb"><div class="lbl">Portfolio Withdrawal</div><div class="val y" id="ib-port">—</div><div class="sub">Pre-tax · per year</div></div>
     </div>
 
     <div class="bbar-wrap">
-      <div class="bbar-lbl">Income Composition (gross)</div>
+      <div class="bbar-lbl">Income Composition <span style="text-transform:none;font-weight:400;opacity:0.8">· portfolio pre-tax, pension/SS at face</span></div>
       <div class="bbar" id="ib-bar" style="height:14px">
         <div id="ib-bar-port" style="background:var(--accent)"></div>
         <div id="ib-bar-pen"  style="background:var(--yellow)"></div>
@@ -1144,10 +1144,10 @@
         <div id="ib-bar-ss2"  style="background:#7ba8d4"></div>
       </div>
       <div class="bbar-key">
-        <span><span style="color:var(--accent)">■</span> Portfolio: <strong id="ib-key-port">—</strong></span>
-        <span id="ib-key-pen-wrap"  style="display:none"><span style="color:var(--yellow)">■</span> Pension: <strong id="ib-key-pen">—</strong></span>
-        <span id="ib-key-ss1-wrap"  style="display:none"><span style="color:var(--green)">■</span> SS (you): <strong id="ib-key-ss1">—</strong></span>
-        <span id="ib-key-ss2-wrap"  style="display:none"><span style="color:#7ba8d4">■</span> SS (spouse): <strong id="ib-key-ss2">—</strong></span>
+        <span><span style="color:var(--accent)">■</span> Portfolio <span style="color:var(--muted);font-weight:400">(pre-tax)</span>: <strong id="ib-key-port">—</strong></span>
+        <span id="ib-key-pen-wrap"  style="display:none"><span style="color:var(--yellow)">■</span> Pension <span style="color:var(--muted);font-weight:400">(face)</span>: <strong id="ib-key-pen">—</strong></span>
+        <span id="ib-key-ss1-wrap"  style="display:none"><span style="color:var(--green)">■</span> SS (you) <span style="color:var(--muted);font-weight:400">(face)</span>: <strong id="ib-key-ss1">—</strong></span>
+        <span id="ib-key-ss2-wrap"  style="display:none"><span style="color:#7ba8d4">■</span> SS (spouse) <span style="color:var(--muted);font-weight:400">(face)</span>: <strong id="ib-key-ss2">—</strong></span>
       </div>
     </div>
 
@@ -1158,7 +1158,7 @@
             <th style="padding:8px 10px;font-weight:600">Source</th>
             <th style="padding:8px 10px;font-weight:600;text-align:right">Monthly</th>
             <th style="padding:8px 10px;font-weight:600;text-align:right">Annual</th>
-            <th style="padding:8px 10px;font-weight:600;text-align:right">% of gross</th>
+            <th style="padding:8px 10px;font-weight:600;text-align:right">% of total</th>
             <th style="padding:8px 10px;font-weight:600">Status at retirement</th>
           </tr>
         </thead>
@@ -1167,6 +1167,11 @@
     </div>
 
     <div class="info-box" id="ib-footer" style="font-size:0.82rem;line-height:1.6;margin-top:14px"></div>
+
+    <div style="font-size:0.74rem;color:var(--muted);margin-top:12px;line-height:1.6;padding:10px 12px;background:rgba(255,255,255,0.02);border-left:2px solid var(--border);border-radius:4px">
+      <strong style="color:var(--text)">📋 Tax treatment note.</strong>
+      The <strong>portfolio withdrawal</strong> is grossed up using your blended retirement tax rate (from the Tax-Advantaged tab) — so the net figure matches your target spending. <strong>Pension and Social Security are shown at face value</strong> and treated as net offsets to spending throughout this calculator. This mirrors how most FIRE models handle them and is a reasonable simplification because SS is only 0–85% federally taxable depending on combined income, and pension taxation varies by state and after-tax basis. If your situation involves heavy pension taxation or no other income offsetting SS brackets, your actual tax bill on these sources will be higher than this simplification suggests — check with a tax pro.
+    </div>
   </div>
 
   <div class="cw" id="age59-section" style="display:none">
@@ -2425,11 +2430,11 @@ function recalc() {
     // Totals row
     rows.push(
       `<tr style="border-top:2px solid var(--border);background:rgba(201,150,92,0.04)">` +
-        `<td style="padding:10px;font-weight:700;color:var(--text)">Total Gross Income</td>` +
+        `<td style="padding:10px;font-weight:700;color:var(--text)">Total Income</td>` +
         `<td style="padding:10px;text-align:right;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums">${fmt(dRetAmt(grossTotal/12))}</td>` +
         `<td style="padding:10px;text-align:right;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums">${fmt(dRetAmt(grossTotal))}</td>` +
         `<td style="padding:10px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums">100%</td>` +
-        `<td style="padding:10px;color:var(--muted);font-size:0.8rem">Pre-tax total at age ${rage}</td>` +
+        `<td style="padding:10px;color:var(--muted);font-size:0.8rem">Portfolio pre-tax + pension/SS face at age ${rage}</td>` +
       `</tr>`
     );
     tbody.innerHTML = rows.join('');
@@ -2464,15 +2469,15 @@ function recalc() {
 
       const names = deferred.map(d => `${d.name} at ${d.age}`).join(', ');
       footer  = `⏳ <strong>${names}</strong> kick${deferred.length === 1 ? 's' : ''} in after retirement — until then, your portfolio shoulders the full spending gap. `;
-      footer += `Once all sources are active at <strong>age ${stableAge}</strong>, your income mix shifts to roughly <strong>${fmt(toDisp(grossTotalStable, stableIdx))}/yr gross</strong> `;
-      footer += `(portfolio: ${fmt(toDisp(grossFromPortStable, stableIdx))}, other: ${fmt(toDisp(offsetsStable, stableIdx))}). `;
+      footer += `Once all sources are active at <strong>age ${stableAge}</strong>, your total income is roughly <strong>${fmt(toDisp(grossTotalStable, stableIdx))}/yr</strong> `;
+      footer += `(portfolio pre-tax: ${fmt(toDisp(grossFromPortStable, stableIdx))}, pension/SS face: ${fmt(toDisp(offsetsStable, stableIdx))}). `;
       const reduction = grossFromPortfolio - grossFromPortStable;
       if (reduction > 0) {
         footer += `That reduces the portfolio draw by <strong>${fmt(toDisp(reduction, stableIdx))}/yr</strong> — big SWR relief in the later years.`;
       }
     } else if (offsetsAtRage > 0) {
       const offsetPct = pctOf(offsetsAtRage);
-      footer = `✅ All income sources are active at retirement. Pension + Social Security covers <strong>${offsetPct.toFixed(0)}%</strong> of your gross income need — your portfolio only has to generate the remaining <strong>${fmt(dRetAmt(grossFromPortfolio))}/yr</strong>.`;
+      footer = `✅ All income sources are active at retirement. Pension + Social Security covers <strong>${offsetPct.toFixed(0)}%</strong> of your total retirement income — your portfolio only has to generate the remaining <strong>${fmt(dRetAmt(grossFromPortfolio))}/yr</strong> (pre-tax).`;
     } else {
       footer = `Your portfolio covers <strong>100%</strong> of retirement income in this scenario. Adding a pension or projecting Social Security (in the Results section below) can meaningfully reduce how much you need to save.`;
     }
