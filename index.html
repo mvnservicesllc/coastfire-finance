@@ -621,26 +621,26 @@
     </div>
   </div>
 
-  <!-- ── TAX-ADVANTAGED (TRADITIONAL / PRE-TAX) ── -->
+  <!-- ── TRADITIONAL 401k / 403b / TSP ── -->
   <div class="acc">
-    <div class="acc-hdr" onclick="toggle('ta')">
-      <span class="acc-title">🏦 Tax-Advantaged (Traditional) <span class="tl-tag tag-p">Pre-tax</span></span>
-      <span class="acc-arrow open" id="arr-ta">▶</span>
+    <div class="acc-hdr" onclick="toggle('ta401k')">
+      <span class="acc-title">🏦 Traditional 401k / 403b / TSP <span class="tl-tag tag-p">Pre-tax</span></span>
+      <span class="acc-arrow open" id="arr-ta401k">▶</span>
     </div>
-    <div class="acc-body open" id="body-ta">
+    <div class="acc-body open" id="body-ta401k">
       <div class="acc-inner">
         <div class="info-box" style="font-size:0.72rem;line-height:1.5;margin-bottom:10px;color:var(--muted)">
-          💡 Include <strong>pre-tax retirement accounts</strong>: Traditional 401(k), Traditional IRA, 403(b), 457(b), SEP/SIMPLE IRA, HSA. Withdrawals are taxed as ordinary income. Roth accounts go in the next section.
+          💡 Pre-tax workplace plan. Contributions reduce taxable income now; withdrawals are taxed in retirement.
         </div>
-        <div class="sub-hdr">Primary 401k / IRA</div>
+        <div class="sub-hdr">Primary 401k / 403b / TSP</div>
         <div class="field">
           <label class="field-label">Current Balance</label>
           <div class="field-wrap">
             <span class="field-pfx">$</span>
-            <input type="number" id="n-ta-bal" min="0" max="10000000" value="50000" step="1000" inputmode="numeric">
+            <input type="number" id="n-ta401k-bal" min="0" max="10000000" value="50000" step="1000" inputmode="numeric">
             <div class="field-steps">
-              <button onclick="step('n-ta-bal',5000)">▲</button>
-              <button onclick="step('n-ta-bal',-5000)">▼</button>
+              <button onclick="step('n-ta401k-bal',5000)">▲</button>
+              <button onclick="step('n-ta401k-bal',-5000)">▼</button>
             </div>
           </div>
         </div>
@@ -648,10 +648,10 @@
           <label class="field-label">Your Annual Contributions</label>
           <div class="field-wrap">
             <span class="field-pfx">$</span>
-            <input type="number" id="n-ta-cont" min="0" max="150000" value="15000" step="500" inputmode="numeric">
+            <input type="number" id="n-ta401k-cont" min="0" max="150000" value="15000" step="500" inputmode="numeric">
             <div class="field-steps">
-              <button onclick="step('n-ta-cont',500)">▲</button>
-              <button onclick="step('n-ta-cont',-500)">▼</button>
+              <button onclick="step('n-ta401k-cont',500)">▲</button>
+              <button onclick="step('n-ta401k-cont',-500)">▼</button>
             </div>
           </div>
           <div class="field-hint">Up to $150,000/yr (incl. catch-up)</div>
@@ -685,16 +685,16 @@
           <div style="font-size:0.69rem;color:var(--muted);margin-top:3px" id="match-note"></div>
         </div>
 
-        <div id="spouse-ta-block" style="display:none">
-          <div class="sub-hdr" style="margin-top:16px">Spouse 401k / IRA <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
+        <div id="spouse-ta401k-block" style="display:none">
+          <div class="sub-hdr" style="margin-top:16px">Spouse 401k / 403b / TSP <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
           <div class="field">
             <label class="field-label">Current Balance</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
-              <input type="number" id="n-s-ta-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+              <input type="number" id="n-s-ta401k-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
               <div class="field-steps">
-                <button onclick="step('n-s-ta-bal',5000)">▲</button>
-                <button onclick="step('n-s-ta-bal',-5000)">▼</button>
+                <button onclick="step('n-s-ta401k-bal',5000)">▲</button>
+                <button onclick="step('n-s-ta401k-bal',-5000)">▼</button>
               </div>
             </div>
           </div>
@@ -702,10 +702,10 @@
             <label class="field-label">Spouse Annual Contributions</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
-              <input type="number" id="n-s-ta-cont" min="0" max="150000" value="10000" step="500" inputmode="numeric">
+              <input type="number" id="n-s-ta401k-cont" min="0" max="150000" value="10000" step="500" inputmode="numeric">
               <div class="field-steps">
-                <button onclick="step('n-s-ta-cont',500)">▲</button>
-                <button onclick="step('n-s-ta-cont',-500)">▼</button>
+                <button onclick="step('n-s-ta401k-cont',500)">▲</button>
+                <button onclick="step('n-s-ta401k-cont',-500)">▼</button>
               </div>
             </div>
           </div>
@@ -742,51 +742,51 @@
     </div>
   </div>
 
-  <!-- ── ROTH (POST-TAX RETIREMENT) ── -->
+  <!-- ── TRADITIONAL IRA ── -->
   <div class="acc">
-    <div class="acc-hdr" onclick="toggle('roth')">
-      <span class="acc-title">🌱 Roth IRA / Roth 401k <span class="tl-tag tag-g">Tax-free</span></span>
-      <span class="acc-arrow" id="arr-roth">▶</span>
+    <div class="acc-hdr" onclick="toggle('taira')">
+      <span class="acc-title">📋 Traditional IRA <span class="tl-tag tag-p">Pre-tax</span></span>
+      <span class="acc-arrow" id="arr-taira">▶</span>
     </div>
-    <div class="acc-body" id="body-roth">
+    <div class="acc-body" id="body-taira">
       <div class="acc-inner">
         <div class="info-box" style="font-size:0.72rem;line-height:1.5;margin-bottom:10px;color:var(--muted)">
-          💡 Include <strong>post-tax retirement accounts</strong>: Roth IRA, Roth 401(k), Roth 403(b). Contributions are made with after-tax money; qualified withdrawals (including growth) are 100% tax-free in retirement. Roth IRA contributions can also be withdrawn penalty-free at any age.
+          💡 Traditional IRA: tax-deductible contributions (income limits apply); withdrawals taxed. 2026 limit: $7,000 ($8,000 if 50+).
         </div>
         <div class="field">
           <label class="field-label">Current Balance</label>
-          <div class="field-wrap g">
+          <div class="field-wrap">
             <span class="field-pfx">$</span>
-            <input type="number" id="n-roth-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+            <input type="number" id="n-taira-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
             <div class="field-steps">
-              <button onclick="step('n-roth-bal',5000)">▲</button>
-              <button onclick="step('n-roth-bal',-5000)">▼</button>
+              <button onclick="step('n-taira-bal',5000)">▲</button>
+              <button onclick="step('n-taira-bal',-5000)">▼</button>
             </div>
           </div>
         </div>
         <div class="field">
           <label class="field-label">Your Annual Contributions</label>
-          <div class="field-wrap g">
+          <div class="field-wrap">
             <span class="field-pfx">$</span>
-            <input type="number" id="n-roth-cont" min="0" max="50000" value="0" step="500" inputmode="numeric">
+            <input type="number" id="n-taira-cont" min="0" max="10000" value="0" step="500" inputmode="numeric">
             <div class="field-steps">
-              <button onclick="step('n-roth-cont',500)">▲</button>
-              <button onclick="step('n-roth-cont',-500)">▼</button>
+              <button onclick="step('n-taira-cont',500)">▲</button>
+              <button onclick="step('n-taira-cont',-500)">▼</button>
             </div>
           </div>
-          <div class="field-hint">2026 Roth IRA limit: $7,000 ($8,000 if 50+). Roth 401(k) limit: $23,500 ($31,000 if 50+). Combine if you use both.</div>
+          <div class="field-hint">2026 limit: $7,000 ($8,000 if 50+)</div>
         </div>
 
-        <div id="spouse-roth-block" style="display:none">
-          <div class="sub-hdr" style="margin-top:16px">Spouse Roth <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
+        <div id="spouse-taira-block" style="display:none">
+          <div class="sub-hdr" style="margin-top:16px">Spouse Traditional IRA <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
           <div class="field">
             <label class="field-label">Current Balance</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
-              <input type="number" id="n-s-roth-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+              <input type="number" id="n-s-taira-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
               <div class="field-steps">
-                <button onclick="step('n-s-roth-bal',5000)">▲</button>
-                <button onclick="step('n-s-roth-bal',-5000)">▼</button>
+                <button onclick="step('n-s-taira-bal',5000)">▲</button>
+                <button onclick="step('n-s-taira-bal',-5000)">▼</button>
               </div>
             </div>
           </div>
@@ -794,10 +794,138 @@
             <label class="field-label">Spouse Annual Contributions</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
-              <input type="number" id="n-s-roth-cont" min="0" max="50000" value="0" step="500" inputmode="numeric">
+              <input type="number" id="n-s-taira-cont" min="0" max="10000" value="0" step="500" inputmode="numeric">
               <div class="field-steps">
-                <button onclick="step('n-s-roth-cont',500)">▲</button>
-                <button onclick="step('n-s-roth-cont',-500)">▼</button>
+                <button onclick="step('n-s-taira-cont',500)">▲</button>
+                <button onclick="step('n-s-taira-cont',-500)">▼</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ROTH 401k / 403b / TSP ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('roth401k')">
+      <span class="acc-title">🌱 Roth 401k / 403b / TSP <span class="tl-tag tag-g">Tax-free</span></span>
+      <span class="acc-arrow" id="arr-roth401k">▶</span>
+    </div>
+    <div class="acc-body" id="body-roth401k">
+      <div class="acc-inner">
+        <div class="info-box" style="font-size:0.72rem;line-height:1.5;margin-bottom:10px;color:var(--muted)">
+          💡 After-tax workplace Roth. Qualified withdrawals are 100% tax-free. 2026 limit: $23,500 ($31,000 if 50+).
+        </div>
+        <div class="field">
+          <label class="field-label">Current Balance</label>
+          <div class="field-wrap g">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-roth401k-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-roth401k-bal',5000)">▲</button>
+              <button onclick="step('n-roth401k-bal',-5000)">▼</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Your Annual Contributions</label>
+          <div class="field-wrap g">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-roth401k-cont" min="0" max="50000" value="0" step="500" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-roth401k-cont',500)">▲</button>
+              <button onclick="step('n-roth401k-cont',-500)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">2026 limit: $23,500 ($31,000 if 50+)</div>
+        </div>
+
+        <div id="spouse-roth401k-block" style="display:none">
+          <div class="sub-hdr" style="margin-top:16px">Spouse Roth 401k / 403b / TSP <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
+          <div class="field">
+            <label class="field-label">Current Balance</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-roth401k-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-roth401k-bal',5000)">▲</button>
+                <button onclick="step('n-s-roth401k-bal',-5000)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Spouse Annual Contributions</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-roth401k-cont" min="0" max="50000" value="0" step="500" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-roth401k-cont',500)">▲</button>
+                <button onclick="step('n-s-roth401k-cont',-500)">▼</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ROTH IRA ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('rothira')">
+      <span class="acc-title">🌿 Roth IRA <span class="tl-tag tag-g">Tax-free</span></span>
+      <span class="acc-arrow" id="arr-rothira">▶</span>
+    </div>
+    <div class="acc-body" id="body-rothira">
+      <div class="acc-inner">
+        <div class="info-box" style="font-size:0.72rem;line-height:1.5;margin-bottom:10px;color:var(--muted)">
+          💡 Roth IRA: after-tax, grows tax-free, no RMDs. Also include backdoor Roth or Roth conversion balances here. 2026 limit: $7,000 ($8,000 if 50+).
+        </div>
+        <div class="field">
+          <label class="field-label">Current Balance</label>
+          <div class="field-wrap g">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-rothira-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-rothira-bal',5000)">▲</button>
+              <button onclick="step('n-rothira-bal',-5000)">▼</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Your Annual Contributions</label>
+          <div class="field-wrap g">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-rothira-cont" min="0" max="10000" value="0" step="500" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-rothira-cont',500)">▲</button>
+              <button onclick="step('n-rothira-cont',-500)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">2026 limit: $7,000 ($8,000 if 50+)</div>
+        </div>
+
+        <div id="spouse-rothira-block" style="display:none">
+          <div class="sub-hdr" style="margin-top:16px">Spouse Roth IRA <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
+          <div class="field">
+            <label class="field-label">Current Balance</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-rothira-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-rothira-bal',5000)">▲</button>
+                <button onclick="step('n-s-rothira-bal',-5000)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Spouse Annual Contributions</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-s-rothira-cont" min="0" max="10000" value="0" step="500" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-s-rothira-cont',500)">▲</button>
+                <button onclick="step('n-s-rothira-cont',-500)">▼</button>
               </div>
             </div>
           </div>
@@ -1750,10 +1878,14 @@ const S = {
   cage: 30, rage: 60,
   primaryIncome: 80000,
   spouseEnabled: false, spouseIncome: 60000,
-  sTaBal: 0, sTaCont: 10000, sMatchRate: 0.50, sMatchCap: 0.06,
-  sRothBal: 0, sRothCont: 0,
-  taBal: 50000, taCont: 15000, matchRate: 0.50, matchCap: 0.06,
-  rothBal: 0, rothCont: 0,
+  ta401kBal: 50000, ta401kCont: 15000, matchRate: 0.50, matchCap: 0.06,
+  taIraBal: 0, taIraCont: 0,
+  roth401kBal: 0, roth401kCont: 0,
+  rothIraBal: 0, rothIraCont: 0,
+  sTa401kBal: 0, sTa401kCont: 10000, sMatchRate: 0.50, sMatchCap: 0.06,
+  sTaIraBal: 0, sTaIraCont: 0,
+  sRoth401kBal: 0, sRoth401kCont: 0,
+  sRothIraBal: 0, sRothIraCont: 0,
   brBal: 0, brCont: 0, divDrag: 0.003, ltcg: 0.15,
   retTaxRate: 0,
   penEnabled: false, pen: 24000, pAge: 65, cola: true, penTaxable: true,
@@ -1811,18 +1943,26 @@ bindNum('n-cage',        'cage',         null);
 bindNum('n-rage',        'rage',         null);
 bindNum('n-p-inc',       'primaryIncome',null);
 bindNum('n-s-inc',       'spouseIncome', null);
-bindNum('n-s-ta-bal',    'sTaBal',       null);
-bindNum('n-s-ta-cont',   'sTaCont',      null);
-bindNum('n-s-match-rate','sMatchRate',   v => v/100);
-bindNum('n-s-match-cap', 'sMatchCap',    v => v/100);
-bindNum('n-s-roth-bal',  'sRothBal',     null);
-bindNum('n-s-roth-cont', 'sRothCont',    null);
-bindNum('n-ta-bal',      'taBal',        null);
-bindNum('n-ta-cont',     'taCont',       null);
-bindNum('n-match-rate',  'matchRate',    v => v/100);
-bindNum('n-match-cap',   'matchCap',     v => v/100);
-bindNum('n-roth-bal',    'rothBal',      null);
-bindNum('n-roth-cont',   'rothCont',     null);
+bindNum('n-ta401k-bal',    'ta401kBal',    null);
+bindNum('n-ta401k-cont',   'ta401kCont',   null);
+bindNum('n-match-rate',    'matchRate',    v => v/100);
+bindNum('n-match-cap',     'matchCap',     v => v/100);
+bindNum('n-taira-bal',     'taIraBal',     null);
+bindNum('n-taira-cont',    'taIraCont',    null);
+bindNum('n-roth401k-bal',  'roth401kBal',  null);
+bindNum('n-roth401k-cont', 'roth401kCont', null);
+bindNum('n-rothira-bal',   'rothIraBal',   null);
+bindNum('n-rothira-cont',  'rothIraCont',  null);
+bindNum('n-s-ta401k-bal',  'sTa401kBal',   null);
+bindNum('n-s-ta401k-cont', 'sTa401kCont',  null);
+bindNum('n-s-match-rate',  'sMatchRate',   v => v/100);
+bindNum('n-s-match-cap',   'sMatchCap',    v => v/100);
+bindNum('n-s-taira-bal',   'sTaIraBal',    null);
+bindNum('n-s-taira-cont',  'sTaIraCont',   null);
+bindNum('n-s-roth401k-bal',  'sRoth401kBal',  null);
+bindNum('n-s-roth401k-cont', 'sRoth401kCont', null);
+bindNum('n-s-rothira-bal',   'sRothIraBal',   null);
+bindNum('n-s-rothira-cont',  'sRothIraCont',  null);
 bindNum('n-br-bal',      'brBal',        null);
 bindNum('n-br-cont',     'brCont',       null);
 bindNum('n-ret-tax',     'retTaxRate',   v => v/100);
@@ -1841,12 +1981,16 @@ bindNum('n-keep-br-pct', 'keepInvestPctBr',  v => v/100);
 
 // Live contribution bases for the paired $ inputs.
 function currentRetContribBase() {
-  const pMatch = Math.min((S.taCont || 0), (S.primaryIncome || 0) * (S.matchCap || 0)) * (S.matchRate || 0);
+  const taCont  = (S.ta401kCont || 0) + (S.taIraCont || 0);
+  const sTaCont = (S.sTa401kCont || 0) + (S.sTaIraCont || 0);
+  const rothCont  = (S.roth401kCont || 0) + (S.rothIraCont || 0);
+  const sRothCont = (S.sRoth401kCont || 0) + (S.sRothIraCont || 0);
+  const pMatch = Math.min((S.ta401kCont || 0), (S.primaryIncome || 0) * (S.matchCap || 0)) * (S.matchRate || 0);
   const sMatch = S.spouseEnabled
-    ? Math.min((S.sTaCont || 0), (S.spouseIncome || 0) * (S.sMatchCap || 0)) * (S.sMatchRate || 0)
+    ? Math.min((S.sTa401kCont || 0), (S.spouseIncome || 0) * (S.sMatchCap || 0)) * (S.sMatchRate || 0)
     : 0;
-  const trad = (S.taCont || 0) + pMatch + (S.spouseEnabled ? (S.sTaCont || 0) : 0) + sMatch;
-  const roth = (S.rothCont || 0) + (S.spouseEnabled ? (S.sRothCont || 0) : 0);
+  const trad = taCont + pMatch + (S.spouseEnabled ? sTaCont : 0) + sMatch;
+  const roth = rothCont + (S.spouseEnabled ? sRothCont : 0);
   return trad + roth;
 }
 function currentBrContribBase() { return S.brCont || 0; }
@@ -1888,10 +2032,12 @@ document.getElementById('sw-oi-taxable').addEventListener('change', e => { S.oiT
 function toggleSpouse() {
   S.spouseEnabled = document.getElementById('sw-spouse').checked;
   const vis = S.spouseEnabled ? '' : 'none';
-  document.getElementById('spouse-block').style.display      = vis;
-  document.getElementById('spouse-ta-block').style.display   = vis;
-  document.getElementById('spouse-roth-block').style.display = vis;
-  document.getElementById('ilbl-s-wrap').style.display       = vis;
+  document.getElementById('spouse-block').style.display         = vis;
+  document.getElementById('spouse-ta401k-block').style.display  = vis;
+  document.getElementById('spouse-taira-block').style.display   = vis;
+  document.getElementById('spouse-roth401k-block').style.display= vis;
+  document.getElementById('spouse-rothira-block').style.display = vis;
+  document.getElementById('ilbl-s-wrap').style.display          = vis;
   recalc();
 }
 function toggleSS() {
@@ -2040,10 +2186,16 @@ function initChart() {
 function runCalc() {
   const {
     cage, rage,
-    primaryIncome, spouseEnabled, spouseIncome, sTaBal, sTaCont, sMatchRate, sMatchCap,
-    sRothBal, sRothCont,
-    taBal, taCont, matchRate, matchCap,
-    rothBal, rothCont,
+    primaryIncome, spouseEnabled, spouseIncome, sMatchRate, sMatchCap,
+    ta401kBal, ta401kCont,
+    taIraBal, taIraCont,
+    roth401kBal, roth401kCont,
+    rothIraBal, rothIraCont,
+    sTa401kBal, sTa401kCont,
+    sTaIraBal, sTaIraCont,
+    sRoth401kBal, sRoth401kCont,
+    sRothIraBal, sRothIraCont,
+    matchRate, matchCap,
     brBal, brCont, divDrag, ltcg,
     retTaxRate,
     penEnabled, pen, pAge, cola, penTaxable,
@@ -2052,6 +2204,16 @@ function runCalc() {
     spend, nom, inf, swr,
     keepInvestPctRet, keepInvestPctBr,
   } = S;
+
+  // Aggregated aliases — rest of runCalc uses these unchanged
+  const taBal   = ta401kBal + taIraBal;
+  const taCont   = ta401kCont + taIraCont;
+  const rothBal  = roth401kBal + rothIraBal;
+  const rothCont = roth401kCont + rothIraCont;
+  const sTaBal   = sTa401kBal + sTaIraBal;
+  const sTaCont  = sTa401kCont + sTaIraCont;
+  const sRothBal  = sRoth401kBal + sRothIraBal;
+  const sRothCont = sRoth401kCont + sRothIraCont;
 
   if (rage <= cage) return null;
 
@@ -3577,18 +3739,26 @@ const INPUT_MAP = [
   { id:'n-rage',         key:'rage',          m:1   },
   { id:'n-p-inc',        key:'primaryIncome', m:1   },
   { id:'n-s-inc',        key:'spouseIncome',  m:1   },
-  { id:'n-s-ta-bal',     key:'sTaBal',        m:1   },
-  { id:'n-s-ta-cont',    key:'sTaCont',       m:1   },
-  { id:'n-s-match-rate', key:'sMatchRate',    m:100 },
-  { id:'n-s-match-cap',  key:'sMatchCap',     m:100 },
-  { id:'n-s-roth-bal',   key:'sRothBal',      m:1   },
-  { id:'n-s-roth-cont',  key:'sRothCont',     m:1   },
-  { id:'n-ta-bal',       key:'taBal',         m:1   },
-  { id:'n-ta-cont',      key:'taCont',        m:1   },
-  { id:'n-match-rate',   key:'matchRate',     m:100 },
-  { id:'n-match-cap',    key:'matchCap',      m:100 },
-  { id:'n-roth-bal',     key:'rothBal',       m:1   },
-  { id:'n-roth-cont',    key:'rothCont',      m:1   },
+  { id:'n-ta401k-bal',      key:'ta401kBal',    m:1   },
+  { id:'n-ta401k-cont',     key:'ta401kCont',   m:1   },
+  { id:'n-match-rate',      key:'matchRate',    m:100 },
+  { id:'n-match-cap',       key:'matchCap',     m:100 },
+  { id:'n-taira-bal',       key:'taIraBal',     m:1   },
+  { id:'n-taira-cont',      key:'taIraCont',    m:1   },
+  { id:'n-roth401k-bal',    key:'roth401kBal',  m:1   },
+  { id:'n-roth401k-cont',   key:'roth401kCont', m:1   },
+  { id:'n-rothira-bal',     key:'rothIraBal',   m:1   },
+  { id:'n-rothira-cont',    key:'rothIraCont',  m:1   },
+  { id:'n-s-ta401k-bal',    key:'sTa401kBal',   m:1   },
+  { id:'n-s-ta401k-cont',   key:'sTa401kCont',  m:1   },
+  { id:'n-s-match-rate',    key:'sMatchRate',   m:100 },
+  { id:'n-s-match-cap',     key:'sMatchCap',    m:100 },
+  { id:'n-s-taira-bal',     key:'sTaIraBal',    m:1   },
+  { id:'n-s-taira-cont',    key:'sTaIraCont',   m:1   },
+  { id:'n-s-roth401k-bal',  key:'sRoth401kBal', m:1   },
+  { id:'n-s-roth401k-cont', key:'sRoth401kCont',m:1   },
+  { id:'n-s-rothira-bal',   key:'sRothIraBal',  m:1   },
+  { id:'n-s-rothira-cont',  key:'sRothIraCont', m:1   },
   { id:'n-br-bal',       key:'brBal',         m:1   },
   { id:'n-br-cont',      key:'brCont',        m:1   },
   { id:'n-ret-tax',      key:'retTaxRate',    m:100 },
@@ -3634,10 +3804,12 @@ function syncUIFromState() {
   cb('sw-oi',         S.oiEnabled);
   cb('sw-oi-cola',    S.oiCola);
   cb('sw-oi-taxable', S.oiTaxable);
-  show('spouse-block',      S.spouseEnabled);
-  show('spouse-ta-block',   S.spouseEnabled);
-  show('spouse-roth-block', S.spouseEnabled);
-  show('ilbl-s-wrap',       S.spouseEnabled);
+  show('spouse-block',          S.spouseEnabled);
+  show('spouse-ta401k-block',   S.spouseEnabled);
+  show('spouse-taira-block',    S.spouseEnabled);
+  show('spouse-roth401k-block', S.spouseEnabled);
+  show('spouse-rothira-block',  S.spouseEnabled);
+  show('ilbl-s-wrap',           S.spouseEnabled);
   show('ss-block',        S.ssEnabled);
   show('ss-spouse-block', S.ssSpouseEnabled);
   show('oi-block',        S.oiEnabled);
@@ -3653,6 +3825,15 @@ function loadState() {
       if (!('keepInvestPctRet' in saved)) saved.keepInvestPctRet = saved.keepInvestPct;
       if (!('keepInvestPctBr'  in saved)) saved.keepInvestPctBr  = saved.keepInvestPct;
     }
+    // Migrate old flat keys to new split account keys
+    if ('taBal'    in saved && !('ta401kBal'    in saved)) saved.ta401kBal    = saved.taBal;
+    if ('taCont'   in saved && !('ta401kCont'   in saved)) saved.ta401kCont   = saved.taCont;
+    if ('rothBal'  in saved && !('rothIraBal'   in saved)) saved.rothIraBal   = saved.rothBal;
+    if ('rothCont' in saved && !('rothIraCont'  in saved)) saved.rothIraCont  = saved.rothCont;
+    if ('sTaBal'   in saved && !('sTa401kBal'   in saved)) saved.sTa401kBal   = saved.sTaBal;
+    if ('sTaCont'  in saved && !('sTa401kCont'  in saved)) saved.sTa401kCont  = saved.sTaCont;
+    if ('sRothBal' in saved && !('sRothIraBal'  in saved)) saved.sRothIraBal  = saved.sRothBal;
+    if ('sRothCont'in saved && !('sRothIraCont' in saved)) saved.sRothIraCont = saved.sRothCont;
     Object.keys(S).forEach(k => { if (k in saved) S[k] = saved[k]; });
     syncUIFromState();
     set('save-status', 'Inputs loaded from last session');
