@@ -753,6 +753,20 @@
           Primary match: <strong id="match-amt">—</strong>/yr · Total into 401k: <strong id="match-total">—</strong>/yr
           <div style="font-size:0.69rem;color:var(--muted);margin-top:3px" id="match-note"></div>
         </div>
+        <div class="sw-row" style="margin-top:10px">
+          <div>
+            <div>Match also covers Roth 401k contributions</div>
+            <div class="sw-row-sub">Most plans match total employee contributions, not just Trad</div>
+          </div>
+          <label class="sw"><input type="checkbox" class="g" id="sw-match-roth-too" onchange="recalc()"><span class="sw-track"></span></label>
+        </div>
+        <div class="sw-row">
+          <div>
+            <div>Deposit match as Roth (SECURE 2.0)</div>
+            <div class="sw-row-sub">Default = match goes to Traditional. Plan must offer this option.</div>
+          </div>
+          <label class="sw"><input type="checkbox" class="g" id="sw-match-as-roth" onchange="recalc()"><span class="sw-track"></span></label>
+        </div>
 
         <div id="spouse-ta401k-block" style="display:none">
           <div class="sub-hdr" style="margin-top:16px">Spouse 401k / 403b / TSP <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
@@ -805,6 +819,20 @@
           <div class="info-box info-box-y" id="spouse-match-preview">
             Spouse match: <strong id="s-match-amt">—</strong>/yr · Spouse total into 401k: <strong id="s-match-total">—</strong>/yr
             <div style="font-size:0.69rem;color:var(--muted);margin-top:3px" id="s-match-note"></div>
+          </div>
+          <div class="sw-row" style="margin-top:10px">
+            <div>
+              <div>Spouse match also covers Roth 401k</div>
+              <div class="sw-row-sub">Total employee contributions counted toward match cap</div>
+            </div>
+            <label class="sw"><input type="checkbox" class="y" id="sw-s-match-roth-too" onchange="recalc()"><span class="sw-track"></span></label>
+          </div>
+          <div class="sw-row">
+            <div>
+              <div>Spouse match deposited as Roth (SECURE 2.0)</div>
+              <div class="sw-row-sub">Default = match goes to Traditional</div>
+            </div>
+            <label class="sw"><input type="checkbox" class="y" id="sw-s-match-as-roth" onchange="recalc()"><span class="sw-track"></span></label>
           </div>
         </div>
       </div>
@@ -1330,6 +1358,17 @@
           </div>
           <div class="field-hint">Estimated tax on <strong>Traditional</strong> withdrawals in retirement. Roth withdrawals are tax-free, so this only applies to the pre-tax portion of your portfolio. Leave 0% if your spending input already includes taxes. Typical: 10–15%.</div>
         </div>
+        <div class="field">
+          <label class="field-label">Stop Contributing at Age</label>
+          <div class="field-wrap">
+            <input type="number" id="n-stop-invest-age" min="40" max="80" value="60" step="1" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-stop-invest-age',1)">▲</button>
+              <button onclick="step('n-stop-invest-age',-1)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">Default = retirement age. Set higher to keep contributing past retirement (e.g. via part-time work, pension surplus, or rental income). Affects the <strong>Keep Investing</strong> projection only.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1499,7 +1538,7 @@
   <div class="cw" id="keep-invest-section" style="display:none">
     <div class="ct">📈 Coast vs Keep Investing</div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      Stop saving at CoastFIRE vs keep contributing through retirement. Tune the % below.
+      Stop saving at CoastFIRE vs keep contributing — through retirement and (optionally) past it via the <strong>Stop Contributing at Age</strong> setting in Spending &amp; Returns.
     </div>
     <div style="margin-bottom:14px">
       <label class="field-label">After CoastFIRE, keep investing...</label>
@@ -1952,10 +1991,12 @@ const S = {
   primaryIncome: 80000,
   spouseEnabled: false, spouseIncome: 60000,
   ta401kBal: 50000, ta401kCont: 15000, matchRate: 0.50, matchCap: 0.06,
+  matchRothToo: false, matchAsRoth: false,
   taIraBal: 0, taIraCont: 0,
   roth401kBal: 0, roth401kCont: 0,
   rothIraBal: 0, rothIraCont: 0,
   sTa401kBal: 0, sTa401kCont: 10000, sMatchRate: 0.50, sMatchCap: 0.06,
+  sMatchRothToo: false, sMatchAsRoth: false,
   sTaIraBal: 0, sTaIraCont: 0,
   sRoth401kBal: 0, sRoth401kCont: 0,
   sRothIraBal: 0, sRothIraCont: 0,
@@ -1967,6 +2008,7 @@ const S = {
   oiEnabled: false, oi: 0, oiAge: 60, oiCola: true, oiTaxable: true,
   spend: 60000, nom: 0.07, inf: 0.03, swr: 0.04,
   keepInvestPctRet: 1.0, keepInvestPctBr: 1.0,
+  stopInvestAge: 60,
 };
 
 let dispMode = 'nom';
@@ -2051,6 +2093,7 @@ bindNum('n-inf',         'inf',          v => v/100);
 bindNum('n-swr',         'swr',          v => v/100);
 bindNum('n-keep-ret-pct','keepInvestPctRet', v => v/100);
 bindNum('n-keep-br-pct', 'keepInvestPctBr',  v => v/100);
+bindNum('n-stop-invest-age', 'stopInvestAge', null);
 
 // Live contribution bases for the paired $ inputs.
 function currentRetContribBase() {
@@ -2101,6 +2144,10 @@ document.getElementById('sw-pen-taxable').addEventListener('change', e => { S.pe
 document.getElementById('sw-oi').addEventListener('change',         e => { S.oiEnabled  = e.target.checked; document.getElementById('oi-block').style.display = S.oiEnabled ? '' : 'none'; recalc(); });
 document.getElementById('sw-oi-cola').addEventListener('change',    e => { S.oiCola     = e.target.checked; recalc(); });
 document.getElementById('sw-oi-taxable').addEventListener('change', e => { S.oiTaxable  = e.target.checked; recalc(); });
+document.getElementById('sw-match-roth-too').addEventListener('change',  e => { S.matchRothToo  = e.target.checked; recalc(); });
+document.getElementById('sw-match-as-roth').addEventListener('change',   e => { S.matchAsRoth   = e.target.checked; recalc(); });
+document.getElementById('sw-s-match-roth-too').addEventListener('change',e => { S.sMatchRothToo = e.target.checked; recalc(); });
+document.getElementById('sw-s-match-as-roth').addEventListener('change', e => { S.sMatchAsRoth  = e.target.checked; recalc(); });
 
 function toggleSpouse() {
   S.spouseEnabled = document.getElementById('sw-spouse').checked;
@@ -2268,14 +2315,15 @@ function runCalc() {
     sTaIraBal, sTaIraCont,
     sRoth401kBal, sRoth401kCont,
     sRothIraBal, sRothIraCont,
-    matchRate, matchCap,
+    matchRate, matchCap, matchRothToo, matchAsRoth,
+    sMatchRothToo, sMatchAsRoth,
     brBal, brCont, divDrag, ltcg,
     retTaxRate,
     penEnabled, pen, pAge, cola, penTaxable,
     ssEnabled, ssPrimary, ssAge, ssSpouseEnabled, ssSpouse, ssSpouseAge,
     oiEnabled, oi, oiAge, oiCola, oiTaxable,
     spend, nom, inf, swr,
-    keepInvestPctRet, keepInvestPctBr,
+    keepInvestPctRet, keepInvestPctBr, stopInvestAge,
   } = S;
 
   // Aggregated aliases — rest of runCalc uses these unchanged
@@ -2295,12 +2343,20 @@ function runCalc() {
 
   const totalIncome   = primaryIncome + (spouseEnabled ? spouseIncome : 0);
   const pMatchCeil    = primaryIncome * matchCap;
-  const annualMatch   = Math.min(taCont, pMatchCeil) * matchRate;
+  // Primary: match counted against ta401k, optionally also roth401k
+  const matchableP    = matchRothToo ? (ta401kCont + roth401kCont) : ta401kCont;
+  const annualMatch   = Math.min(matchableP, pMatchCeil) * matchRate;
+  const matchToTrad   = matchAsRoth ? 0 : annualMatch;
+  const matchToRoth   = matchAsRoth ? annualMatch : 0;
+  // Spouse: same logic
   const sMatchCeil    = spouseEnabled ? spouseIncome * sMatchCap : 0;
-  const sAnnualMatch  = spouseEnabled ? Math.min(sTaCont, sMatchCeil) * sMatchRate : 0;
+  const matchableS    = sMatchRothToo ? (sTa401kCont + sRoth401kCont) : sTa401kCont;
+  const sAnnualMatch  = spouseEnabled ? Math.min(matchableS, sMatchCeil) * sMatchRate : 0;
+  const sMatchToTrad  = sMatchAsRoth ? 0 : sAnnualMatch;
+  const sMatchToRoth  = sMatchAsRoth ? sAnnualMatch : 0;
   const totalMatch       = annualMatch + sAnnualMatch;
-  const effectiveTaCont  = taCont + annualMatch + (spouseEnabled ? sTaCont : 0) + sAnnualMatch;
-  const effectiveRothCont= rothCont + (spouseEnabled ? sRothCont : 0);
+  const effectiveTaCont  = taCont + matchToTrad + (spouseEnabled ? sTaCont + sMatchToTrad : 0);
+  const effectiveRothCont= rothCont + matchToRoth + (spouseEnabled ? sRothCont + sMatchToRoth : 0);
   const totalContribs    = effectiveTaCont + effectiveRothCont + brCont;
   const savingsRate      = totalIncome > 0 ? totalContribs / totalIncome : 0;
 
@@ -2350,9 +2406,9 @@ function runCalc() {
   // Uses a simple "keep investing" annuity projection (conservative ceiling on both buckets;
   // the share ratio is what matters, not the absolute dollar figures).
   const combinedTaBalForTax = taBal + (spouseEnabled ? sTaBal : 0);
-  const combinedTaContForTax = taCont + annualMatch + (spouseEnabled ? sTaCont : 0) + sAnnualMatch;
+  const combinedTaContForTax = taCont + matchToTrad + (spouseEnabled ? sTaCont + sMatchToTrad : 0);
   const combinedRothBalForTax  = rothBal  + (spouseEnabled ? sRothBal  : 0);
-  const combinedRothContForTax = rothCont + (spouseEnabled ? sRothCont : 0);
+  const combinedRothContForTax = rothCont + matchToRoth + (spouseEnabled ? sRothCont + sMatchToRoth : 0);
   const cf = nom > 0 ? ((Math.pow(1 + nom, yrs) - 1) / nom) : yrs;
   const projTrad = combinedTaBalForTax   * Math.pow(1 + nom, yrs) + combinedTaContForTax   * cf;
   const projRoth = combinedRothBalForTax * Math.pow(1 + nom, yrs) + combinedRothContForTax * cf;
@@ -2534,12 +2590,18 @@ function runCalc() {
       for (let y = yrs + 1; y <= horizonYears; y++) coastPath.push(null);
     }
 
-    // Keep-investing path drawdown
+    // Keep-investing path drawdown — optionally keep contributing past retirement
+    // up to `stopInvestAge` (e.g. part-time work, rental income, pension surplus).
+    // Contributions are nominal-today's-dollars to stay consistent with the rest
+    // of the model (matches the through-rage keep-invest loop).
+    const effStopAge = Math.max(rage, Math.min(stopInvestAge || rage, HORIZON_AGE));
     if (coastAge !== null && keepInvestPath[yrs] != null) {
       let kiBal = keepInvestPath[yrs];
       for (let y = yrs + 1; y <= horizonYears; y++) {
         const age = cage + y;
-        kiBal = Math.max(kiBal * (1 + nom) - grossDrawAt(age), 0);
+        const stillContrib = age <= effStopAge;
+        const contribAdd = stillContrib ? (keepRetAdd + keepBrAdd) : 0;
+        kiBal = Math.max(kiBal * (1 + nom) + contribAdd - grossDrawAt(age), 0);
         keepInvestPath.push(kiBal);
         keepBrPath.push(null); // brokerage-only tracking past rage omitted
       }
@@ -2556,7 +2618,8 @@ function runCalc() {
     totalIncome, primaryIncome, spouseEnabled, spouseIncome,
     sTaBal, sTaCont, sMatchRate, sMatchCap,
     sRothBal, sRothCont,
-    annualMatch, sAnnualMatch, totalMatch,
+    annualMatch, sAnnualMatch, totalMatch, matchToTrad, matchToRoth, sMatchToTrad, sMatchToRoth,
+    matchRothToo, matchAsRoth, sMatchRothToo, sMatchAsRoth, stopInvestAge,
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
     keepInvestPctRet, keepInvestPctBr, keepRetAdd, keepBrAdd, keepTotalAdd,
@@ -2602,7 +2665,8 @@ function recalc() {
     totalIncome, primaryIncome, spouseEnabled, spouseIncome,
     sTaBal, sTaCont, sMatchRate, sMatchCap,
     sRothBal, sRothCont,
-    annualMatch, sAnnualMatch, totalMatch,
+    annualMatch, sAnnualMatch, totalMatch, matchToTrad, matchToRoth, sMatchToTrad, sMatchToRoth,
+    matchRothToo, matchAsRoth, sMatchRothToo, sMatchAsRoth, stopInvestAge,
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
     keepInvestPctRet, keepInvestPctBr, keepRetAdd, keepBrAdd, keepTotalAdd,
@@ -2715,25 +2779,35 @@ function recalc() {
   set('ilbl-m', totalMatch > 0 ? fmt(totalMatch) + '/yr' : '$0');
   set('ilbl-rate', totalIncome > 0 ? pct(savingsRate) : '—');
 
+  const ta401kCont_p = S.ta401kCont || 0;
+  const roth401kCont_p = S.roth401kCont || 0;
+  const sTa401kCont_s = S.sTa401kCont || 0;
+  const sRoth401kCont_s = S.sRoth401kCont || 0;
   set('match-amt',   fmt(annualMatch));
-  set('match-total', fmt(taCont + annualMatch));
+  set('match-total', fmt(ta401kCont_p + (matchRothToo ? roth401kCont_p : 0) + annualMatch));
+  const pMatchableCont = matchRothToo ? (ta401kCont_p + roth401kCont_p) : ta401kCont_p;
   const pCapDol = primaryIncome * matchCap;
-  const pCapped = taCont > pCapDol;
+  const pCapped = pMatchableCont > pCapDol;
+  const matchDest = matchAsRoth ? 'Roth 401k' : 'Traditional 401k';
+  const matchScope = matchRothToo ? 'Trad + Roth contributions' : 'Trad contributions';
   document.getElementById('match-note').textContent =
     matchRate > 0
-      ? `${Math.round(matchRate*100)}% match on up to ${pct(matchCap)} of salary (${fmt(pCapDol)}/yr eligible).` +
-        (pCapped ? ` ⚠️ ${fmt(taCont - pCapDol)}/yr of your contributions is unmatched.` : ' ✓ All contributions within cap.')
+      ? `${Math.round(matchRate*100)}% match on ${matchScope}, up to ${pct(matchCap)} of salary (${fmt(pCapDol)}/yr). Match → ${matchDest}.` +
+        (pCapped ? ` ⚠️ ${fmt(pMatchableCont - pCapDol)}/yr unmatched.` : ' ✓ All within cap.')
       : 'No employer match configured.';
 
   if (spouseEnabled) {
     set('s-match-amt',   fmt(sAnnualMatch));
-    set('s-match-total', fmt(sTaCont + sAnnualMatch));
+    set('s-match-total', fmt(sTa401kCont_s + (sMatchRothToo ? sRoth401kCont_s : 0) + sAnnualMatch));
+    const sMatchableCont = sMatchRothToo ? (sTa401kCont_s + sRoth401kCont_s) : sTa401kCont_s;
     const sCapDol = spouseIncome * sMatchCap;
-    const sCapped = sTaCont > sCapDol;
+    const sCapped = sMatchableCont > sCapDol;
+    const sMatchDest = sMatchAsRoth ? 'Roth 401k' : 'Traditional 401k';
+    const sMatchScope = sMatchRothToo ? 'Trad + Roth' : 'Trad';
     document.getElementById('s-match-note').textContent =
       sMatchRate > 0
-        ? `${Math.round(sMatchRate*100)}% match on up to ${pct(sMatchCap)} of spouse salary (${fmt(sCapDol)}/yr eligible).` +
-          (sCapped ? ` ⚠️ ${fmt(sTaCont - sCapDol)}/yr unmatched.` : ' ✓ All within cap.')
+        ? `${Math.round(sMatchRate*100)}% match on ${sMatchScope}, up to ${pct(sMatchCap)} (${fmt(sCapDol)}/yr). → ${sMatchDest}.` +
+          (sCapped ? ` ⚠️ ${fmt(sMatchableCont - sCapDol)}/yr unmatched.` : ' ✓ All within cap.')
         : 'No spouse employer match configured.';
   }
 
@@ -3670,6 +3744,7 @@ function updateAiPrompt(R) {
     nomSpend, penEnabled, pen, penTaxable, ssEnabled, ssPrimary,
     ssSpouseEnabled, ssSpouse, spouseEnabled,
     oiEnabled, oi, oiTaxable,
+    matchRothToo, matchAsRoth, sMatchRothToo, sMatchAsRoth, stopInvestAge,
   } = R;
 
   const fmt0 = n => '$' + Math.round(n).toLocaleString();
@@ -3716,6 +3791,17 @@ function updateAiPrompt(R) {
   if (oiEnabled        && oi > 0)        situation.push(`- Other income expected: ${fmt0(oi)}/yr (today's dollars) — ${oiTaxable ? 'taxable' : 'tax-free (net cash)'}`);
   if (ssEnabled        && ssPrimary > 0) situation.push(`- Social Security (me): ${fmt0(ssPrimary)}/yr projected`);
   if (ssSpouseEnabled  && ssSpouse > 0)  situation.push(`- Social Security (spouse): ${fmt0(ssSpouse)}/yr projected`);
+  if (totalMatch > 0 && (matchRothToo || matchAsRoth || sMatchRothToo || sMatchAsRoth)) {
+    const matchNotes = [];
+    if (matchRothToo)  matchNotes.push('match counts Roth contributions');
+    if (matchAsRoth)   matchNotes.push('match deposited as Roth (SECURE 2.0)');
+    if (sMatchRothToo) matchNotes.push('spouse match counts Roth');
+    if (sMatchAsRoth)  matchNotes.push('spouse match deposited as Roth');
+    situation.push(`- Match config: ${matchNotes.join('; ')}`);
+  }
+  if (stopInvestAge && stopInvestAge > rage) {
+    situation.push(`- Plan to keep contributing past retirement until age ${stopInvestAge} (e.g. part-time work, pension surplus, or rental income).`);
+  }
 
   const prompt =
 `I'm using a CoastFIRE calculator and want you to stress-test my plan. Be direct — tell me what's risky, what I'm probably wrong about, and what I should consider that the calculator can't model.
@@ -3851,6 +3937,7 @@ const INPUT_MAP = [
   { id:'n-swr',          key:'swr',           m:100 },
   { id:'n-keep-ret-pct', key:'keepInvestPctRet', m:100 },
   { id:'n-keep-br-pct',  key:'keepInvestPctBr',  m:100 },
+  { id:'n-stop-invest-age', key:'stopInvestAge', m:1 },
 ];
 
 function saveState() {
@@ -3877,6 +3964,10 @@ function syncUIFromState() {
   cb('sw-oi',         S.oiEnabled);
   cb('sw-oi-cola',    S.oiCola);
   cb('sw-oi-taxable', S.oiTaxable);
+  cb('sw-match-roth-too',   S.matchRothToo);
+  cb('sw-match-as-roth',    S.matchAsRoth);
+  cb('sw-s-match-roth-too', S.sMatchRothToo);
+  cb('sw-s-match-as-roth',  S.sMatchAsRoth);
   show('spouse-block',          S.spouseEnabled);
   show('spouse-ta401k-block',   S.spouseEnabled);
   show('spouse-taira-block',    S.spouseEnabled);
