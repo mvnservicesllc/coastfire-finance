@@ -99,6 +99,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 70px; }
 
     :root {
       --bg:      #0b1929;
@@ -146,7 +147,7 @@
       flex-shrink: 0; touch-action: manipulation;
     }
 
-    header { text-align: center; margin-bottom: 32px; }
+    header { text-align: center; margin-bottom: 18px; }
     header h1 {
       font-family: var(--serif);
       font-size: 2.3rem; font-weight: 700;
@@ -154,7 +155,57 @@
       background: linear-gradient(135deg, #c9965c, #e8c685);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    header p { color: var(--muted); margin-top: 8px; font-size: 0.9rem; max-width: 560px; margin-inline: auto; }
+    header p { color: var(--muted); margin-top: 6px; font-size: 0.92rem; max-width: 560px; margin-inline: auto; }
+
+    /* ── Sticky in-page navigation ── */
+    .pagenav {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(11,25,41,0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      margin: 0 -16px 18px;
+      padding: 10px 16px;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+    .pagenav::-webkit-scrollbar { display: none; }
+    .pagenav-inner {
+      max-width: 1240px; margin: 0 auto;
+      display: flex; gap: 6px; align-items: center;
+    }
+    .pagenav a {
+      display: inline-flex; align-items: center;
+      padding: 7px 12px; border-radius: 8px;
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--muted); text-decoration: none;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+      touch-action: manipulation;
+    }
+    .pagenav a:hover {
+      color: var(--text); background: rgba(201,150,92,0.08);
+      border-color: rgba(201,150,92,0.2);
+    }
+    .pagenav a.primary {
+      background: linear-gradient(135deg, rgba(201,150,92,0.18), rgba(232,198,133,0.10));
+      color: var(--accent2, #e8c685); border-color: rgba(201,150,92,0.3);
+    }
+
+    /* ── Section group headers (left-panel input grouping) ── */
+    .group-hdr {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin: 22px 0 12px;
+      padding: 0 4px;
+    }
+    .group-hdr::before, .group-hdr::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, transparent, rgba(201,150,92,0.25), transparent);
+    }
+    .group-hdr:first-of-type { margin-top: 0; }
 
     .layout {
       display: grid;
@@ -504,8 +555,22 @@
 
 <header>
   <h1>🏄 CoastFIRE Calculator</h1>
-  <p>Nominal projections with pension offsets, after-tax brokerage, employer match, and clean pre/post-coast phases.</p>
+  <p>Find the age you can stop saving. Compound growth handles the rest.</p>
 </header>
+
+<nav class="pagenav" aria-label="Page sections">
+  <div class="pagenav-inner">
+    <a href="#inputs" class="primary">📝 Inputs</a>
+    <a href="#results">📊 Results</a>
+    <a href="#projection">📈 Projection</a>
+    <a href="#income">💰 Income</a>
+    <a href="#stress">🎲 Stress Test</a>
+    <a href="#plan">🤖 Plan</a>
+    <a href="#scenarios">🎯 Scenarios</a>
+    <a href="#blog">📚 Blog</a>
+  </div>
+</nav>
+
 <div class="save-bar">
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
@@ -516,8 +581,10 @@
 <!-- ══════════════════════════════════════════════
      LEFT PANEL — INPUTS
 ══════════════════════════════════════════════ -->
-<div>
+<div id="inputs">
 <div class="card">
+
+  <div class="group-hdr">You</div>
 
   <!-- ── AGE ── -->
   <div class="acc">
@@ -620,6 +687,8 @@
       </div>
     </div>
   </div>
+
+  <div class="group-hdr">Investments</div>
 
   <!-- ── TRADITIONAL 401k / 403b / TSP ── -->
   <div class="acc">
@@ -994,6 +1063,8 @@
     </div>
   </div>
 
+  <div class="group-hdr">Future Income</div>
+
   <!-- ── PENSION ── -->
   <div class="acc">
     <div class="acc-hdr" onclick="toggle('pen')">
@@ -1190,6 +1261,8 @@
     </div>
   </div>
 
+  <div class="group-hdr">Plan &amp; Goals</div>
+
   <!-- ── RETURNS ── -->
   <div class="acc">
     <div class="acc-hdr" onclick="toggle('ret')">
@@ -1267,7 +1340,7 @@
 <!-- ══════════════════════════════════════════════
      RIGHT PANEL — RESULTS
 ══════════════════════════════════════════════ -->
-<div class="chart-area">
+<div class="chart-area" id="results">
 
   <div class="card" style="margin-bottom:18px">
     <div id="banner" class="banner track">
@@ -1311,18 +1384,18 @@
     </div>
   </div>
 
-  <div class="cw">
-    <div class="ct">Portfolio Projection <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Accumulation → drawdown through age 80</span></div>
+  <div class="cw" id="projection">
+    <div class="ct">📈 Portfolio Projection <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Through age 80</span></div>
     <div style="font-size:0.76rem;color:var(--muted);margin-bottom:10px;line-height:1.5">
-      Stacked areas (Trad / Roth / Brokerage) show <strong>accumulation</strong> through retirement age. Past retirement, only the summary lines continue — the <strong>Total</strong>, <strong>Coast-Only</strong>, and <strong>Keep Investing</strong> paths are drawn down using your inflation-adjusted spending need (net of pension/SS as they kick in).
+      Stacked accumulation (Trad/Roth/Brokerage) through retirement age, then drawdown of the Total / Coast / Keep-Investing paths net of pension &amp; SS.
     </div>
     <canvas id="chart" height="230"></canvas>
   </div>
 
-  <div class="cw" id="income-breakdown-section">
-    <div class="ct">💰 Estimated Retirement Income <span style="font-size:0.7rem;color:var(--muted);font-weight:400">At age <span id="ib-rage">—</span> · year one of retirement</span></div>
+  <div class="cw" id="income">
+    <div class="ct">💰 Retirement Income <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Age <span id="ib-rage">—</span> · year one</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      Where your spending comes from on day one of retirement. Portfolio withdrawals and Social Security are treated as <strong>pre-tax</strong> and taxed at your blended retirement rate. <strong>Pension</strong> and <strong>Other Income</strong> each have a Taxable toggle — switch off for tax-free streams (after-tax annuities, muni bond coupons, HSA-qualified, etc.).
+      Where your spending comes from on day one. Portfolio &amp; SS are taxed at your blended rate; Pension and Other Income have a Taxable toggle for tax-free streams.
     </div>
 
     <div class="bbar-lbl" style="margin-bottom:6px">Portfolio balance at retirement</div>
@@ -1379,16 +1452,16 @@
 
     <div class="info-box" id="ib-footer" style="font-size:0.82rem;line-height:1.6;margin-top:14px"></div>
 
-    <div style="font-size:0.74rem;color:var(--muted);margin-top:12px;line-height:1.6;padding:10px 12px;background:rgba(255,255,255,0.02);border-left:2px solid var(--border);border-radius:4px">
-      <strong style="color:var(--text)">📋 Tax treatment note.</strong>
-      By default, portfolio withdrawals, pension, Other Income, and Social Security are treated as <strong>pre-tax</strong> and taxed at your blended retirement rate (from the Tax-Advantaged tab). Both <strong>Pension</strong> and <strong>Other Income</strong> have a <strong>Taxable toggle</strong> — switch Off to treat the stream as <strong>tax-free net cash</strong> (e.g. after-tax annuity, tax-exempt pension, muni bond coupons, HSA-qualified withdrawals). Tax-free streams reduce your net spending need dollar-for-dollar before gross-up, which lowers your required FIRE number. SS is federally taxable on 0–85% of the benefit depending on combined income, so treating it as fully pre-tax is a <strong>conservative</strong> safety margin. The Net FIRE # and CoastFIRE Target in the Results section use this same model.
-    </div>
+    <details style="font-size:0.74rem;color:var(--muted);margin-top:12px;line-height:1.6;padding:10px 12px;background:rgba(255,255,255,0.02);border-left:2px solid var(--border);border-radius:4px">
+      <summary style="cursor:pointer;font-weight:600;color:var(--text)">📋 Tax treatment details</summary>
+      <p style="margin-top:8px">All income (portfolio, pension, Other Income, SS) is treated as <strong>pre-tax</strong> at your blended retirement rate. The <strong>Taxable toggle</strong> on Pension &amp; Other Income flips them to net cash (after-tax annuity, muni coupons, HSA), reducing your FIRE target. SS is conservatively modeled as fully taxable (it's actually 0–85% federally taxable).</p>
+    </details>
   </div>
 
   <div class="cw" id="age59-section" style="display:none">
     <div class="ct">🔐 Portfolio at Age 59½ <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Penalty-free access</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      At 59½ you can tap 401(k)/IRA without the 10% early-withdrawal penalty. Brokerage accounts you can tap anytime — that's your <strong>bridge</strong> between stopping work and retirement accounts opening up.
+      Brokerage = your bridge before 59½ when 401(k)/IRA unlock without the 10% penalty.
     </div>
     <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
       <div class="rb"><div class="lbl">Total Portfolio</div><div class="val g" id="age59-total">—</div><div class="sub">All accounts combined</div></div>
@@ -1399,9 +1472,9 @@
   </div>
 
   <div class="cw" id="retire-growth-section" style="display:none">
-    <div class="ct">🚀 401(k) / IRA Growth Through Age 80 <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Long-horizon compounding</span></div>
+    <div class="ct">🚀 401(k) / IRA Growth Through 80 <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Untouched compounding</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      Trad + Roth combined, from today through age 80. Contributions follow your plan until retirement; after retirement, balances grow <strong>untouched</strong> at your nominal return (no withdrawals modeled here) — useful for seeing how much is waiting for you at 59½, RMDs at 73, and beyond.
+      Trad + Roth combined. Grows untouched after retirement (no withdrawals modeled) — shows what's waiting at 59½, RMDs at 73, and beyond.
     </div>
     <canvas id="retire-chart" height="220"></canvas>
     <div id="retire-chart-legend" style="display:none;margin-top:10px;font-size:0.78rem;color:var(--muted);text-align:center">
@@ -1424,9 +1497,9 @@
   </div>
 
   <div class="cw" id="keep-invest-section" style="display:none">
-    <div class="ct">📈 What if you keep investing after CoastFIRE?</div>
+    <div class="ct">📈 Coast vs Keep Investing</div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      Compares stopping contributions at CoastFIRE vs continuing to invest all the way to retirement. Dial in exactly how much you'd keep contributing.
+      Stop saving at CoastFIRE vs keep contributing through retirement. Tune the % below.
     </div>
     <div style="margin-bottom:14px">
       <label class="field-label">After CoastFIRE, keep investing...</label>
@@ -1508,10 +1581,10 @@
     <div class="info-box" id="ki-summary" style="margin-top:0;font-size:0.82rem;line-height:1.6"></div>
   </div>
 
-  <div class="cw">
-    <div class="ct">🎲 Monte Carlo Simulation — After CoastFIRE</div>
+  <div class="cw" id="stress">
+    <div class="ct">🎲 Monte Carlo Stress Test</div>
     <div class="info-box" style="font-size:0.82rem;line-height:1.5;margin-bottom:14px">
-      Starting from the moment you hit your CoastFIRE number (or today, if you've already hit it), this runs 1,000 simulated futures with 15% market volatility to show how your money grows over the remaining years until retirement — <strong>under two strategies: coast (stop contributing) or keep investing.</strong>
+      1,000 simulated futures (15% market volatility) from CoastFIRE to retirement — under two strategies: <strong>coast</strong> (stop contributing) or <strong>keep investing</strong>.
     </div>
     <button class="mc-run-btn" id="mc-run" onclick="runMonteCarlo()">▶ Run 1,000 Simulations</button>
 
@@ -1564,10 +1637,11 @@
        Builds a prompt from the calculator state in the browser and opens
        it in ChatGPT or Claude. Nothing is sent from our servers.
   ══════════════════════════════════════════════ -->
+  <span id="plan"></span>
   <div class="cw" id="ai-card" style="margin-bottom:20px;display:none">
-    <div class="ct">🤖 Stress-test this with AI</div>
+    <div class="ct">🤖 Get a Second Opinion from AI</div>
     <div class="info-box" style="font-size:0.82rem;line-height:1.5;margin-bottom:12px">
-      We'll package your numbers into a ready-to-ask prompt and open it in ChatGPT or Claude. Nothing is sent from our site — the prompt is built in your browser. Use it to ask <em>"what am I missing?"</em> or stress-test your assumptions.
+      Builds a prompt from your numbers and opens it in ChatGPT or Claude. Nothing leaves your browser.
     </div>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
       <a href="#" id="ai-chatgpt" class="aff-cta"   target="_blank" rel="noopener" style="flex:1;min-width:160px;text-align:center">Ask ChatGPT →</a>
@@ -1579,8 +1653,8 @@
       <summary style="cursor:pointer;color:var(--accent2);font-weight:600">Preview the prompt →</summary>
       <pre id="ai-prompt-preview" style="white-space:pre-wrap;word-wrap:break-word;background:var(--surface2);padding:12px;border-radius:6px;margin-top:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.78rem;line-height:1.5;border:1px solid var(--border);color:var(--text);max-height:320px;overflow:auto"></pre>
     </details>
-    <div style="font-size:0.75rem;color:var(--muted);margin-top:10px">
-      Reminder: AI answers aren't financial advice either. Use them as a second opinion — always verify with a qualified advisor before acting.
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:10px">
+      AI answers aren't financial advice. Verify with a qualified advisor before acting.
     </div>
   </div>
 
@@ -1589,11 +1663,8 @@
   ══════════════════════════════════════════════ -->
   <div class="cw" id="ctx-card" style="margin-bottom:20px;display:none">
     <div class="ct">✨ Recommended for You</div>
-    <div class="info-box" style="font-size:0.82rem;line-height:1.5;margin-bottom:12px">
-      Based on what you entered above, these tools best fit <strong>your</strong> situation right now.
-    </div>
-    <div class="aff-disclosure" style="margin-bottom:12px">
-      <strong>Disclosure:</strong> Affiliate links — we may earn a commission if you sign up, at no extra cost to you.
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px">
+      Picked based on the inputs above. <em>Disclosure: affiliate links — no extra cost to you.</em>
     </div>
     <div class="aff-grid" id="ctx-grid"></div>
   </div>
@@ -1604,9 +1675,9 @@
        approved affiliate tracking link for that program.
   ══════════════════════════════════════════════ -->
   <div class="cw" style="margin-bottom:0">
-    <div class="ct">💰 Put Your CoastFIRE Plan Into Action</div>
-    <div class="aff-disclosure">
-      <strong>Disclosure:</strong> Links below are affiliate links — we may earn a commission if you sign up, at no cost to you. We only recommend tools we'd use ourselves.
+    <div class="ct">💰 Tools to Execute the Plan</div>
+    <div class="aff-disclosure" style="font-size:0.74rem">
+      <em>Affiliate links — we may earn a commission. No extra cost to you. We only list tools we'd use ourselves.</em>
     </div>
     <div class="aff-grid">
 
@@ -1766,35 +1837,39 @@
        CONTACT & CONSULTATION
   ══════════════════════════════════════════════ -->
   <div class="cw" style="margin-top:20px;margin-bottom:0">
-    <div class="ct">✉️ Contact & Tool Consultation</div>
-    <div class="info-box" style="font-size:0.9rem;line-height:1.7;margin-bottom:14px">
-      I'm a <strong>consultant for this calculator</strong> — not a licensed financial advisor. What that means: I can help you understand and use the tool, walk through what each input does, explain the CoastFIRE concept, and help interpret your results. I can't give personalized investment advice, tax advice, or tell you what to buy or sell.
-      <br><br>
-      <strong>What you can reach out about:</strong>
-      <ul style="margin:8px 0 0;padding-left:22px">
-        <li>How to use the calculator and what each input means</li>
-        <li>Walkthroughs of your results (explaining the math, not recommending actions)</li>
-        <li>Scheduling and pricing for 1-on-1 tool walkthrough sessions</li>
-        <li>Questions or feedback on the calculator itself</li>
-        <li>Partnership or media inquiries</li>
+    <div class="ct">✉️ Contact &amp; Consultation</div>
+    <div style="font-size:0.88rem;line-height:1.6;margin-bottom:12px">
+      I'm a <strong>consultant for this calculator</strong> — not a licensed financial advisor. Reach out for:
+      <ul style="margin:6px 0 8px;padding-left:22px;color:var(--text)">
+        <li>How to use the tool / what each input means</li>
+        <li>Walkthroughs of your results (math only, not advice)</li>
+        <li>1-on-1 tool sessions, feedback, or partnerships</li>
       </ul>
-      <br>
-      <span style="color:var(--muted);font-size:0.82rem">
-        <strong>Disclaimer:</strong> Nothing on this site or in consultations is financial, tax, or investment advice. For personalized advice tailored to your situation, consult a licensed fiduciary financial advisor, CPA, or attorney.
+      <span style="color:var(--muted);font-size:0.78rem">
+        Nothing here is financial, tax, or investment advice. Consult a fiduciary advisor for personalized guidance.
       </span>
     </div>
     <a href="mailto:minh@coastfirefinance.com?subject=CoastFIRE%20Tool%20Inquiry" class="aff-cta" target="_blank" rel="noopener" style="display:inline-block;max-width:320px">Email Minh →</a>
   </div>
 
   <!-- ══════════════════════════════════════════════
-       BLOG / LEARN MORE
+       SCENARIOS + BLOG (combined)
   ══════════════════════════════════════════════ -->
-  <div class="cw" style="margin-top:20px;margin-bottom:0">
-    <div class="ct">📚 Learn More About CoastFIRE</div>
-    <div class="info-box" style="font-size:0.9rem;line-height:1.6;margin-bottom:14px">
-      New to the concept or want to go deeper? Start with these guides.
+  <span id="scenarios"></span>
+  <div class="cw" id="blog" style="margin-top:20px;margin-bottom:0">
+    <div class="ct">📚 Learn More</div>
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:12px">
+      Pre-computed scenarios &amp; deep-dive guides.
     </div>
     <div class="blog-list">
+      <a href="coastfire/index.html" class="blog-row" style="border-color:rgba(201,150,92,0.3);background:linear-gradient(135deg,rgba(201,150,92,0.06),rgba(232,198,133,0.02))">
+        <span class="blog-emoji">🎯</span>
+        <span class="blog-text">
+          <span class="blog-title">CoastFIRE Scenarios by Age, Income &amp; Career</span>
+          <span class="blog-meta">100+ pre-computed pages · skip the math</span>
+        </span>
+        <span class="blog-arrow">→</span>
+      </a>
       <a href="blog/what-is-coastfire.html" class="blog-row">
         <span class="blog-emoji">🌱</span>
         <span class="blog-text">
@@ -1851,14 +1926,6 @@
         </span>
         <span class="blog-arrow">→</span>
       </a>
-      <a href="coastfire/index.html" class="blog-row">
-        <span class="blog-emoji">🎯</span>
-        <span class="blog-text">
-          <span class="blog-title">CoastFIRE Scenarios — by Age, Income & Career</span>
-          <span class="blog-meta">100+ pre-computed scenarios</span>
-        </span>
-        <span class="blog-arrow">→</span>
-      </a>
     </div>
   </div>
 
@@ -1867,10 +1934,8 @@
   ══════════════════════════════════════════════ -->
   <div class="cw" style="margin-top:20px;margin-bottom:0">
     <div class="ct">💙 Support the Site</div>
-    <div class="info-box" style="font-size:0.9rem;line-height:1.7;margin-bottom:14px">
-      This calculator is <strong>free and always will be</strong> — no logins, no ads, no data collection. If it helped you plan your financial future and you'd like to say thanks, a small Venmo tip helps cover hosting costs and keeps the site independent.
-      <br><br>
-      Every bit — even $3 — is genuinely appreciated. Thank you!
+    <div style="font-size:0.88rem;line-height:1.6;margin-bottom:12px">
+      Free forever — no logins, ads, or tracking. Tips help cover hosting. Even $3 is appreciated.
     </div>
     <a href="https://venmo.com/Mivang" class="aff-cta" target="_blank" rel="noopener" style="display:inline-block;max-width:320px;background:linear-gradient(135deg,#3D95CE,#008CFF)">💙 Tip via Venmo (@Mivang) →</a>
   </div>

@@ -1,7 +1,8 @@
 User-agent: *
 Allow: /
 
-# Block crawlers from the service worker (not useful to index)
+# Block crawlers from the service worker and admin pages (not useful to index)
 Disallow: /sw.js
+Disallow: /admin/
 
 Sitemap: https://coastfirefinance.com/sitemap.xml

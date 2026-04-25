@@ -1,5 +1,16 @@
 # scripts/
 
+## Quick reference
+
+| Script | What it does | When to run |
+|---|---|---|
+| `generate-pseo.js` | Generate 100 SEO landing pages | After content updates, quarterly for `lastmod` refresh |
+| `ping-search-engines.js` | Notify Bing/IndexNow of new URLs | After deploying new pages |
+
+The **SEO Health Dashboard** lives at `/admin/seo-dashboard.html` (browser-only, paste GSC export to analyze).
+
+---
+
 ## generate-pseo.js
 
 Programmatic SEO landing page generator for CoastFIRE Finance.
@@ -54,3 +65,59 @@ Math constants (return assumptions, SWR, retirement age) are at the top of the f
 - **Spending-target pages** — "$50k/yr retirement spending" etc. (different on-ramp than income-based).
 - **Comparison pages** — "$80k income vs $100k income" (matches comparison search intent).
 - **Year-specific pages** — "CoastFIRE in 2026" etc. (refresh annually).
+
+---
+
+## ping-search-engines.js
+
+Notifies search engines of new/updated URLs so they get crawled faster than waiting for natural discovery.
+
+### What it pings
+- **IndexNow** (Bing, Yandex, Seznam, Naver) — instant indexing protocol; URLs typically indexed within minutes.
+- **Bing sitemap ping** — direct sitemap notification, still supported.
+- **Google** — sadly Google deprecated their sitemap ping endpoint. The only reliable path is manual submission via GSC (the script reminds you).
+
+### One-time setup (5 minutes)
+1. Generate an IndexNow key at https://www.bing.com/indexnow
+2. Save the key to a file at the site root: `<your-key>.txt` (just the key as plain text)
+3. Set the env var: `export INDEXNOW_KEY="your-key-here"` (or edit the placeholder in the script)
+4. Push the key file along with your next deploy
+
+### Run
+```bash
+# Default: ping all /coastfire/* URLs (the new SEO landing pages)
+node scripts/ping-search-engines.js
+
+# All URLs in sitemap
+node scripts/ping-search-engines.js --all
+
+# Specific URLs
+node scripts/ping-search-engines.js https://coastfirefinance.com/coastfire/age-30-income-100k.html
+```
+
+### When to run
+- After running `generate-pseo.js` and pushing new pages
+- After publishing a new blog post
+- After significantly updating the calculator (notify of root URL refresh)
+
+---
+
+## SEO Health Dashboard
+
+A browser-only dashboard at `/admin/seo-dashboard.html`. No backend, no auth — just paste a Google Search Console CSV export and get:
+
+- **Overview** — total clicks, impressions, CTR, average position with insight callouts
+- **Top Performers** — sortable table of pages/queries
+- **Quick Wins** — pages with high impressions but low CTR (titles to optimize)
+- **Almost-Ranking** — pages at position 11–20 (one push from page 1)
+- **Stuck** — pages getting impressions but ranking too low to convert
+- **Periodic SEO Tasks** — checklist for weekly/monthly/quarterly habits
+
+The dashboard is `noindex, nofollow` (won't appear in search results) but is still publicly accessible. Don't paste sensitive data — your inputs stay in your browser only (saved to localStorage, never transmitted).
+
+### How to get GSC data
+1. Open [Google Search Console](https://search.google.com/search-console)
+2. Performance → Search results → set date range (28 days is good)
+3. Click "Export" → "Download CSV"
+4. Open the ZIP, copy contents of `Pages.csv` or `Queries.csv`
+5. Paste into the dashboard and click Analyze
