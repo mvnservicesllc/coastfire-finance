@@ -575,7 +575,7 @@
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v61</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v62</span>
 </div>
 
 <div class="layout">
@@ -3333,16 +3333,26 @@ function _recalcImpl() {
     set('iaa-age-lbl', String(iaaAge));
 
     // ─── Per-bucket balances at the chosen age ───────────
+    // The IAA card asks "what if I stopped working at age X?" — meaning
+    // the portfolio compounded UNTOUCHED past retirement (no drawdown).
+    // Don't use effTotals past rage (it includes drawdown for spending).
     let taAtY = 0, roAtY = 0, brAtY = 0, totalAtAge = 0;
     if (iaaY <= yrs && taVals[iaaY] != null) {
+      // Inside accumulation window — per-bucket data is direct
       taAtY = taVals[iaaY] || 0;
       roAtY = rothVals[iaaY] || 0;
       brAtY = effBrVals[iaaY] || 0;
-      totalAtAge = taAtY + roAtY + brAtY;
     } else {
-      // Past rage — only effTotals available; we can't split per-bucket.
-      totalAtAge = effTotals[iaaY] != null ? effTotals[iaaY] : 0;
+      // Past rage — grow each bucket UNTOUCHED at nominal return
+      // (brokerage grows at nom - divDrag for the annual dividend tax drag)
+      const yrsBeyondRage = iaaY - yrs;
+      const grow   = Math.pow(1 + nom, yrsBeyondRage);
+      const brGrow = Math.pow(1 + nom - (divDrag || 0), yrsBeyondRage);
+      taAtY = (taVals[yrs]    || 0) * grow;
+      roAtY = (rothVals[yrs]  || 0) * grow;
+      brAtY = (effBrVals[yrs] || 0) * brGrow;
     }
+    totalAtAge = taAtY + roAtY + brAtY;
 
     // ─── Roth IRA balance & basis projection ─────────────
     // Roth IRA isn't tracked separately in the main loop (rothVals lumps
@@ -3367,21 +3377,12 @@ function _recalcImpl() {
 
     // ─── Compute accessible vs locked ────────────────────
     // Roth IRA basis is ALWAYS accessible regardless of age (IRS rule).
-    // Past rage we lose per-bucket data, so brokerage portion is approximated
-    // by assuming proportional-share of effTotals (rough but better than 0).
+    // Brokerage is always accessible. Trad 401k/IRA + Roth 401k +
+    // Roth IRA earnings need to wait until 59½ (or use Rule of 55 / SEPP).
     const accessRothIra = Math.min(rothIraBasisAtY, rothIraBalAtY);
     let accessAtAge, lockedAtAge;
     if (isPreEarly) {
-      let accessBr = brAtY;
-      // Past rage edge case: estimate brokerage from totalAtAge minus retirement
-      // accounts (using inline Roth IRA balance + Trad approximation).
-      if (iaaY > yrs && totalAtAge > 0) {
-        // Rough: assume retirement accounts grew untouched at nom past rage
-        const taPastY = (taVals[yrs] || 0) * Math.pow(1 + nom, iaaY - yrs);
-        const roPastY = (rothVals[yrs] || 0) * Math.pow(1 + nom, iaaY - yrs);
-        accessBr = Math.max(0, totalAtAge - taPastY - roPastY);
-      }
-      accessAtAge = accessBr + accessRothIra;
+      accessAtAge = brAtY + accessRothIra;
       lockedAtAge = Math.max(0, totalAtAge - accessAtAge);
     } else {
       accessAtAge = totalAtAge;
