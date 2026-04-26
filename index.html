@@ -3228,31 +3228,46 @@ function recalc() {
 
   // ──────────────────────────────────────────────────────
   //  INCOME AT ANY AGE — what would my income be if I
-  //  stopped working at age X? Uses main projection
-  //  (effTotals) + portfolio × SWR + pension/SS/Other
-  //  income that's active by that age.
+  //  stopped working at age X? Accounts for the 59½
+  //  penalty-free access rule: pre-59½, only Brokerage
+  //  is realistically tappable (Roth IRA contributions
+  //  also work but we don't track basis separately).
   // ──────────────────────────────────────────────────────
   {
     const iaaAgeRaw = S.iaaAge || 65;
-    // Clamp to valid range: cage..min(80, last age in arrays)
     const maxIaaAge = ages.length ? ages[ages.length - 1] : 80;
     const iaaAge = Math.max(cage, Math.min(maxIaaAge, iaaAgeRaw));
     const iaaY = iaaAge - cage;
     const yrsToIaa = iaaY;
+    const PENALTY_FREE_AGE = 59.5;
+    const isPreEarly = iaaAge < PENALTY_FREE_AGE;
 
     set('iaa-swr-lbl',  pct(swr));
     set('iaa-age-lbl', String(iaaAge));
 
-    // Lookup portfolio at this age. Use effTotals (Total line) which always
-    // has a value for every age in the projection (incl. drawdown extension).
-    let portAtAge = 0;
-    if (effTotals[iaaY] != null) {
-      portAtAge = effTotals[iaaY];
+    // Compute Total / Accessible / Locked portfolio at the chosen age.
+    // Pre-59½: only Brokerage (effBr) is accessible without 10% penalty.
+    // Post-59½ or past retirement-age drawdown window: everything is fluid.
+    let totalAtAge = 0, accessAtAge = 0, lockedAtAge = 0;
+    if (iaaY <= yrs && taVals[iaaY] != null) {
+      // Inside accumulation window — per-bucket data is available
+      const taAtY = taVals[iaaY] || 0;
+      const roAtY = rothVals[iaaY] || 0;
+      const brAtY = effBrVals[iaaY] || 0;
+      totalAtAge = taAtY + roAtY + brAtY;
+      if (isPreEarly) {
+        accessAtAge = brAtY;
+        lockedAtAge = taAtY + roAtY;
+      } else {
+        accessAtAge = totalAtAge;
+        lockedAtAge = 0;
+      }
     } else {
-      // Fallback: linear interpolation between adjacent valid points
-      const lo = Math.max(0, Math.floor(iaaY));
-      const hi = Math.min(effTotals.length - 1, Math.ceil(iaaY));
-      portAtAge = ((effTotals[lo] || 0) + (effTotals[hi] || 0)) / 2;
+      // Past rage (drawdown extension) — only effTotals tracks balance.
+      // If user retires before 59½, this is technically wrong; we flag it.
+      totalAtAge = effTotals[iaaY] != null ? effTotals[iaaY] : 0;
+      accessAtAge = isPreEarly ? 0 : totalAtAge;  // nothing accessible if pre-59.5 past rage
+      lockedAtAge = isPreEarly ? totalAtAge : 0;
     }
 
     // Income source values at the chosen age (nominal future $)
@@ -3267,40 +3282,52 @@ function recalc() {
       ? (oiCola ? oi * iaaInfl(iaaAge - cage) : oi) : 0;
     const otherIncome = pen_at + ss1_at + ss2_at + oi_at;
 
-    // Portfolio income at the configured SWR
-    const swrIncome = portAtAge * swr;
+    // SWR applied ONLY to accessible portfolio (not locked retirement accounts)
+    const swrIncome = accessAtAge * swr;
 
-    // Total pre-tax + tax handling
-    // Non-taxable (after-tax pension/Other Income) doesn't get taxed.
-    const penTax_at = penTaxable ? pen_at : 0;
+    // Tax handling
+    const penTax_at    = penTaxable ? pen_at : 0;
     const penNonTax_at = penTaxable ? 0 : pen_at;
-    const oiTax_at  = oiTaxable ? oi_at : 0;
-    const oiNonTax_at = oiTaxable ? 0 : oi_at;
-    const taxableIncome    = swrIncome + penTax_at + ss1_at + ss2_at + oiTax_at;
-    const nonTaxableIncome = penNonTax_at + oiNonTax_at;
-    const totalPretax      = taxableIncome + nonTaxableIncome;
-    const taxBill          = taxableIncome * effTax;
-    const totalNet         = totalPretax - taxBill;
+    const oiTax_at     = oiTaxable ? oi_at : 0;
+    const oiNonTax_at  = oiTaxable ? 0 : oi_at;
+    // SWR from brokerage is taxed at LTCG (~ltcg rate), not at the blended
+    // retirement rate (which assumes Trad/Roth withdrawals). When pre-59½
+    // and tapping only brokerage, use ltcg; otherwise use blended effTax.
+    const swrTaxRate = isPreEarly ? (ltcg || 0) : effTax;
+    const swrTax     = swrIncome * swrTaxRate;
+    const offsetsTaxableIncome = penTax_at + ss1_at + ss2_at + oiTax_at;
+    const offsetsTax           = offsetsTaxableIncome * effTax;
+    const taxBill              = swrTax + offsetsTax;
+    const nonTaxableIncome     = penNonTax_at + oiNonTax_at;
+    const totalPretax          = swrIncome + pen_at + ss1_at + ss2_at + oi_at;
+    const totalNet             = totalPretax - taxBill;
 
-    // Display in CHOSEN-MODE dollars (Future $ or Today's $)
     const dIaa = v => toDisp(v, yrsToIaa);
-    set('iaa-port',          fmt(dIaa(portAtAge)));
-    set('iaa-port-sub',      iaaY <= yrs ? 'Coast strategy (main line)' : 'After drawdown to this age');
-    set('iaa-swr-income',    fmt(dIaa(swrIncome)) + '/yr');
-    set('iaa-swr-sub',       pct(swr) + ' of portfolio');
-    set('iaa-other-income',  otherIncome > 0 ? fmt(dIaa(otherIncome)) + '/yr' : 'None');
+    set('iaa-port',     fmt(dIaa(totalAtAge)));
+    set('iaa-port-sub', isPreEarly
+        ? `Accessible: ${fmt(dIaa(accessAtAge))} · Locked: ${fmt(dIaa(lockedAtAge))}`
+        : 'All accounts unlocked at 59½+');
+    set('iaa-swr-income',  fmt(dIaa(swrIncome)) + '/yr');
+    set('iaa-swr-sub',     isPreEarly
+        ? `${pct(swr)} of accessible (Brokerage only)`
+        : `${pct(swr)} of total portfolio`);
+    set('iaa-other-income', otherIncome > 0 ? fmt(dIaa(otherIncome)) + '/yr' : 'None');
     const otherParts = [];
     if (pen_at > 0) otherParts.push('Pension');
-    if (ss1_at > 0) otherParts.push('SS');
-    if (ss2_at > 0 && !otherParts.includes('SS')) otherParts.push('SS');
+    if (ss1_at > 0 || ss2_at > 0) otherParts.push('SS');
     if (oi_at  > 0) otherParts.push('Other');
     set('iaa-other-sub', otherParts.length ? otherParts.join(' + ') + ' active' : 'Nothing started yet');
-    set('iaa-total-pretax', fmt(dIaa(totalPretax))  + '/yr');
-    set('iaa-total-net',    fmt(dIaa(totalNet))     + '/yr');
-    set('iaa-tax-sub',      effTax > 0 ? `−${pct(effTax)} blended on ${fmt(dIaa(taxableIncome))}` : 'No tax rate set');
+    set('iaa-total-pretax', fmt(dIaa(totalPretax)) + '/yr');
+    set('iaa-total-net',    fmt(dIaa(totalNet))    + '/yr');
+    set('iaa-tax-sub', isPreEarly && swrIncome > 0
+        ? `Brokerage @ ${pct(swrTaxRate)} LTCG${offsetsTaxableIncome > 0 ? ` · offsets @ ${pct(effTax)}` : ''}`
+        : (effTax > 0 ? `−${pct(effTax)} blended on ${fmt(dIaa(swrIncome + offsetsTaxableIncome))}` : 'No tax rate set'));
 
     // Footer narrative
     const ftrParts = [];
+    if (isPreEarly) {
+      ftrParts.push(`<strong style="color:var(--yellow)">⚠️ Age ${iaaAge} is pre-59½.</strong> Only your <strong>Brokerage</strong> can be tapped without a 10% early-withdrawal penalty. The locked <strong>${fmt(dIaa(lockedAtAge))}</strong> in 401(k)/IRA keeps compounding but isn't accessible (unless you use the <strong>Rule of 55</strong>, <strong>SEPP / 72(t)</strong>, or withdraw <strong>Roth IRA contributions</strong> — tracked separately).`);
+    }
     if (iaaY < yrs) {
       ftrParts.push(`At <strong>${iaaAge}</strong>, you'd be retiring <strong>${yrs - iaaY} year${yrs - iaaY === 1 ? '' : 's'} early</strong>.`);
     } else if (iaaY === yrs) {
@@ -3308,9 +3335,9 @@ function recalc() {
     } else {
       ftrParts.push(`At <strong>${iaaAge}</strong>, you'd be retiring <strong>${iaaY - yrs} year${iaaY - yrs === 1 ? '' : 's'} after</strong> your target retirement age.`);
     }
-    if (pen_at === 0 && penEnabled && pen > 0)        ftrParts.push(`Your pension hasn't started yet (begins at ${pAge}).`);
-    if (ss1_at === 0 && ssEnabled  && ssPrimary > 0)  ftrParts.push(`Your SS hasn't started yet (claim at ${ssAge}).`);
-    if (oi_at  === 0 && oiEnabled  && oi > 0)         ftrParts.push(`Your Other Income hasn't started yet (begins at ${oiAge}).`);
+    if (pen_at === 0 && penEnabled && pen > 0)        ftrParts.push(`Pension hasn't started (begins at ${pAge}).`);
+    if (ss1_at === 0 && ssEnabled  && ssPrimary > 0)  ftrParts.push(`SS hasn't started (claim at ${ssAge}).`);
+    if (oi_at  === 0 && oiEnabled  && oi > 0)         ftrParts.push(`Other Income hasn't started (begins at ${oiAge}).`);
     document.getElementById('iaa-footer').innerHTML = ftrParts.join(' ');
   }
 
