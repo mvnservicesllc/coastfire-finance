@@ -1529,19 +1529,6 @@
     </details>
   </div>
 
-  <div class="cw" id="age59-section" style="display:none">
-    <div class="ct">🔐 Portfolio at Age 59½ <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Penalty-free access</span></div>
-    <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      Brokerage = your bridge before 59½ when 401(k)/IRA unlock without the 10% penalty.
-    </div>
-    <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
-      <div class="rb"><div class="lbl">Total Portfolio</div><div class="val g" id="age59-total">—</div><div class="sub">All accounts combined</div></div>
-      <div class="rb"><div class="lbl">Retirement Only</div><div class="val p" id="age59-retire">—</div><div class="sub">Trad + Roth (no brokerage)</div></div>
-      <div class="rb"><div class="lbl">Brokerage Bridge</div><div class="val y" id="age59-bridge">—</div><div class="sub">Available pre-59½</div></div>
-    </div>
-    <div class="info-box" id="age59-footer" style="font-size:0.82rem;line-height:1.6"></div>
-  </div>
-
   <div class="cw" id="retire-growth-section" style="display:none">
     <div class="ct">🚀 401(k) / IRA Growth Through 80 <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Untouched compounding</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
@@ -3178,103 +3165,6 @@ function recalc() {
     }
 
     document.getElementById('ib-footer').innerHTML = footer;
-  }
-
-  // ──────────────────────────────────────────────────────
-  //  PORTFOLIO AT AGE 59½ (penalty-free access milestone)
-  // ──────────────────────────────────────────────────────
-  const age59Section = document.getElementById('age59-section');
-  const TARGET_AGE   = 59.5;
-  const yrs59        = TARGET_AGE - cage;
-
-  if (yrs59 > 0) {
-    age59Section.style.display = '';
-
-    let ta59, roth59, br59;
-    let earlyRetire = false;
-    let lo, hi, frac;  // interpolation indices used later for keep-invest comparison
-
-    if (yrs59 <= yrs) {
-      // 59½ is inside the sim window — interpolate from the main projection arrays
-      lo   = Math.floor(yrs59);
-      hi   = Math.min(lo + 1, yrs);
-      frac = yrs59 - lo;
-      const lerp = (arr) => {
-        if (!arr || arr[lo] == null) return null;
-        if (arr[hi] == null) return arr[lo];
-        return arr[lo] + frac * (arr[hi] - arr[lo]);
-      };
-      ta59   = lerp(taVals)    ?? 0;
-      roth59 = lerp(rothVals)  ?? 0;
-      br59   = lerp(effBrVals) ?? 0;
-    } else {
-      // User is retiring BEFORE 59½. Project retirement accounts forward untouched from
-      // retirement age to 59½ (no contributions post-retirement; growth only). Brokerage
-      // is shown AT retirement — it's what's available to bridge the pre-59½ gap.
-      earlyRetire = true;
-      const extraYears = yrs59 - yrs;
-      const grow = Math.pow(1 + nom, extraYears);
-      ta59   = (taVals[yrs]    ?? 0) * grow;
-      roth59 = (rothVals[yrs]  ?? 0) * grow;
-      br59   =  effBrVals[yrs] ?? 0;
-    }
-
-    const retire59 = ta59 + roth59;
-    const total59  = retire59 + br59;
-
-    const d59 = v => toDisp(v, yrs59);
-    const dRet = v => toDisp(v, yrs); // display helper at retirement age (for brokerage in early case)
-    set('age59-total',  fmt(d59(total59)));
-    set('age59-retire', fmt(d59(retire59)));
-    // In early retirement, the brokerage figure is AT rage, so discount by yrs not yrs59.
-    set('age59-bridge', fmt(earlyRetire ? dRet(br59) : d59(br59)));
-
-    // Footer narrative
-    let footer = '';
-    if (earlyRetire) {
-      const gapYears = (TARGET_AGE - rage);
-      const gapLabel = gapYears.toFixed(1);
-      const spendAtRage = toDisp((S.spend || 0) * Math.pow(1 + inf, yrs), yrs);
-      const bridgeYrs = spendAtRage > 0 ? (dRet(br59) / spendAtRage) : null;
-      footer = `You're retiring at <strong>${rage}</strong> — <strong>${gapLabel} year${gapLabel !== '1.0' ? 's' : ''}</strong> before 401(k)/IRA unlock at 59½. The "Retirement Only" figure shows what those accounts will be worth when they unlock, assuming they grow untouched during the bridge years (no contributions, no withdrawals). `;
-      if (bridgeYrs != null && bridgeYrs > 0 && spendAtRage > 0) {
-        footer += `Your brokerage at retirement (${fmt(dRet(br59))}) plus pension/SS needs to cover the ${gapLabel}-year gap — roughly <strong>${bridgeYrs.toFixed(1)} year${bridgeYrs >= 1.5 ? 's' : ''}</strong> of spending at ${fmt(spendAtRage)}/yr on brokerage alone.`;
-      }
-      footer += `<br><br><span style="color:var(--muted);font-size:0.78rem">⚠️ If the bridge is thin, look into the <strong>Rule of 55</strong> (penalty-free 401(k) access at 55 if you leave the employer) or <strong>SEPP / 72(t)</strong> distributions (substantially-equal periodic payments from an IRA at any age). Roth IRA <em>contributions</em> (not earnings) can also be withdrawn anytime, penalty-free.</span>`;
-    } else {
-      const yearlySpend = nomSpend > 0 ? nomSpend : 0;
-      const spendAt59 = toDisp((S.spend || 0) * Math.pow(1 + inf, yrs59), yrs59);
-      const bridgeYrs = spendAt59 > 0 ? (d59(br59) / spendAt59) : null;
-
-      if (coastAge !== null && coastAge < TARGET_AGE) {
-        const gap = Math.max(0, TARGET_AGE - coastAge);
-        footer += `Based on your plan: coast at <strong>${coastAge}</strong>, no more contributions for ${gap.toFixed(1)} year${gap.toFixed(1) !== '1.0' ? 's' : ''} until retirement accounts unlock at 59½. `;
-      } else if (coastAge !== null && coastAge >= TARGET_AGE) {
-        footer += `Your CoastFIRE age (${coastAge}) is after 59½, so you're still contributing up to this point. `;
-      } else {
-        footer += `You haven't hit CoastFIRE in this sim, so you're contributing the whole way. `;
-      }
-      if (bridgeYrs != null && bridgeYrs > 0 && yearlySpend > 0) {
-        footer += `Your brokerage bridge covers roughly <strong>${bridgeYrs.toFixed(1)} year${bridgeYrs >= 1.5 ? 's' : ''}</strong> of spending at ${fmt(spendAt59)}/yr (today's dollars).`;
-      }
-    }
-
-    // Keep-invest comparison (only meaningful when 59½ is inside the sim window)
-    if (!earlyRetire && keepInvestPath && keepBrPath && keepInvestPath[lo] != null && keepInvestPath[hi] != null) {
-      const keepTotal59 = keepInvestPath[lo] + frac * (keepInvestPath[hi] - keepInvestPath[lo]);
-      const keepBr59    = keepBrPath[lo]     + frac * (keepBrPath[hi]     - keepBrPath[lo]);
-      const deltaTotal  = keepTotal59 - total59;
-      if (Math.abs(deltaTotal) > 1) {
-        const rPct = Math.round((keepInvestPctRet || 0) * 100);
-        const bPct = Math.round((keepInvestPctBr  || 0) * 100);
-        const pctLabel = (rPct === bPct) ? `${rPct}%` : `${rPct}% retirement / ${bPct}% brokerage`;
-        footer += `<br><br><span style="color:var(--muted);font-size:0.78rem">💪 If you keep investing at ${pctLabel} after CoastFIRE: total at 59½ would be <strong>${fmt(d59(keepTotal59))}</strong> (${deltaTotal >= 0 ? '+' : ''}${fmt(d59(deltaTotal))}), with <strong>${fmt(d59(keepBr59))}</strong> in the brokerage bridge.</span>`;
-      }
-    }
-    document.getElementById('age59-footer').innerHTML = footer;
-  } else {
-    // Already past 59½ today — nothing to project forward to.
-    age59Section.style.display = 'none';
   }
 
   // ──────────────────────────────────────────────────────
