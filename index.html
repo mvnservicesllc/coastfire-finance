@@ -1495,11 +1495,23 @@
     </div>
 
     <div class="bbar-lbl" style="margin-bottom:6px">Annual income flow</div>
-    <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:18px">
+    <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
       <div class="rb"><div class="lbl">Total Income at Retirement</div><div class="val p" id="ib-gross">—</div><div class="sub">Pre-tax · all sources</div></div>
       <div class="rb"><div class="lbl">Net Spending Target</div><div class="val g" id="ib-net">—</div><div class="sub" id="ib-net-sub">= Total × (1 − tax rate)</div></div>
       <div class="rb"><div class="lbl">Portfolio Withdrawal</div><div class="val y" id="ib-port">—</div><div class="sub">Pre-tax · fills pen/SS gap</div></div>
     </div>
+
+    <div class="bbar-lbl" style="margin-bottom:6px">Withdrawal Analysis <span style="text-transform:none;font-weight:400;opacity:0.8">· am I drawing too much?</span></div>
+    <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:10px">
+      <div class="rb"><div class="lbl">Actual Withdrawal Rate</div><div class="val" id="ib-wr-actual">—</div><div class="sub" id="ib-wr-actual-sub">% of total portfolio</div></div>
+      <div class="rb"><div class="lbl">Recommended (SWR)</div><div class="val w" id="ib-wr-target">—</div><div class="sub">Your safe rate setting</div></div>
+      <div class="rb"><div class="lbl">Status</div><div class="val" id="ib-wr-status">—</div><div class="sub" id="ib-wr-status-sub">vs SWR target</div></div>
+    </div>
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.5;padding:10px 12px;background:rgba(255,255,255,0.02);border-left:2px solid var(--border);border-radius:4px">
+      <strong style="color:var(--text)">Pulled proportionally from each bucket:</strong>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:6px;font-variant-numeric:tabular-nums" id="ib-wr-buckets">—</div>
+    </div>
+    <div style="height:14px"></div>
 
     <div class="bbar-wrap">
       <div class="bbar-lbl">Income Composition <span style="text-transform:none;font-weight:400;opacity:0.8">· face-value of each source</span></div>
@@ -2992,6 +3004,62 @@ function recalc() {
       } else {
         netSubEl.textContent = `= Total × (1 − ${(effTax * 100).toFixed(1)}%) after tax`;
       }
+    }
+
+    // ─── WITHDRAWAL ANALYSIS ──────────────────────────────
+    // Actual withdrawal rate vs SWR target, plus per-bucket breakdown
+    // assuming proportional withdrawals from each bucket.
+    const wrActual = balTotal > 0 ? (grossFromPortfolio / balTotal) : 0;
+    const wrTarget = swr || 0;
+    const wrDiff   = wrActual - wrTarget;
+    const wrActualPct = (wrActual * 100).toFixed(2) + '%';
+    const wrTargetPct = (wrTarget * 100).toFixed(2) + '%';
+
+    // Color-coded status
+    let statusLabel, statusColor, statusSub;
+    if (grossFromPortfolio <= 0) {
+      statusLabel = 'N/A'; statusColor = 'var(--muted)';
+      statusSub   = 'No portfolio withdrawal needed';
+    } else if (wrActual <= wrTarget) {
+      statusLabel = '✅ Under SWR'; statusColor = 'var(--green)';
+      statusSub   = `${(Math.abs(wrDiff)*100).toFixed(2)}% below target — sustainable`;
+    } else if (wrActual <= wrTarget + 0.005) {
+      statusLabel = '⚠️ At SWR'; statusColor = 'var(--yellow)';
+      statusSub   = `Right at target — borderline`;
+    } else if (wrActual <= wrTarget + 0.015) {
+      statusLabel = '⚠️ Over SWR'; statusColor = 'var(--yellow)';
+      statusSub   = `+${(wrDiff*100).toFixed(2)}% above target — risky`;
+    } else {
+      statusLabel = '🚨 Way over SWR'; statusColor = 'var(--red)';
+      statusSub   = `+${(wrDiff*100).toFixed(2)}% above target — likely depletes early`;
+    }
+
+    set('ib-wr-actual',     grossFromPortfolio > 0 ? wrActualPct : '—');
+    set('ib-wr-actual-sub', `${fmt(dRetAmt(grossFromPortfolio))}/yr from ${fmt(dRetAmt(balTotal))}`);
+    set('ib-wr-target',     wrTargetPct);
+    document.getElementById('ib-wr-actual').style.color = statusColor;
+    document.getElementById('ib-wr-status').textContent = statusLabel;
+    document.getElementById('ib-wr-status').style.color = statusColor;
+    set('ib-wr-status-sub', statusSub);
+
+    // Per-bucket breakdown (proportional). Show $/yr from each bucket and
+    // what % of THAT bucket the withdrawal represents.
+    const bucketsEl = document.getElementById('ib-wr-buckets');
+    if (grossFromPortfolio > 0 && balTotal > 0) {
+      const buckets = [];
+      if (balRet > 0) {
+        const bucketWd = grossFromPortfolio * (balRet / balTotal);
+        const bucketRate = (bucketWd / balRet * 100).toFixed(2);
+        buckets.push(`<span><span style="color:var(--accent)">●</span> <strong>Trad+Roth</strong>: ${fmt(dRetAmt(bucketWd))}/yr <span style="color:var(--muted)">(${bucketRate}% of bucket)</span></span>`);
+      }
+      if (balBr > 0) {
+        const bucketWd = grossFromPortfolio * (balBr / balTotal);
+        const bucketRate = (bucketWd / balBr * 100).toFixed(2);
+        buckets.push(`<span><span style="color:var(--yellow)">●</span> <strong>Brokerage</strong>: ${fmt(dRetAmt(bucketWd))}/yr <span style="color:var(--muted)">(${bucketRate}% of bucket)</span></span>`);
+      }
+      bucketsEl.innerHTML = buckets.join('') || '<span style="color:var(--muted)">No portfolio buckets at retirement</span>';
+    } else {
+      bucketsEl.innerHTML = '<span style="color:var(--muted)">No portfolio withdrawal — pension/SS/Other Income covers everything.</span>';
     }
 
     // Stacked bar widths (by % of gross income)
