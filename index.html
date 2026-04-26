@@ -574,7 +574,8 @@
 <div class="save-bar">
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v58</span>
+  <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v59</span>
 </div>
 
 <div class="layout">
@@ -4246,6 +4247,27 @@ function clearSave() {
   if (!confirm('Reset all inputs to defaults?')) return;
   try { localStorage.removeItem(LS_KEY); } catch(e) {}
   location.reload();
+}
+
+// One-click rescue for stale service-worker cache: unregisters the SW,
+// deletes all caches, then forces a reload bypassing HTTP cache.
+async function forceUpdate() {
+  const status = document.getElementById('save-status');
+  if (status) status.textContent = 'Clearing caches & service worker…';
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister()));
+    }
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+  } catch (e) {
+    console.warn('forceUpdate cleanup error:', e);
+  }
+  // Cache-busting query param + true reload
+  location.href = location.pathname + '?v=' + Date.now();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
