@@ -1542,6 +1542,37 @@
     </details>
   </div>
 
+  <div class="cw" id="income-at-age-card">
+    <div class="ct">🎯 Income at Any Age <span style="font-size:0.7rem;color:var(--muted);font-weight:400">"What if I stopped at..."</span></div>
+    <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
+      Pick any age — see your portfolio and total annual income if you stopped working then. Withdrawal at your SWR (currently <span id="iaa-swr-lbl">4.0%</span>), plus pension/SS/Other Income that's active by that age.
+    </div>
+
+    <div class="field" style="max-width:200px">
+      <label class="field-label">What age?</label>
+      <div class="field-wrap">
+        <input type="number" id="n-iaa-age" min="20" max="80" value="65" step="1" inputmode="numeric">
+        <div class="field-steps">
+          <button onclick="step('n-iaa-age',1)">▲</button>
+          <button onclick="step('n-iaa-age',-1)">▼</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
+      <div class="rb"><div class="lbl">Portfolio at age <span id="iaa-age-lbl">—</span></div><div class="val p" id="iaa-port">—</div><div class="sub" id="iaa-port-sub">Coast strategy</div></div>
+      <div class="rb"><div class="lbl">Annual @ SWR</div><div class="val g" id="iaa-swr-income">—</div><div class="sub" id="iaa-swr-sub">From portfolio only</div></div>
+      <div class="rb"><div class="lbl">+ Pension/SS/Other</div><div class="val y" id="iaa-other-income">—</div><div class="sub" id="iaa-other-sub">Active at this age</div></div>
+    </div>
+
+    <div class="rg" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
+      <div class="rb"><div class="lbl">Total Annual Income</div><div class="val p" id="iaa-total-pretax">—</div><div class="sub">Pre-tax · all sources</div></div>
+      <div class="rb"><div class="lbl">Net (After Tax)</div><div class="val g" id="iaa-total-net">—</div><div class="sub" id="iaa-tax-sub">— blended tax</div></div>
+    </div>
+
+    <div class="info-box" id="iaa-footer" style="font-size:0.82rem;line-height:1.6"></div>
+  </div>
+
   <div class="cw" id="retire-growth-section" style="display:none">
     <div class="ct">🚀 401(k) / IRA Growth Through 80 <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Untouched compounding</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
@@ -2042,6 +2073,7 @@ const S = {
   spend: 60000, nom: 0.07, inf: 0.03, swr: 0.04,
   keepInvestPctRet: 1.0, keepInvestPctBr: 1.0,
   stopInvestAge: 60, postRetRetCont: 0, postRetBrCont: 0,
+  iaaAge: 65,
 };
 
 let dispMode = 'nom';
@@ -2130,6 +2162,7 @@ bindNum('n-keep-br-pct', 'keepInvestPctBr',  v => v/100);
 bindNum('n-stop-invest-age', 'stopInvestAge', null);
 bindNum('n-post-ret-cont',   'postRetRetCont', null);
 bindNum('n-post-br-cont',    'postRetBrCont',  null);
+bindNum('n-iaa-age',         'iaaAge',         null);
 
 // Live contribution bases for the paired $ inputs.
 function currentRetContribBase() {
@@ -3194,6 +3227,94 @@ function recalc() {
   }
 
   // ──────────────────────────────────────────────────────
+  //  INCOME AT ANY AGE — what would my income be if I
+  //  stopped working at age X? Uses main projection
+  //  (effTotals) + portfolio × SWR + pension/SS/Other
+  //  income that's active by that age.
+  // ──────────────────────────────────────────────────────
+  {
+    const iaaAgeRaw = S.iaaAge || 65;
+    // Clamp to valid range: cage..min(80, last age in arrays)
+    const maxIaaAge = ages.length ? ages[ages.length - 1] : 80;
+    const iaaAge = Math.max(cage, Math.min(maxIaaAge, iaaAgeRaw));
+    const iaaY = iaaAge - cage;
+    const yrsToIaa = iaaY;
+
+    set('iaa-swr-lbl',  pct(swr));
+    set('iaa-age-lbl', String(iaaAge));
+
+    // Lookup portfolio at this age. Use effTotals (Total line) which always
+    // has a value for every age in the projection (incl. drawdown extension).
+    let portAtAge = 0;
+    if (effTotals[iaaY] != null) {
+      portAtAge = effTotals[iaaY];
+    } else {
+      // Fallback: linear interpolation between adjacent valid points
+      const lo = Math.max(0, Math.floor(iaaY));
+      const hi = Math.min(effTotals.length - 1, Math.ceil(iaaY));
+      portAtAge = ((effTotals[lo] || 0) + (effTotals[hi] || 0)) / 2;
+    }
+
+    // Income source values at the chosen age (nominal future $)
+    const iaaInfl = (years) => Math.pow(1 + inf, Math.max(0, years));
+    const pen_at = (penEnabled && pen > 0 && pAge <= iaaAge)
+      ? (cola ? pen * iaaInfl(iaaAge - cage) : pen) : 0;
+    const ss1_at = (ssEnabled && ssPrimary > 0 && ssAge <= iaaAge)
+      ? ssPrimaryAnnual * iaaInfl(iaaAge - cage) : 0;
+    const ss2_at = (ssEnabled && ssSpouseEnabled && ssSpouse > 0 && ssSpouseAge <= iaaAge)
+      ? ssSpouseAnnual * iaaInfl(iaaAge - cage) : 0;
+    const oi_at  = (oiEnabled && oi > 0 && oiAge <= iaaAge)
+      ? (oiCola ? oi * iaaInfl(iaaAge - cage) : oi) : 0;
+    const otherIncome = pen_at + ss1_at + ss2_at + oi_at;
+
+    // Portfolio income at the configured SWR
+    const swrIncome = portAtAge * swr;
+
+    // Total pre-tax + tax handling
+    // Non-taxable (after-tax pension/Other Income) doesn't get taxed.
+    const penTax_at = penTaxable ? pen_at : 0;
+    const penNonTax_at = penTaxable ? 0 : pen_at;
+    const oiTax_at  = oiTaxable ? oi_at : 0;
+    const oiNonTax_at = oiTaxable ? 0 : oi_at;
+    const taxableIncome    = swrIncome + penTax_at + ss1_at + ss2_at + oiTax_at;
+    const nonTaxableIncome = penNonTax_at + oiNonTax_at;
+    const totalPretax      = taxableIncome + nonTaxableIncome;
+    const taxBill          = taxableIncome * effTax;
+    const totalNet         = totalPretax - taxBill;
+
+    // Display in CHOSEN-MODE dollars (Future $ or Today's $)
+    const dIaa = v => toDisp(v, yrsToIaa);
+    set('iaa-port',          fmt(dIaa(portAtAge)));
+    set('iaa-port-sub',      iaaY <= yrs ? 'Coast strategy (main line)' : 'After drawdown to this age');
+    set('iaa-swr-income',    fmt(dIaa(swrIncome)) + '/yr');
+    set('iaa-swr-sub',       pct(swr) + ' of portfolio');
+    set('iaa-other-income',  otherIncome > 0 ? fmt(dIaa(otherIncome)) + '/yr' : 'None');
+    const otherParts = [];
+    if (pen_at > 0) otherParts.push('Pension');
+    if (ss1_at > 0) otherParts.push('SS');
+    if (ss2_at > 0 && !otherParts.includes('SS')) otherParts.push('SS');
+    if (oi_at  > 0) otherParts.push('Other');
+    set('iaa-other-sub', otherParts.length ? otherParts.join(' + ') + ' active' : 'Nothing started yet');
+    set('iaa-total-pretax', fmt(dIaa(totalPretax))  + '/yr');
+    set('iaa-total-net',    fmt(dIaa(totalNet))     + '/yr');
+    set('iaa-tax-sub',      effTax > 0 ? `−${pct(effTax)} blended on ${fmt(dIaa(taxableIncome))}` : 'No tax rate set');
+
+    // Footer narrative
+    const ftrParts = [];
+    if (iaaY < yrs) {
+      ftrParts.push(`At <strong>${iaaAge}</strong>, you'd be retiring <strong>${yrs - iaaY} year${yrs - iaaY === 1 ? '' : 's'} early</strong>.`);
+    } else if (iaaY === yrs) {
+      ftrParts.push(`This matches your retirement age — same numbers as the main retirement income card.`);
+    } else {
+      ftrParts.push(`At <strong>${iaaAge}</strong>, you'd be retiring <strong>${iaaY - yrs} year${iaaY - yrs === 1 ? '' : 's'} after</strong> your target retirement age.`);
+    }
+    if (pen_at === 0 && penEnabled && pen > 0)        ftrParts.push(`Your pension hasn't started yet (begins at ${pAge}).`);
+    if (ss1_at === 0 && ssEnabled  && ssPrimary > 0)  ftrParts.push(`Your SS hasn't started yet (claim at ${ssAge}).`);
+    if (oi_at  === 0 && oiEnabled  && oi > 0)         ftrParts.push(`Your Other Income hasn't started yet (begins at ${oiAge}).`);
+    document.getElementById('iaa-footer').innerHTML = ftrParts.join(' ');
+  }
+
+  // ──────────────────────────────────────────────────────
   //  401(k)/IRA GROWTH THROUGH AGE 80
   //  Long-horizon retirement-only projection. Uses the
   //  main sim inside the accumulation window, then grows
@@ -3901,6 +4022,7 @@ const INPUT_MAP = [
   { id:'n-stop-invest-age', key:'stopInvestAge', m:1 },
   { id:'n-post-ret-cont',   key:'postRetRetCont', m:1 },
   { id:'n-post-br-cont',    key:'postRetBrCont',  m:1 },
+  { id:'n-iaa-age',         key:'iaaAge',         m:1 },
 ];
 
 function saveState() {
