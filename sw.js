@@ -1,4 +1,4 @@
-const CACHE = 'coastfire-v59';
+const CACHE = 'coastfire-v60';
 const LOCAL = [
   './', './index.html', './manifest.json', './icon.svg',
   './about.html', './privacy.html', './terms.html',

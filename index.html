@@ -575,7 +575,7 @@
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v59</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v60</span>
 </div>
 
 <div class="layout">
@@ -3464,7 +3464,14 @@ function _recalcImpl() {
     if (oi_at  === 0 && oiEnabled  && oi > 0)         ftrParts.push(`Other Income hasn't started (begins at ${oiAge}).`);
     const footerEl = document.getElementById('iaa-footer');
     if (footerEl) footerEl.innerHTML = ftrParts.join(' ');
-  } catch (err) { console.error('Income at Any Age error:', err); }
+  } catch (err) {
+    console.error('Income at Any Age error:', err);
+    // Surface the error in the UI so we can debug stuck installations
+    const footerEl = document.getElementById('iaa-footer');
+    if (footerEl) {
+      footerEl.innerHTML = `<span style="color:var(--red)">⚠️ Card error: ${err.message}</span><br><span style="color:var(--muted);font-size:0.75rem">${(err.stack || '').split('\n').slice(0,3).join(' · ')}</span>`;
+    }
+  }
 
   // ──────────────────────────────────────────────────────
   //  401(k)/IRA GROWTH THROUGH AGE 80
