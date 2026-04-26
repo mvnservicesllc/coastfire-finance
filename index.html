@@ -575,7 +575,7 @@
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v60</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v61</span>
 </div>
 
 <div class="layout">
@@ -2717,7 +2717,7 @@ function runCalc() {
     matchRothToo, matchAsRoth, sMatchRothToo, sMatchAsRoth, stopInvestAge,
     postRetRetCont, postRetBrCont,
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
-    rothBal, rothCont, retTaxRate, tradShare, effTax,
+    rothBal, rothCont, retTaxRate, tradShare, effTax, ltcg, divDrag,
     keepInvestPctRet, keepInvestPctBr, keepRetAdd, keepBrAdd, keepTotalAdd,
     nomSpend, nomPension, nomPensionTaxable, nomPensionNonTaxable,
     nomOtherIncome, nomOtherTaxable, nomOtherNonTaxable, totalNonTaxable,
@@ -2780,7 +2780,7 @@ function _recalcImpl() {
     matchRothToo, matchAsRoth, sMatchRothToo, sMatchAsRoth, stopInvestAge,
     postRetRetCont, postRetBrCont,
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
-    rothBal, rothCont, retTaxRate, tradShare, effTax,
+    rothBal, rothCont, retTaxRate, tradShare, effTax, ltcg, divDrag,
     keepInvestPctRet, keepInvestPctBr, keepRetAdd, keepBrAdd, keepTotalAdd,
     nomSpend, nomPension, nomPensionTaxable, nomPensionNonTaxable,
     nomOtherIncome, nomOtherTaxable, nomOtherNonTaxable, totalNonTaxable,
@@ -3366,11 +3366,22 @@ function _recalcImpl() {
     const roth401kAtY = Math.max(0, roAtY - rothIraBalAtY);
 
     // ─── Compute accessible vs locked ────────────────────
+    // Roth IRA basis is ALWAYS accessible regardless of age (IRS rule).
+    // Past rage we lose per-bucket data, so brokerage portion is approximated
+    // by assuming proportional-share of effTotals (rough but better than 0).
+    const accessRothIra = Math.min(rothIraBasisAtY, rothIraBalAtY);
     let accessAtAge, lockedAtAge;
     if (isPreEarly) {
-      // Brokerage (always) + Roth IRA basis (penalty-free)
-      const accessRothIra = iaaY <= yrs ? Math.min(rothIraBasisAtY, rothIraBalAtY) : 0;
-      accessAtAge = brAtY + accessRothIra;
+      let accessBr = brAtY;
+      // Past rage edge case: estimate brokerage from totalAtAge minus retirement
+      // accounts (using inline Roth IRA balance + Trad approximation).
+      if (iaaY > yrs && totalAtAge > 0) {
+        // Rough: assume retirement accounts grew untouched at nom past rage
+        const taPastY = (taVals[yrs] || 0) * Math.pow(1 + nom, iaaY - yrs);
+        const roPastY = (rothVals[yrs] || 0) * Math.pow(1 + nom, iaaY - yrs);
+        accessBr = Math.max(0, totalAtAge - taPastY - roPastY);
+      }
+      accessAtAge = accessBr + accessRothIra;
       lockedAtAge = Math.max(0, totalAtAge - accessAtAge);
     } else {
       accessAtAge = totalAtAge;
@@ -3400,9 +3411,10 @@ function _recalcImpl() {
     const oiNonTax_at  = oiTaxable ? 0 : oi_at;
 
     let swrTax = 0;
+    const accessBrForTax = Math.max(0, accessAtAge - accessRothIra);
     if (isPreEarly && accessAtAge > 0) {
       // Split SWR proportionally between brokerage (LTCG) and Roth IRA basis (tax-free)
-      const brShare    = accessAtAge > 0 ? (brAtY / accessAtAge) : 0;
+      const brShare    = accessAtAge > 0 ? (accessBrForTax / accessAtAge) : 0;
       const swrFromBr  = swrIncome * brShare;
       swrTax = swrFromBr * (ltcg || 0);
     } else {
@@ -3419,9 +3431,9 @@ function _recalcImpl() {
     // ─── Render ─────────────────────────────────────────
     set('iaa-port', fmt(dIaa(totalAtAge)));
     if (isPreEarly) {
-      const accessRothIra = Math.min(rothIraBasisAtY, rothIraBalAtY);
+      const accessBr = Math.max(0, accessAtAge - accessRothIra);
       const breakdown = [];
-      if (brAtY > 0)         breakdown.push(`Brokerage ${fmt(dIaa(brAtY))}`);
+      if (accessBr > 0)      breakdown.push(`Brokerage ${fmt(dIaa(accessBr))}`);
       if (accessRothIra > 0) breakdown.push(`Roth IRA basis ${fmt(dIaa(accessRothIra))}`);
       const accStr = breakdown.length ? breakdown.join(' + ') : 'nothing';
       set('iaa-port-sub', `Accessible: ${fmt(dIaa(accessAtAge))} (${accStr}) · Locked: ${fmt(dIaa(lockedAtAge))}`);
@@ -3441,7 +3453,7 @@ function _recalcImpl() {
     set('iaa-total-pretax', fmt(dIaa(totalPretax)) + '/yr');
     set('iaa-total-net',    fmt(dIaa(totalNet))    + '/yr');
     if (isPreEarly && swrIncome > 0) {
-      const brShare = accessAtAge > 0 ? (brAtY / accessAtAge * 100).toFixed(0) : 0;
+      const brShare = accessAtAge > 0 ? (accessBrForTax / accessAtAge * 100).toFixed(0) : 0;
       set('iaa-tax-sub', `${brShare}% Brokerage @ ${pct(ltcg || 0)} LTCG · rest tax-free${offsetsTaxableIncome > 0 ? ` · offsets @ ${pct(effTax)}` : ''}`);
     } else {
       set('iaa-tax-sub', effTax > 0 ? `−${pct(effTax)} blended on ${fmt(dIaa(swrIncome + offsetsTaxableIncome))}` : 'No tax rate set');
