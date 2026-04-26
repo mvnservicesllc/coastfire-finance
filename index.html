@@ -574,6 +574,7 @@
 <div class="save-bar">
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v57</span>
 </div>
 
 <div class="layout">
@@ -2750,6 +2751,21 @@ function toDisp(nomVal, yr) {
 //  RECALC
 // ─────────────────────────────────────────────────────────────────────────────
 function recalc() {
+  try { return _recalcImpl(); }
+  catch (err) {
+    console.error('[recalc] failed:', err);
+    // Recover gracefully — at least update the banner so the user knows
+    // something happened, instead of being stuck on "Calculating…"
+    const bTxt = document.getElementById('b-text');
+    const bIco = document.getElementById('b-ico');
+    if (bTxt) bTxt.textContent = 'Hit a snag — open DevTools console for details, or try Reset to defaults.';
+    if (bIco) bIco.textContent = '⚠️';
+    const banner = document.getElementById('banner');
+    if (banner) banner.className = 'banner warn';
+  }
+}
+
+function _recalcImpl() {
   if (!chart) return;
   const R = runCalc();
   if (!R) return;
@@ -3007,8 +3023,9 @@ function recalc() {
     }
 
     // ─── WITHDRAWAL ANALYSIS ──────────────────────────────
-    // Actual withdrawal rate vs SWR target, plus per-bucket breakdown
-    // assuming proportional withdrawals from each bucket.
+    // Wrapped in try/catch so any DOM/math edge case can't kill the whole
+    // recalc and leave the banner stuck on "Calculating…"
+    try {
     const wrActual = balTotal > 0 ? (grossFromPortfolio / balTotal) : 0;
     const wrTarget = swr || 0;
     const wrDiff   = wrActual - wrTarget;
@@ -3061,6 +3078,7 @@ function recalc() {
     } else {
       bucketsEl.innerHTML = '<span style="color:var(--muted)">No portfolio withdrawal — pension/SS/Other Income covers everything.</span>';
     }
+    } catch (err) { console.error('Withdrawal Analysis error:', err); }
 
     // Stacked bar widths (by % of gross income)
     const pctOf = (v) => grossTotal > 0 ? (v / grossTotal * 100) : 0;
@@ -3301,7 +3319,7 @@ function recalc() {
   //  is realistically tappable (Roth IRA contributions
   //  also work but we don't track basis separately).
   // ──────────────────────────────────────────────────────
-  {
+  try {
     const iaaAgeRaw = S.iaaAge || 65;
     const maxIaaAge = ages.length ? ages[ages.length - 1] : 80;
     const iaaAge = Math.max(cage, Math.min(maxIaaAge, iaaAgeRaw));
@@ -3407,7 +3425,7 @@ function recalc() {
     if (ss1_at === 0 && ssEnabled  && ssPrimary > 0)  ftrParts.push(`SS hasn't started (claim at ${ssAge}).`);
     if (oi_at  === 0 && oiEnabled  && oi > 0)         ftrParts.push(`Other Income hasn't started (begins at ${oiAge}).`);
     document.getElementById('iaa-footer').innerHTML = ftrParts.join(' ');
-  }
+  } catch (err) { console.error('Income at Any Age error:', err); }
 
   // ──────────────────────────────────────────────────────
   //  401(k)/IRA GROWTH THROUGH AGE 80
