@@ -669,6 +669,19 @@
           </div>
         </div>
 
+        <div class="field">
+          <label class="field-label">Annual Salary Increase</label>
+          <div class="field-wrap g">
+            <input type="number" id="n-salary-inc" min="0" max="15" value="0" step="0.25" inputmode="decimal">
+            <span class="field-sfx">%</span>
+            <div class="field-steps">
+              <button onclick="step('n-salary-inc',0.25)">▲</button>
+              <button onclick="step('n-salary-inc',-0.25)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">Applies to <strong>both</strong> primary &amp; spouse income. Contributions and employer match scale with salary each year. Typical: 3% (matches inflation) or 4–5% (real raises). Set 0% to keep contributions flat in nominal dollars.</div>
+        </div>
+
         <div class="info-box" style="margin-top:12px">
           <div class="ibar-label">Household Income &amp; Employer Match</div>
           <div class="ibar">
@@ -2009,6 +2022,7 @@ const S = {
   cage: 30, rage: 60,
   primaryIncome: 80000,
   spouseEnabled: false, spouseIncome: 60000,
+  salaryInc: 0,
   ta401kBal: 50000, ta401kCont: 15000, matchRate: 0.50, matchCap: 0.06,
   matchRothToo: false, matchAsRoth: false,
   taIraBal: 0, taIraCont: 0,
@@ -2077,6 +2091,7 @@ bindNum('n-cage',        'cage',         null);
 bindNum('n-rage',        'rage',         null);
 bindNum('n-p-inc',       'primaryIncome',null);
 bindNum('n-s-inc',       'spouseIncome', null);
+bindNum('n-salary-inc',  'salaryInc',    v => v/100);
 bindNum('n-ta401k-bal',    'ta401kBal',    null);
 bindNum('n-ta401k-cont',   'ta401kCont',   null);
 bindNum('n-match-rate',    'matchRate',    v => v/100);
@@ -2327,7 +2342,7 @@ function initChart() {
 function runCalc() {
   const {
     cage, rage,
-    primaryIncome, spouseEnabled, spouseIncome, sMatchRate, sMatchCap,
+    primaryIncome, spouseEnabled, spouseIncome, sMatchRate, sMatchCap, salaryInc,
     ta401kBal, ta401kCont,
     taIraBal, taIraCont,
     roth401kBal, roth401kCont,
@@ -2430,7 +2445,12 @@ function runCalc() {
   const combinedTaContForTax = taCont + matchToTrad + (spouseEnabled ? sTaCont + sMatchToTrad : 0);
   const combinedRothBalForTax  = rothBal  + (spouseEnabled ? sRothBal  : 0);
   const combinedRothContForTax = rothCont + matchToRoth + (spouseEnabled ? sRothCont + sMatchToRoth : 0);
-  const cf = nom > 0 ? ((Math.pow(1 + nom, yrs) - 1) / nom) : yrs;
+  // FV of growing annuity: PMT × ((1+r)^n − (1+g)^n) / (r − g), or PMT × n × (1+r)^(n−1) when r == g.
+  // Reduces to standard FV-of-annuity when salaryInc = 0.
+  const g = salaryInc || 0;
+  const cf = (Math.abs(nom - g) < 1e-9)
+    ? yrs * Math.pow(1 + nom, Math.max(0, yrs - 1))
+    : (Math.pow(1 + nom, yrs) - Math.pow(1 + g, yrs)) / (nom - g);
   const projTrad = combinedTaBalForTax   * Math.pow(1 + nom, yrs) + combinedTaContForTax   * cf;
   const projRoth = combinedRothBalForTax * Math.pow(1 + nom, yrs) + combinedRothContForTax * cf;
   const totalProjTA = projTrad + projRoth;
@@ -2484,9 +2504,13 @@ function runCalc() {
     }
     phases.push(coastAge !== null ? 'coast' : 'accum');
 
-    const addTa   = coastAge === null ? effectiveTaCont   : 0;
-    const addRoth = coastAge === null ? effectiveRothCont : 0;
-    const addBr   = coastAge === null ? brCont            : 0;
+    // Scale contributions by salary growth (compounded year-over-year).
+    // Year y uses next-year's contribution (y+1) since `add` is applied AFTER
+    // the year y observation. This matches "your raise effective end of year y".
+    const salMult = Math.pow(1 + (salaryInc || 0), y);
+    const addTa   = coastAge === null ? effectiveTaCont   * salMult : 0;
+    const addRoth = coastAge === null ? effectiveRothCont * salMult : 0;
+    const addBr   = coastAge === null ? brCont            * salMult : 0;
     ta    = ta   * (1 + nom) + addTa;
     roth  = roth * (1 + nom) + addRoth;
     br    = br   * (1 + nom - divDrag) + addBr;
@@ -2522,16 +2546,18 @@ function runCalc() {
   if (coastAge !== null) {
     const ci = coastAge - cage;
     let kTa = coastTa, kRoth = coastRoth, kBr = coastBr, kBasis = brBal;
-    for (let y = 0; y < ci; y++) kBasis += brCont;
+    // Brokerage basis pre-coast accumulates with salary scaling each year.
+    for (let y = 0; y < ci; y++) kBasis += brCont * Math.pow(1 + (salaryInc || 0), y);
     for (let y = ci; y <= yrs; y++) {
+      const salMult = Math.pow(1 + (salaryInc || 0), y);
       const g = Math.max(kBr - kBasis, 0);
       const effKBr = kBr - g * ltcg;
       keepInvestPath[y] = kTa + kRoth + effKBr;
       keepBrPath[y]     = effKBr;
-      kTa    = kTa   * (1 + nom) + keepTaAdd;
-      kRoth  = kRoth * (1 + nom) + keepRoAdd;
-      kBr    = kBr   * (1 + nom - divDrag) + keepBrAdd;
-      kBasis = kBasis + keepBrAdd;
+      kTa    = kTa   * (1 + nom) + keepTaAdd * salMult;
+      kRoth  = kRoth * (1 + nom) + keepRoAdd * salMult;
+      kBr    = kBr   * (1 + nom - divDrag) + keepBrAdd * salMult;
+      kBasis = kBasis + keepBrAdd * salMult;
     }
     keepFinalTotal    = keepInvestPath[yrs];
     keepBrFinal       = keepBrPath[yrs];
@@ -2637,7 +2663,7 @@ function runCalc() {
 
   return {
     cage, rage, yrs, nowYear, taBal, taCont, brBal, brCont, nom, inf, swr,
-    totalIncome, primaryIncome, spouseEnabled, spouseIncome,
+    totalIncome, primaryIncome, spouseEnabled, spouseIncome, salaryInc,
     sTaBal, sTaCont, sMatchRate, sMatchCap,
     sRothBal, sRothCont,
     annualMatch, sAnnualMatch, totalMatch, matchToTrad, matchToRoth, sMatchToTrad, sMatchToRoth,
@@ -2685,7 +2711,7 @@ function recalc() {
 
   const {
     cage, rage, yrs, nowYear, taBal, taCont, brBal, brCont, nom, inf, swr,
-    totalIncome, primaryIncome, spouseEnabled, spouseIncome,
+    totalIncome, primaryIncome, spouseEnabled, spouseIncome, salaryInc,
     sTaBal, sTaCont, sMatchRate, sMatchCap,
     sRothBal, sRothCont,
     annualMatch, sAnnualMatch, totalMatch, matchToTrad, matchToRoth, sMatchToTrad, sMatchToRoth,
@@ -3666,7 +3692,7 @@ function updateAiPrompt(R) {
     cage, rage, taBal, brBal, taCont, brCont,
     rothBal, rothCont, retTaxRate, tradShare, effTax,
     sTaBal, sTaCont, sRothBal, sRothCont,
-    totalContribs, totalIncome, savingsRate,
+    totalContribs, totalIncome, savingsRate, salaryInc,
     nom, inf, swr, totalMatch, netFIRE, coastToday, effNow, coastAge,
     nomSpend, penEnabled, pen, penTaxable, ssEnabled, ssPrimary,
     ssSpouseEnabled, ssSpouse, spouseEnabled,
@@ -3712,7 +3738,8 @@ function updateAiPrompt(R) {
       (totalMatch > 0 ? ` (plus ${fmt0(totalMatch)} employer match)` : ''),
   ];
   if (totalIncome > 0) {
-    situation.push(`- Household income: ${fmt0(totalIncome)}/yr · Savings rate: ${pctS(savingsRate)}`);
+    const salNote = (salaryInc || 0) > 0 ? ` · Salary growth: ${pctS(salaryInc)}/yr` : '';
+    situation.push(`- Household income: ${fmt0(totalIncome)}/yr · Savings rate: ${pctS(savingsRate)}${salNote}`);
   }
   situation.push(`- Retirement spending target: ${fmt0(nomSpend)}/yr in today's dollars`);
   if (penEnabled       && pen > 0)       situation.push(`- Pension expected: ${fmt0(pen)}/yr (today's dollars) — ${penTaxable ? 'taxable' : 'tax-free (net cash)'}`);
@@ -3831,6 +3858,7 @@ const INPUT_MAP = [
   { id:'n-rage',         key:'rage',          m:1   },
   { id:'n-p-inc',        key:'primaryIncome', m:1   },
   { id:'n-s-inc',        key:'spouseIncome',  m:1   },
+  { id:'n-salary-inc',   key:'salaryInc',     m:100 },
   { id:'n-ta401k-bal',      key:'ta401kBal',    m:1   },
   { id:'n-ta401k-cont',     key:'ta401kCont',   m:1   },
   { id:'n-match-rate',      key:'matchRate',    m:100 },
