@@ -1,4 +1,4 @@
-const CACHE = 'coastfire-v63';
+const CACHE = 'coastfire-v64';
 const LOCAL = [
   './', './index.html', './manifest.json', './icon.svg',
   './about.html', './privacy.html', './terms.html',
@@ -8,7 +8,8 @@ const LOCAL = [
   './blog/my-coastfire-journey.html',
   './blog/5-coastfire-mistakes.html',
   './blog/4-percent-rule-coastfire.html',
-  './blog/roth-ira-coastfire.html'
+  './blog/roth-ira-coastfire.html',
+  './blog/healthspan-coastfire.html'
 ];
 const CDN   = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
 

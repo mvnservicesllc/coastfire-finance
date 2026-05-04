@@ -590,7 +590,7 @@
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v63</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v64</span>
 </div>
 
 <div class="layout">
@@ -1473,14 +1473,36 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Daily Activity</label>
+          <label class="field-label">Cardio Activity</label>
           <select id="n-activity" class="field-select">
-            <option value="sedentary">Sedentary — desk job, little/no exercise</option>
-            <option value="light">Light — 1–3 days/week light exercise</option>
+            <option value="sedentary">Sedentary — desk job, no cardio</option>
+            <option value="light">Light — 1–3 days/week light cardio</option>
             <option value="moderate" selected>Moderate — 3–5 days/week</option>
-            <option value="active">Active — daily exercise or 5+ days vigorous</option>
+            <option value="active">Active — daily or 5+ days vigorous</option>
             <option value="athlete">Athlete — intensive training</option>
           </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Strength Training</label>
+          <select id="n-strength" class="field-select">
+            <option value="none" selected>None</option>
+            <option value="low">1–2 days/week</option>
+            <option value="mid">3 days/week</option>
+            <option value="high">4+ days/week</option>
+          </select>
+          <div class="field-hint">Resistance training is the strongest single predictor of mortality after 50 — separate from cardio.</div>
+        </div>
+        <div class="field">
+          <label class="field-label">Body Fat % <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <div class="field-wrap">
+            <input type="number" id="n-bodyfat" min="0" max="60" value="0" step="1" inputmode="numeric">
+            <span class="field-sfx">%</span>
+            <div class="field-steps">
+              <button onclick="step('n-bodyfat',1)">▲</button>
+              <button onclick="step('n-bodyfat',-1)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">Leave 0 if unknown. If provided, overrides BMI penalty (useful for muscular folks BMI mislabels). DEXA / InBody / smart scales give estimates.</div>
         </div>
         <div class="field">
           <label class="field-label">Sex (affects baseline lifespan)</label>
@@ -1491,6 +1513,88 @@
         </div>
         <div class="info-box info-box-y" id="bmi-preview" style="margin-top:10px">
           BMI: <strong id="bmi-val">—</strong> · <span id="bmi-cat">—</span>
+        </div>
+
+        <div id="spouse-health-block" style="display:none">
+          <div class="sub-hdr" style="margin-top:18px">Spouse Health <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label">Spouse Height</label>
+              <div class="field-wrap y">
+                <input type="number" id="n-s-height-in" min="48" max="84" value="68" step="1" inputmode="numeric">
+                <span class="field-sfx">in</span>
+                <div class="field-steps">
+                  <button onclick="step('n-s-height-in',1)">▲</button>
+                  <button onclick="step('n-s-height-in',-1)">▼</button>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Spouse Weight</label>
+              <div class="field-wrap y">
+                <input type="number" id="n-s-weight-lb" min="80" max="500" value="160" step="1" inputmode="numeric">
+                <span class="field-sfx">lb</span>
+                <div class="field-steps">
+                  <button onclick="step('n-s-weight-lb',5)">▲</button>
+                  <button onclick="step('n-s-weight-lb',-5)">▼</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Spouse Cardio</label>
+            <select id="n-s-activity" class="field-select">
+              <option value="sedentary">Sedentary</option>
+              <option value="light">Light — 1–3 days/wk</option>
+              <option value="moderate" selected>Moderate — 3–5 days/wk</option>
+              <option value="active">Active — daily or 5+ days vigorous</option>
+              <option value="athlete">Athlete</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Spouse Strength Training</label>
+            <select id="n-s-strength" class="field-select">
+              <option value="none" selected>None</option>
+              <option value="low">1–2 days/week</option>
+              <option value="mid">3 days/week</option>
+              <option value="high">4+ days/week</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label">Spouse Body Fat % <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(opt)</span></label>
+              <div class="field-wrap y">
+                <input type="number" id="n-s-bodyfat" min="0" max="60" value="0" step="1" inputmode="numeric">
+                <span class="field-sfx">%</span>
+                <div class="field-steps">
+                  <button onclick="step('n-s-bodyfat',1)">▲</button>
+                  <button onclick="step('n-s-bodyfat',-1)">▼</button>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Spouse Sex</label>
+              <select id="n-s-sex" class="field-select">
+                <option value="m" selected>Male</option>
+                <option value="f">Female</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Spouse Age Offset <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(years older/younger)</span></label>
+            <div class="field-wrap y">
+              <input type="number" id="n-s-age-offset" min="-20" max="20" value="0" step="1" inputmode="numeric">
+              <span class="field-sfx">yr</span>
+              <div class="field-steps">
+                <button onclick="step('n-s-age-offset',1)">▲</button>
+                <button onclick="step('n-s-age-offset',-1)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">Positive = spouse is older. Default 0 (same age).</div>
+          </div>
+          <div class="info-box info-box-y" id="s-bmi-preview" style="margin-top:10px">
+            Spouse BMI: <strong id="s-bmi-val">—</strong> · <span id="s-bmi-cat">—</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1695,9 +1799,11 @@
 
     <div class="info-box" id="ls-cost" style="font-size:0.88rem;line-height:1.6;background:rgba(232,198,133,0.08);border-left:3px solid var(--yellow)"></div>
 
+    <div id="ls-roi" style="margin-top:14px;padding:14px 16px;background:rgba(196,112,112,0.06);border:1px solid rgba(196,112,112,0.25);border-radius:8px"></div>
+
     <div style="font-size:0.72rem;color:var(--muted);margin-top:12px;line-height:1.6">
       <strong style="color:var(--text)">📋 About these estimates.</strong>
-      Lifespan baselines from US life-expectancy data (CDC): ~76 years male, ~81 years female at age 30. Adjustments for BMI follow Prospective Studies Collaboration (Lancet 2009) and activity adjustments follow the Copenhagen City Heart Study and Lee et al. (PLOS Med 2012). Healthspan-lifespan gap from <em>Outlive</em> (Attia, 2023) and JAMA longevity research. <strong>Not medical advice.</strong> Genetics, smoking, sleep, social ties, and luck dominate at the individual level. Use these as a thinking tool, not a prescription.
+      Lifespan baselines: CDC US life-expectancy tables (~76 male / ~81 female at 30). BMI adjustments: Prospective Studies Collaboration (Lancet 2009). Cardio activity: Lee et al (PLOS Med 2012) and Copenhagen City Heart Study. <strong>Strength training adjustments</strong>: Saeidifard et al (2019, Mayo Clinic Proc) — resistance training 2+ days/wk = ~23% lower mortality; Stamatakis et al (2018, AJE) — strength + cardio combined = 41% lower mortality; Srikanthan & Karlamangla (2014, AJM) — muscle mass independently predicts mortality; Leong et al (Lancet 2015) — grip strength outperforms BP as a mortality predictor. Healthspan-lifespan gap: <em>Outlive</em> (Attia, 2023). <strong>Not medical advice.</strong> Genetics, smoking, sleep, social ties, and luck dominate at the individual level — use these as a thinking tool, not a prescription. Read the full piece: <a href="blog/healthspan-coastfire.html" style="color:var(--accent2)">Why Healthspan Is the Hidden Variable in Your CoastFIRE Plan →</a>
     </div>
   </div>
 
@@ -2156,6 +2262,14 @@
         </span>
         <span class="blog-arrow">→</span>
       </a>
+      <a href="blog/healthspan-coastfire.html" class="blog-row" style="border-color:rgba(95,150,119,0.3);background:linear-gradient(135deg,rgba(95,150,119,0.06),rgba(232,198,133,0.02))">
+        <span class="blog-emoji">⏳</span>
+        <span class="blog-text">
+          <span class="blog-title">Healthspan Is the Hidden Variable in CoastFIRE</span>
+          <span class="blog-meta">By Minh · 9 min read · NEW</span>
+        </span>
+        <span class="blog-arrow">→</span>
+      </a>
     </div>
   </div>
 
@@ -2203,6 +2317,9 @@ const S = {
   stopInvestAge: 60, postRetRetCont: 0, postRetBrCont: 0,
   iaaAge: 65,
   heightIn: 68, weightLb: 170, activity: 'moderate', sex: 'f',
+  strength: 'none', bodyFatPct: 0,
+  sHeightIn: 68, sWeightLb: 160, sActivity: 'moderate', sSex: 'm',
+  sStrength: 'none', sBodyFatPct: 0, sAgeOffset: 0,
 };
 
 let dispMode = 'nom';
@@ -2294,13 +2411,19 @@ bindNum('n-post-br-cont',    'postRetBrCont',  null);
 bindNum('n-iaa-age',         'iaaAge',         null);
 bindNum('n-height-in',       'heightIn',       null);
 bindNum('n-weight-lb',       'weightLb',       null);
+bindNum('n-bodyfat',         'bodyFatPct',     null);
+bindNum('n-s-height-in',     'sHeightIn',      null);
+bindNum('n-s-weight-lb',     'sWeightLb',      null);
+bindNum('n-s-bodyfat',       'sBodyFatPct',    null);
+bindNum('n-s-age-offset',    'sAgeOffset',     null);
 // Selects: bind directly
-['n-activity','n-sex'].forEach(id => {
+const SELECT_MAP = {
+  'n-activity':'activity','n-sex':'sex','n-strength':'strength',
+  'n-s-activity':'sActivity','n-s-sex':'sSex','n-s-strength':'sStrength',
+};
+Object.entries(SELECT_MAP).forEach(([id, key]) => {
   const el = document.getElementById(id);
-  if (el) {
-    const key = id === 'n-activity' ? 'activity' : 'sex';
-    el.addEventListener('change', () => { S[key] = el.value; recalc(); });
-  }
+  if (el) el.addEventListener('change', () => { S[key] = el.value; recalc(); });
 });
 
 // Live contribution bases for the paired $ inputs.
@@ -2366,6 +2489,8 @@ function toggleSpouse() {
   document.getElementById('spouse-roth401k-block').style.display= vis;
   document.getElementById('spouse-rothira-block').style.display = vis;
   document.getElementById('ilbl-s-wrap').style.display          = vis;
+  const shb = document.getElementById('spouse-health-block');
+  if (shb) shb.style.display = vis;
   recalc();
 }
 function toggleSS() {
@@ -3619,62 +3744,148 @@ function _recalcImpl() {
   //  2012) for activity, Outlive (Attia 2023) for healthspan gap.
   // ──────────────────────────────────────────────────────
   try {
-    const heightIn = +(S.heightIn || 68);
-    const weightLb = +(S.weightLb || 170);
+    // Reusable healthspan/lifespan calculator — runs once for primary, once for spouse.
+    function computeHealth({ heightIn, weightLb, activity, strength, bodyFat, sex }) {
+      const bmi = heightIn > 0 ? (weightLb / (heightIn * heightIn)) * 703 : 0;
+      let bmiCat;
+      if (bmi < 18.5)      bmiCat = 'Underweight';
+      else if (bmi < 25)   bmiCat = 'Normal';
+      else if (bmi < 30)   bmiCat = 'Overweight';
+      else if (bmi < 35)   bmiCat = 'Obese (Class I)';
+      else if (bmi < 40)   bmiCat = 'Obese (Class II)';
+      else                 bmiCat = 'Obese (Class III)';
+
+      let lifespan = sex === 'f' ? 81 : 76;
+
+      let bodyCompAdj = 0;
+      if (bodyFat > 0) {
+        const bfThresh = sex === 'f' ? 28 : 20;
+        const bfBad    = sex === 'f' ? 38 : 30;
+        if (bodyFat < bfThresh - 5)  bodyCompAdj = +1;
+        else if (bodyFat < bfThresh) bodyCompAdj = 0;
+        else if (bodyFat < bfBad)    bodyCompAdj = -2;
+        else                          bodyCompAdj = -5;
+      } else {
+        let bmiAdj = 0;
+        if (bmi < 18.5)      bmiAdj = -2;
+        else if (bmi < 25)   bmiAdj =  0;
+        else if (bmi < 30)   bmiAdj = -1;
+        else if (bmi < 35)   bmiAdj = -3;
+        else if (bmi < 40)   bmiAdj = -5;
+        else                  bmiAdj = -8;
+        const strengthAtten = { none: 1.0, low: 0.7, mid: 0.4, high: 0.2 };
+        bmiAdj = bmiAdj * (strengthAtten[strength] || 1.0);
+        bodyCompAdj = bmiAdj;
+      }
+      lifespan += bodyCompAdj;
+
+      const cardioAdj = { sedentary:-3, light:-1, moderate:0, active:2, athlete:3 };
+      lifespan += cardioAdj[activity] || 0;
+      const strengthAdj = { none: 0, low: 1, mid: 2, high: 3 };
+      lifespan += strengthAdj[strength] || 0;
+      lifespan = Math.max(40, Math.min(105, lifespan));
+
+      let gap = 10;
+      if (bodyFat > 0 ? bodyFat > (sex === 'f' ? 33 : 25) : bmi >= 30) gap += 2;
+      if (activity === 'sedentary') gap += 2;
+      if (activity === 'active')    gap -= 2;
+      if (activity === 'athlete')   gap -= 3;
+      if (strength === 'mid')       gap -= 2;
+      if (strength === 'high')      gap -= 3;
+      const healthspan = Math.max(40, lifespan - gap);
+
+      return { bmi, bmiCat, lifespan: Math.round(lifespan), healthspan: Math.round(healthspan) };
+    }
+
+    // Primary
+    const primary = computeHealth({
+      heightIn: +(S.heightIn || 68), weightLb: +(S.weightLb || 170),
+      activity: S.activity || 'moderate', strength: S.strength || 'none',
+      bodyFat: +(S.bodyFatPct || 0), sex: S.sex || 'f',
+    });
+    const { bmi, bmiCat, lifespan, healthspan } = primary;
     const activity = S.activity || 'moderate';
-    const sex      = S.sex      || 'f';
+    const strength = S.strength || 'none';
+    const bodyFat  = +(S.bodyFatPct || 0);
 
-    // BMI = (lb / in²) × 703
-    const bmi = heightIn > 0 ? (weightLb / (heightIn * heightIn)) * 703 : 0;
-    let bmiCat;
-    if (bmi < 18.5)      bmiCat = 'Underweight';
-    else if (bmi < 25)   bmiCat = 'Normal';
-    else if (bmi < 30)   bmiCat = 'Overweight';
-    else if (bmi < 35)   bmiCat = 'Obese (Class I)';
-    else if (bmi < 40)   bmiCat = 'Obese (Class II)';
-    else                 bmiCat = 'Obese (Class III)';
     set('bmi-val', bmi.toFixed(1));
-    set('bmi-cat', bmiCat);
+    let bmiNote = bmiCat;
+    if (bmi >= 25 && (strength === 'mid' || strength === 'high') && bodyFat === 0) {
+      bmiNote += ` — but BMI penalty reduced ${strength === 'high' ? '80%' : '60%'} for strength training (likely muscle, not fat)`;
+    } else if (bodyFat > 0) {
+      bmiNote += ` — body fat ${bodyFat}% used instead of BMI`;
+    }
+    set('bmi-cat', bmiNote);
 
-    // Lifespan baseline at age 30
-    let lifespan = sex === 'f' ? 81 : 76;
-    // BMI adjustment (Lancet 2009 PSC: each 5 BMI above 25 ≈ -2-4 yrs)
-    if (bmi < 18.5)      lifespan -= 2;
-    else if (bmi < 25)   lifespan += 0;
-    else if (bmi < 30)   lifespan -= 1;
-    else if (bmi < 35)   lifespan -= 3;
-    else if (bmi < 40)   lifespan -= 5;
-    else                 lifespan -= 8;
-    // Activity (Lee et al: 75 min/wk vigorous = +1.8 yr; sedentary = -3 yr)
-    const activityAdj = { sedentary:-3, light:-1, moderate:0, active:2, athlete:3 };
-    lifespan += activityAdj[activity] || 0;
-    lifespan = Math.max(40, Math.min(105, lifespan));
+    // Spouse (if enabled)
+    let spouse = null;
+    let spouseAge = cage;
+    if (spouseEnabled) {
+      spouse = computeHealth({
+        heightIn: +(S.sHeightIn || 68), weightLb: +(S.sWeightLb || 160),
+        activity: S.sActivity || 'moderate', strength: S.sStrength || 'none',
+        bodyFat: +(S.sBodyFatPct || 0), sex: S.sSex || 'm',
+      });
+      spouseAge = cage + (+(S.sAgeOffset || 0));
+      set('s-bmi-val', spouse.bmi.toFixed(1));
+      let sBmiNote = spouse.bmiCat;
+      const sStr = S.sStrength || 'none';
+      const sBf  = +(S.sBodyFatPct || 0);
+      if (spouse.bmi >= 25 && (sStr === 'mid' || sStr === 'high') && sBf === 0) {
+        sBmiNote += ` — penalty reduced ${sStr === 'high' ? '80%' : '60%'} (strength training)`;
+      } else if (sBf > 0) {
+        sBmiNote += ` — body fat ${sBf}% used`;
+      }
+      set('s-bmi-cat', sBmiNote);
+    }
 
-    // Healthspan: lifespan minus the "decline gap" (8-12 yrs typically)
-    let gap = 10;
-    if (bmi >= 30)             gap += 2;
-    if (activity === 'sedentary') gap += 2;
-    if (activity === 'active')    gap -= 2;
-    if (activity === 'athlete')   gap -= 3;
-    const healthspan = Math.max(40, lifespan - gap);
-
-    // Derived
+    // Derived (primary)
     const healthyLeft  = Math.max(0, healthspan - cage);
-    const healthyRet   = Math.max(0, healthspan - rage);  // healthy years AFTER retirement
+    const healthyRet   = Math.max(0, healthspan - rage);
     const declineYrs   = Math.max(0, lifespan - healthspan);
     const livedYrs     = cage;
     const workingYrs   = Math.max(0, rage - cage);
     const totalSpan    = lifespan;
+    const sex = S.sex || 'f';
 
-    set('ls-healthspan',     healthspan + ' yrs');
-    set('ls-healthspan-sub', `Active years (BMI ${bmi.toFixed(1)} · ${activity})`);
-    set('ls-lifespan',       lifespan + ' yrs');
-    set('ls-lifespan-sub',   `${sex === 'f' ? 'Female' : 'Male'} baseline + adjustments`);
-    set('ls-healthy-left',   healthyLeft + ' yrs');
-    set('ls-healthy-ret',    healthyRet + ' yrs');
-    set('ls-healthy-ret-sub', healthyRet > 0
-      ? `Between age ${rage} and ${healthspan}`
-      : `Retirement age is past your projected healthspan`);
+    // For spouse-aware tiles, the most useful metric is JOINT healthy retirement —
+    // the years BOTH partners are healthy at the same time. That's the "shared
+    // travel and adventure" window that retirement actually buys.
+    let jointHealthyRet = healthyRet;
+    let displayHealthspan = healthspan;
+    let displayLifespan   = lifespan;
+    if (spouse) {
+      const spouseHealthspanAtSpouseAge = spouse.healthspan;        // age (years from birth)
+      const spouseRetirementAge = spouseAge + (rage - cage);         // assume retire same year
+      const spouseHealthyRet = Math.max(0, spouseHealthspanAtSpouseAge - spouseRetirementAge);
+      jointHealthyRet = Math.min(healthyRet, spouseHealthyRet);
+      displayHealthspan = Math.min(healthspan, spouseHealthspanAtSpouseAge);
+      displayLifespan   = Math.min(lifespan, spouse.lifespan);
+    }
+
+    set('ls-healthspan', spouse
+      ? `${healthspan} / ${spouse.healthspan}`
+      : healthspan + ' yrs');
+    const compLabel = bodyFat > 0 ? `${bodyFat}% BF` : `BMI ${bmi.toFixed(1)}`;
+    const strLabel  = strength === 'none' ? '' : ` · strength ${strength === 'low' ? '1-2x' : strength === 'mid' ? '3x' : '4+x'}/wk`;
+    set('ls-healthspan-sub', spouse
+      ? `You ${healthspan} · Spouse ${spouse.healthspan}`
+      : `Active years (${compLabel} · cardio ${activity}${strLabel})`);
+    set('ls-lifespan', spouse
+      ? `${lifespan} / ${spouse.lifespan}`
+      : lifespan + ' yrs');
+    set('ls-lifespan-sub', spouse
+      ? `You ${lifespan} · Spouse ${spouse.lifespan}`
+      : `${sex === 'f' ? 'Female' : 'Male'} baseline + adjustments`);
+    set('ls-healthy-left', healthyLeft + ' yrs');
+    set('ls-healthy-ret', spouse
+      ? jointHealthyRet + ' yrs (joint)'
+      : healthyRet + ' yrs');
+    set('ls-healthy-ret-sub', spouse
+      ? `Both healthy after retirement — the shared adventure window`
+      : (healthyRet > 0
+        ? `Between age ${rage} and ${healthspan}`
+        : `Retirement age is past your projected healthspan`));
 
     // Timeline bar widths
     const pctBar = v => totalSpan > 0 ? (Math.max(0,v) / totalSpan * 100).toFixed(2) + '%' : '0%';
@@ -3684,28 +3895,88 @@ function _recalcImpl() {
     document.getElementById('ls-bar-decline').style.width = pctBar(declineYrs);
     set('ls-key-lived',   livedYrs   + ' yrs');
     set('ls-key-working', workingYrs + ' yrs (to age ' + rage + ')');
-    set('ls-key-healthy', healthyRet + ' yrs');
+    set('ls-key-healthy', healthyRet + ' yrs' + (spouse ? ` (you) · ${jointHealthyRet} joint` : ''));
     set('ls-key-decline', declineYrs + ' yrs');
 
     // The cost-of-working-longer message — the killer line
     let costMsg;
-    if (healthyRet <= 0) {
-      costMsg = `🚨 <strong>Your retirement age (${rage}) is past your projected healthspan of ${healthspan}.</strong> Under this scenario, you'd reach retirement with little or no healthy time left to enjoy it. Consider retiring earlier, or invest in habits that extend healthspan: strength training, sleep, social ties, cardiovascular fitness.`;
+    const totalHealthyMonths = healthyRet * 12;
+    const hoursPerWorkYear = 2080;        // 40hr × 52wk
+    const hoursPerHealthyRetYear = 16 * 365; // 16 waking hours/day
+    const tradeRatio = (hoursPerHealthyRetYear / hoursPerWorkYear).toFixed(1);
+    // For couples, the binding constraint is the JOINT window
+    const effHealthyRet = spouse ? jointHealthyRet : healthyRet;
+    const effHealthyMonths = effHealthyRet * 12;
+    const windowLabel = spouse ? 'joint healthy retirement' : 'healthy retirement';
+    if (effHealthyRet <= 0) {
+      costMsg = `🚨 <strong>Your retirement age (${rage}) is past ${spouse ? "the earlier of you and your spouse's" : 'your'} projected healthspan.</strong> Under this scenario, ${spouse ? "at least one of you" : 'you'} would reach retirement with little or no healthy time left. Consider retiring earlier, or invest in habits that extend healthspan: strength training, sleep, social ties, cardiovascular fitness.`;
     } else if (workingYrs <= 0) {
       costMsg = `✅ You're already at or past your retirement age. Every year now is a gift — spend it deliberately.`;
     } else {
-      // Each extra year worked = ~1 healthy retirement year lost (since healthspan is fixed)
-      const monthsLostPerYear = Math.min(12, Math.round((healthyRet / Math.max(1, workingYrs)) * 12));
-      const totalHealthyMonths = healthyRet * 12;
-      const hoursPerWorkYear = 2080; // standard 40hr×52wk
-      const hoursPerHealthyRetYear = 16 * 365; // 16 waking hours/day
-      const tradeRatio = (hoursPerHealthyRetYear / hoursPerWorkYear).toFixed(1);
-
-      costMsg = `💡 <strong>The trade you're making:</strong> at retirement age ${rage}, you'll have <strong>${healthyRet} healthy years</strong> (${totalHealthyMonths} months) left for travel, family, and adventure. ` +
+      const monthsLostPerYear = Math.min(12, Math.round((effHealthyRet / Math.max(1, workingYrs)) * 12));
+      const spouseClause = spouse ? ` (the constraint is whichever of you reaches the end of healthspan first)` : '';
+      costMsg = `💡 <strong>The trade you're making:</strong> at retirement age ${rage}, you'll have <strong>${effHealthyRet} ${windowLabel} years</strong> (${effHealthyMonths} months) left for travel, family, and adventure${spouseClause}. ` +
         `Every extra year of work past today eats into that pool — about <strong>${monthsLostPerYear} months of healthy retirement per year worked</strong>. ` +
         `<br><br>Each working year is ~${hoursPerWorkYear} hours of W-2 obligation. Each healthy retirement year is ~${hoursPerHealthyRetYear} waking hours of choice — a <strong>${tradeRatio}× exchange rate</strong>. The math of CoastFIRE is really the math of buying back time.`;
     }
     document.getElementById('ls-cost').innerHTML = costMsg;
+
+    // ─── True ROI of Working Longer ────────────────────────
+    // Each year worked past today: gain post-tax income, lose healthy
+    // retirement hours valued at the same hourly rate. Almost always net-negative.
+    const roiEl = document.getElementById('ls-roi');
+    if (roiEl && workingYrs > 0 && effHealthyRet > 0 && primaryIncome > 0) {
+      const totalIncomeRoi = primaryIncome + (spouseEnabled ? spouseIncome : 0);
+      const postTax = totalIncomeRoi * 0.72; // approximate net of fed+state+FICA
+      const wageRate = postTax / hoursPerWorkYear;
+      // Each year past today gives up roughly (effHealthyRet/workingYrs) years of healthy time
+      const healthyHrsLostPerYr = (effHealthyRet / Math.max(1, workingYrs)) * hoursPerHealthyRetYear;
+      const timeValuePerYr = healthyHrsLostPerYr * wageRate;
+      const netRoiPerYr = postTax - timeValuePerYr;
+      const roiPct = postTax > 0 ? (netRoiPerYr / postTax * 100) : 0;
+
+      // Build a small table for years 1, 3, 5, 10
+      const years = [1, 3, 5, 10].filter(y => y <= workingYrs + 5);
+      const rows = years.map(y => {
+        const earned = postTax * y;
+        const lost   = timeValuePerYr * y;
+        const net    = earned - lost;
+        const monthsGone = Math.min(effHealthyMonths, Math.round((effHealthyRet / Math.max(1, workingYrs)) * 12 * y));
+        return `<tr>
+          <td style="padding:6px 8px"><strong>+${y} yr${y === 1 ? '' : 's'}</strong></td>
+          <td style="padding:6px 8px;text-align:right;color:var(--green);font-variant-numeric:tabular-nums">+${fmt(earned)}</td>
+          <td style="padding:6px 8px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums">${monthsGone} mo</td>
+          <td style="padding:6px 8px;text-align:right;color:var(--red);font-variant-numeric:tabular-nums">−${fmt(lost)}</td>
+          <td style="padding:6px 8px;text-align:right;color:${net < 0 ? 'var(--red)' : 'var(--green)'};font-weight:700;font-variant-numeric:tabular-nums">${net < 0 ? '−' : '+'}${fmt(Math.abs(net))}</td>
+        </tr>`;
+      }).join('');
+
+      roiEl.innerHTML = `
+        <div class="bbar-lbl" style="margin-bottom:6px">True ROI of Working Longer <span style="text-transform:none;font-weight:400;opacity:0.8">· what each extra year actually pays</span></div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.5">
+          Income earned (post-tax) <em>minus</em> healthy-retirement hours given up, valued at your own hourly wage. If you wouldn't trade an hour of your healthy free time for an hour of W-2 work, the net ROI is negative.
+        </div>
+        <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left">
+              <th style="padding:6px 8px;font-weight:600">Extra working years</th>
+              <th style="padding:6px 8px;font-weight:600;text-align:right">💰 Earned (post-tax)</th>
+              <th style="padding:6px 8px;font-weight:600;text-align:right">⏳ Healthy time gone</th>
+              <th style="padding:6px 8px;font-weight:600;text-align:right">💸 Time value</th>
+              <th style="padding:6px 8px;font-weight:600;text-align:right">🟥 Net ROI</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+        </div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:10px;line-height:1.5">
+          <strong style="color:${netRoiPerYr < 0 ? 'var(--red)' : 'var(--green)'}">Per-year ROI: ${netRoiPerYr < 0 ? '−' : '+'}${fmt(Math.abs(netRoiPerYr))} (${roiPct.toFixed(0)}%)</strong> — at your post-tax wage of ${fmt(wageRate)}/hr, each extra year of work earns you ${fmt(postTax)} but costs you ~${Math.round(healthyHrsLostPerYr).toLocaleString()} healthy retirement hours worth ${fmt(timeValuePerYr)}.
+        </div>
+      `;
+    } else if (roiEl) {
+      roiEl.innerHTML = '';
+    }
   } catch (err) {
     console.error('Healthspan card error:', err);
     const ce = document.getElementById('ls-cost');
@@ -4423,6 +4694,11 @@ const INPUT_MAP = [
   { id:'n-iaa-age',         key:'iaaAge',         m:1 },
   { id:'n-height-in',       key:'heightIn',       m:1 },
   { id:'n-weight-lb',       key:'weightLb',       m:1 },
+  { id:'n-bodyfat',         key:'bodyFatPct',     m:1 },
+  { id:'n-s-height-in',     key:'sHeightIn',      m:1 },
+  { id:'n-s-weight-lb',     key:'sWeightLb',      m:1 },
+  { id:'n-s-bodyfat',       key:'sBodyFatPct',    m:1 },
+  { id:'n-s-age-offset',    key:'sAgeOffset',     m:1 },
 ];
 
 function saveState() {
@@ -4457,11 +4733,16 @@ function syncUIFromState() {
   const setSel = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
   setSel('n-activity', S.activity);
   setSel('n-sex',      S.sex);
+  setSel('n-strength', S.strength);
+  setSel('n-s-activity', S.sActivity);
+  setSel('n-s-sex',      S.sSex);
+  setSel('n-s-strength', S.sStrength);
   show('spouse-block',          S.spouseEnabled);
   show('spouse-ta401k-block',   S.spouseEnabled);
   show('spouse-taira-block',    S.spouseEnabled);
   show('spouse-roth401k-block', S.spouseEnabled);
   show('spouse-rothira-block',  S.spouseEnabled);
+  show('spouse-health-block',   S.spouseEnabled);
   show('ilbl-s-wrap',           S.spouseEnabled);
   show('ss-block',        S.ssEnabled);
   show('ss-spouse-block', S.ssSpouseEnabled);
