@@ -590,7 +590,7 @@
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v67</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v68</span>
 </div>
 
 <div class="layout">
@@ -1800,6 +1800,14 @@
     <div class="info-box" id="ls-cost" style="font-size:0.88rem;line-height:1.6;background:rgba(232,198,133,0.08);border-left:3px solid var(--yellow)"></div>
 
     <div id="ls-roi" style="margin-top:14px;padding:14px 16px;background:rgba(196,112,112,0.06);border:1px solid rgba(196,112,112,0.25);border-radius:8px"></div>
+
+    <div id="ls-curve-wrap" style="margin-top:14px;padding:14px 16px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;display:none">
+      <div class="bbar-lbl" style="margin-bottom:8px">📈 Time-Value Multiplier Curve <span style="text-transform:none;font-weight:400;opacity:0.8">· how each healthy year is valued by age</span></div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;line-height:1.5">
+        Convex curve (power 2.5): <strong>0.5× wage at your current age → 5.0× at end of healthspan</strong>. Last year is worth ~10× the first year of retirement. Hover on the curve to read exact values.
+      </div>
+      <svg id="ls-curve-svg" viewBox="0 0 600 240" style="width:100%;height:auto;display:block;margin-top:8px;font-family:-apple-system,sans-serif" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
 
     <div style="font-size:0.72rem;color:var(--muted);margin-top:12px;line-height:1.6">
       <strong style="color:var(--text)">📋 About these estimates.</strong>
@@ -4035,6 +4043,100 @@ function _recalcImpl() {
       `;
     } else if (roiEl) {
       roiEl.innerHTML = '';
+    }
+
+    // ─── VISUAL CURVE: time-value multiplier vs age ───────
+    // Light SVG line chart + filled area under curve. Marks user's current
+    // age, retirement age, and end of healthspan with vertical dashed lines.
+    try {
+      const curveWrap = document.getElementById('ls-curve-wrap');
+      const svg = document.getElementById('ls-curve-svg');
+      if (svg && curveWrap && primaryIncome > 0 && effHealthyRet > 0) {
+        const totalIncomeRoi = primaryIncome + (spouseEnabled ? spouseIncome : 0);
+        const wageRate = (totalIncomeRoi * 0.72) / hoursPerWorkYear;
+        const effHealthspanEnd = spouse ? Math.min(healthspan, spouse.healthspan) : healthspan;
+        const yrsToHealthspanEnd = Math.max(1, effHealthspanEnd - cage);
+        const valueMultAt = (age) => {
+          const elapsed = Math.max(0, Math.min(1, (age - cage) / yrsToHealthspanEnd));
+          return 0.5 + 4.5 * Math.pow(elapsed, 2.5);
+        };
+
+        const W = 600, H = 240, PAD_L = 50, PAD_R = 20, PAD_T = 18, PAD_B = 36;
+        const plotW = W - PAD_L - PAD_R;
+        const plotH = H - PAD_T - PAD_B;
+        const minAge = cage, maxAge = effHealthspanEnd;
+        const minMult = 0, maxMult = 5;
+        const x = (age) => PAD_L + ((age - minAge) / Math.max(1, maxAge - minAge)) * plotW;
+        const y = (mult) => PAD_T + plotH - (mult / maxMult) * plotH;
+
+        // Build curve path (sample every year)
+        const pts = [];
+        for (let a = minAge; a <= maxAge; a += 0.5) {
+          pts.push([x(a), y(valueMultAt(a))]);
+        }
+        const linePath = pts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+        // Filled area under curve
+        const areaPath = linePath + ` L${x(maxAge).toFixed(1)} ${y(0).toFixed(1)} L${x(minAge).toFixed(1)} ${y(0).toFixed(1)} Z`;
+
+        // Y-axis tick marks (multiplier 1, 2, 3, 4, 5)
+        const yTicks = [1, 2, 3, 4, 5].map(m => `
+          <line x1="${PAD_L}" x2="${W - PAD_R}" y1="${y(m)}" y2="${y(m)}" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+          <text x="${PAD_L - 8}" y="${y(m) + 4}" text-anchor="end" fill="#8da3b8" font-size="10">${m}×</text>
+        `).join('');
+
+        // X-axis tick marks (every 10 years)
+        const xTicks = [];
+        const startTick = Math.ceil(minAge / 10) * 10;
+        for (let t = startTick; t <= maxAge; t += 10) {
+          xTicks.push(`
+            <line x1="${x(t)}" x2="${x(t)}" y1="${PAD_T}" y2="${H - PAD_B}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <text x="${x(t)}" y="${H - PAD_B + 16}" text-anchor="middle" fill="#8da3b8" font-size="10">${t}</text>
+          `);
+        }
+
+        // Marker lines at key ages
+        const markerLine = (age, color, label, labelOffset = 0) => {
+          if (age < minAge || age > maxAge) return '';
+          return `
+            <line x1="${x(age)}" x2="${x(age)}" y1="${PAD_T}" y2="${H - PAD_B}" stroke="${color}" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
+            <circle cx="${x(age)}" cy="${y(valueMultAt(age))}" r="4" fill="${color}" stroke="#0b1929" stroke-width="2"/>
+            <text x="${x(age) + labelOffset}" y="${PAD_T + 12}" text-anchor="${labelOffset < 0 ? 'end' : labelOffset > 0 ? 'start' : 'middle'}" fill="${color}" font-size="10" font-weight="600">${label}</text>
+          `;
+        };
+
+        // Define gradient for fill
+        const defs = `
+          <defs>
+            <linearGradient id="ls-curve-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#c9965c" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#c9965c" stop-opacity="0.02"/>
+            </linearGradient>
+          </defs>
+        `;
+
+        // Axis labels
+        const axisLabels = `
+          <text x="${PAD_L - 36}" y="${PAD_T + plotH/2}" text-anchor="middle" fill="#8da3b8" font-size="10" transform="rotate(-90 ${PAD_L - 36} ${PAD_T + plotH/2})">value × wage</text>
+          <text x="${PAD_L + plotW/2}" y="${H - 6}" text-anchor="middle" fill="#8da3b8" font-size="10">age</text>
+        `;
+
+        svg.innerHTML = `
+          ${defs}
+          ${yTicks}
+          ${xTicks.join('')}
+          <path d="${areaPath}" fill="url(#ls-curve-grad)"/>
+          <path d="${linePath}" fill="none" stroke="#c9965c" stroke-width="2.5" stroke-linejoin="round"/>
+          ${markerLine(cage, '#8da3b8', `Today (age ${cage})`, 6)}
+          ${markerLine(rage, '#5f9677', `Retire (${rage}, ${valueMultAt(rage).toFixed(1)}×)`, 6)}
+          ${markerLine(effHealthspanEnd, '#c47070', `Healthspan end (${Math.round(effHealthspanEnd)}, 5.0×)`, -6)}
+          ${axisLabels}
+        `;
+        curveWrap.style.display = '';
+      } else if (curveWrap) {
+        curveWrap.style.display = 'none';
+      }
+    } catch (curveErr) {
+      console.warn('Curve render failed:', curveErr);
     }
   } catch (err) {
     console.error('Healthspan card error:', err);
