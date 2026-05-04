@@ -590,7 +590,7 @@
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v66</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v67</span>
 </div>
 
 <div class="layout">
@@ -4004,17 +4004,22 @@ function _recalcImpl() {
         .map(s => `<strong>age ${Math.round(s.age)}: ${s.mult.toFixed(2)}×</strong> (${fmt(wageRate * s.mult)}/hr)`)
         .join(' · ');
 
+      const incomeBreakdown = spouseEnabled && spouseIncome > 0
+        ? `${fmt(primaryIncome)} (you) + ${fmt(spouseIncome)} (spouse) = <strong>${fmt(totalIncomeRoi)} household</strong> → ${fmt(postTax)} post-tax (~28% blended)`
+        : `${fmt(totalIncomeRoi)} gross → <strong>${fmt(postTax)} post-tax</strong> (~28% blended)`;
+
       roiEl.innerHTML = `
         <div class="bbar-lbl" style="margin-bottom:6px">True ROI of Delaying Retirement <span style="text-transform:none;font-weight:400;opacity:0.8">· value escalates near end of healthspan</span></div>
         <div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.5">
-          Each delay year gives up the earliest healthy retirement year at the back end. Time value <strong>scales with proximity to end of healthspan</strong> — last years are exponentially more precious than early ones. Multipliers (against your $${wageRate.toFixed(0)}/hr post-tax wage):<br>${curveExamples}
+          <strong style="color:var(--text)">Income basis:</strong> ${incomeBreakdown}.<br>
+          Each delay year gives up the earliest healthy retirement year at the back end. Time value <strong>scales with proximity to end of healthspan</strong> — last years are exponentially more precious. Multipliers (against your $${wageRate.toFixed(0)}/hr post-tax wage):<br>${curveExamples}
         </div>
         <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
           <thead>
             <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left">
               <th style="padding:6px 8px;font-weight:600">Delay</th>
-              <th style="padding:6px 8px;font-weight:600;text-align:right">💰 Earned</th>
+              <th style="padding:6px 8px;font-weight:600;text-align:right">💰 Earned (post-tax, ${spouseEnabled ? 'household' : 'gross'})</th>
               <th style="padding:6px 8px;font-weight:600;text-align:right">⏳ Time gone</th>
               <th style="padding:6px 8px;font-weight:600;text-align:right">📈 Value mult.</th>
               <th style="padding:6px 8px;font-weight:600;text-align:right">💸 Time value</th>
