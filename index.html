@@ -590,7 +590,7 @@
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v68</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v69</span>
 </div>
 
 <div class="layout">
@@ -2170,8 +2170,35 @@
         <div class="aff-desc">
           The foundational FIRE book. Explains index-fund investing, the 4% rule, and the mindset behind CoastFIRE in a way anyone can follow. I recommend this as the <em>first</em> book on any FIRE reading list.
         </div>
-        <!-- TODO: Replace angelnguyen0e-20 with your Amazon Associates tracking ID (e.g., coastfire-20) -->
         <a href="https://www.amazon.com/dp/1533667926?tag=angelnguyen0e-20" class="aff-cta y" target="_blank" rel="noopener sponsored">Read on Amazon →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo p">⏳</div>
+          <div>
+            <div class="aff-name">Outlive</div>
+            <div class="aff-tag">Peter Attia, MD · Book</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          The canonical book on <strong>healthspan vs lifespan</strong>. Explains why the last decade of life is mostly decline — and how strength training, Zone 2 cardio, and metabolic health compress that gap. The medical companion to CoastFIRE: money buys time, this book teaches you how to keep the time worth living.
+        </div>
+        <a href="https://www.amazon.com/dp/0593236599?tag=angelnguyen0e-20" class="aff-cta" target="_blank" rel="noopener sponsored">Read on Amazon →</a>
+      </div>
+
+      <div class="aff-card">
+        <div class="aff-card-head">
+          <div class="aff-logo g">💡</div>
+          <div>
+            <div class="aff-name">Die With Zero</div>
+            <div class="aff-tag">Bill Perkins · Book</div>
+          </div>
+        </div>
+        <div class="aff-desc">
+          The philosophical companion to CoastFIRE. Argues you should optimize for converting money into <strong>memorable experiences during your healthy years</strong>, not maximizing your portfolio at death. If you've ever felt guilty about spending money before retirement, this book will rewire your thinking.
+        </div>
+        <a href="https://www.amazon.com/dp/0593653882?tag=angelnguyen0e-20" class="aff-cta g" target="_blank" rel="noopener sponsored">Read on Amazon →</a>
       </div>
 
     </div>
@@ -4536,6 +4563,18 @@ const AFFILIATES = {
     url: 'https://www.amazon.com/dp/1533667926?tag=angelnguyen0e-20',
     cta: 'Read on Amazon →', ctaCls: 'y'
   },
+  outlive: {
+    id: 'outlive', logo: '⏳', logoCls: 'p',
+    name: 'Outlive', tag: 'Peter Attia · Book',
+    url: 'https://www.amazon.com/dp/0593236599?tag=angelnguyen0e-20',
+    cta: 'Read on Amazon →', ctaCls: ''
+  },
+  diewithzero: {
+    id: 'diewithzero', logo: '💡', logoCls: 'g',
+    name: 'Die With Zero', tag: 'Bill Perkins · Book',
+    url: 'https://www.amazon.com/dp/0593653882?tag=angelnguyen0e-20',
+    cta: 'Read on Amazon →', ctaCls: 'g'
+  },
   newsletter: {
     id: 'newsletter', logo: '📬', logoCls: 'p',
     name: 'Financial Freedom Insights', tag: 'Newsletter · Free',
@@ -4580,21 +4619,21 @@ function updateContextual(R) {
   const farFromCoast = yearsToCoast !== null && yearsToCoast > 10;
 
   if (alreadyCoast) {
-    add('empower', "You've hit CoastFIRE — time to track your net worth closely.");
-    add('monarch', 'Protect what you built — Monarch unifies budget + net worth so coast drift is easy to spot.');
-    add('sofi',    'Keep investing on autopilot to build a buffer above your CoastFIRE number.');
+    add('empower',     "You've hit CoastFIRE — time to track your net worth closely.");
+    add('diewithzero', "You're past the math — now the question is how to spend it. This book reframes that.");
+    add('outlive',     "You've already won the money game. The next question is healthspan — Attia's roadmap.");
   } else if (nearCoast) {
-    add('m1',      `You're ~${yearsToCoast} yrs from CoastFIRE — automate contributions so you land it.`);
-    add('empower', 'Track every account in one place as you close the gap.');
-    add('ynab',    'Final stretch — tighten your spending plan to close the gap faster.');
+    add('m1',          `You're ~${yearsToCoast} yrs from CoastFIRE — automate contributions so you land it.`);
+    add('empower',     'Track every account in one place as you close the gap.');
+    add('outlive',     "Close to coast — start optimizing for the years you'll buy back, not just the dollars.");
   } else if (farFromCoast) {
-    add('book',      'Long runway — the fundamentals of index investing will compound for you.');
-    add('robinhood', "Decades ahead — Robinhood's 1–3% IRA match is free money compounding for 30+ years.");
-    add('sofi',      'Start a Roth IRA now; decades of tax-free growth ahead.');
+    add('book',        'Long runway — the fundamentals of index investing will compound for you.');
+    add('robinhood',   "Decades ahead — Robinhood's 1–3% IRA match is free money compounding for 30+ years.");
+    add('sofi',        'Start a Roth IRA now; decades of tax-free growth ahead.');
   } else {
-    add('fidelity', 'Solid base for tax-advantaged accounts — FZROX, Roth IRA, 401k rollovers.');
-    add('robinhood','Roth IRA with a 1–3% contribution match — rare free boost on retirement savings.');
-    add('m1',       'Automate your contributions with a Pie portfolio and coast.');
+    add('fidelity',    'Solid base for tax-advantaged accounts — FZROX, Roth IRA, 401k rollovers.');
+    add('robinhood',   'Roth IRA with a 1–3% contribution match — rare free boost on retirement savings.');
+    add('m1',          'Automate your contributions with a Pie portfolio and coast.');
   }
 
   if (brCont > 0 || brBal > 0) {
