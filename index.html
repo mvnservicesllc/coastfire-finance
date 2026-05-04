@@ -307,6 +307,20 @@
 
     .field-hint { font-size: 0.67rem; color: var(--muted); margin-top: 3px; }
 
+    /* Select dropdown matching field-wrap aesthetic */
+    .field-select {
+      width: 100%; padding: 9px 12px;
+      background: var(--surface2); color: var(--text);
+      border: 1px solid var(--border); border-radius: 8px;
+      font-size: 0.95rem; font-weight: 500;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5' fill='%238da3b8'><path d='M0 0l4 5 4-5z'/></svg>");
+      background-repeat: no-repeat; background-position: right 12px center; background-size: 9px;
+      padding-right: 32px;
+    }
+    .field-select:focus { outline:none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(201,150,92,0.15); }
+
     /* 2-up row */
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 13px; }
     .field-row .field { margin-bottom: 0; }
@@ -565,6 +579,7 @@
     <a href="#projection">📈 Projection</a>
     <a href="#income">💰 Income</a>
     <a href="#stress">🎲 Stress Test</a>
+    <a href="#lifespan-card">⏳ Healthspan</a>
     <a href="#plan">🤖 Plan</a>
     <a href="#scenarios">🎯 Scenarios</a>
     <a href="#blog">📚 Blog</a>
@@ -575,7 +590,7 @@
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v62</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v63</span>
 </div>
 
 <div class="layout">
@@ -1420,6 +1435,67 @@
     </div>
   </div>
 
+  <div class="group-hdr">Time &amp; Health</div>
+
+  <!-- ── HEALTH SPAN ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('health')">
+      <span class="acc-title">⏳ Healthspan vs Lifespan</span>
+      <span class="acc-arrow" id="arr-health">▶</span>
+    </div>
+    <div class="acc-body" id="body-health">
+      <div class="acc-inner">
+        <div class="info-box" style="font-size:0.72rem;line-height:1.5;margin-bottom:10px;color:var(--muted)">
+          💡 Estimate how many <strong>healthy, active</strong> years you have left vs. your total lifespan. Money loses meaning past your healthspan — this shows the real cost of working longer.
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label">Height</label>
+            <div class="field-wrap">
+              <input type="number" id="n-height-in" min="48" max="84" value="68" step="1" inputmode="numeric">
+              <span class="field-sfx">in</span>
+              <div class="field-steps">
+                <button onclick="step('n-height-in',1)">▲</button>
+                <button onclick="step('n-height-in',-1)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Weight</label>
+            <div class="field-wrap">
+              <input type="number" id="n-weight-lb" min="80" max="500" value="170" step="1" inputmode="numeric">
+              <span class="field-sfx">lb</span>
+              <div class="field-steps">
+                <button onclick="step('n-weight-lb',5)">▲</button>
+                <button onclick="step('n-weight-lb',-5)">▼</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Daily Activity</label>
+          <select id="n-activity" class="field-select">
+            <option value="sedentary">Sedentary — desk job, little/no exercise</option>
+            <option value="light">Light — 1–3 days/week light exercise</option>
+            <option value="moderate" selected>Moderate — 3–5 days/week</option>
+            <option value="active">Active — daily exercise or 5+ days vigorous</option>
+            <option value="athlete">Athlete — intensive training</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Sex (affects baseline lifespan)</label>
+          <select id="n-sex" class="field-select">
+            <option value="m">Male</option>
+            <option value="f" selected>Female</option>
+          </select>
+        </div>
+        <div class="info-box info-box-y" id="bmi-preview" style="margin-top:10px">
+          BMI: <strong id="bmi-val">—</strong> · <span id="bmi-cat">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /card -->
 </div><!-- /left -->
 
@@ -1585,6 +1661,44 @@
     </div>
 
     <div class="info-box" id="iaa-footer" style="font-size:0.82rem;line-height:1.6"></div>
+  </div>
+
+  <div class="cw" id="lifespan-card">
+    <div class="ct">⏳ Healthspan vs Lifespan <span style="font-size:0.7rem;color:var(--muted);font-weight:400">The real cost of working longer</span></div>
+    <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px;line-height:1.6">
+      <strong>Healthspan</strong> = years lived <em>actively, mobile, and cognitively sharp</em>. <strong>Lifespan</strong> = total years. The gap (typically 8–12 years) is when money matters less than energy. Every year you delay retirement disproportionately eats into the healthy ones.
+    </div>
+
+    <div class="rg" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-bottom:14px">
+      <div class="rb"><div class="lbl">Healthspan</div><div class="val g" id="ls-healthspan">—</div><div class="sub" id="ls-healthspan-sub">Active years</div></div>
+      <div class="rb"><div class="lbl">Lifespan</div><div class="val w" id="ls-lifespan">—</div><div class="sub" id="ls-lifespan-sub">Total years</div></div>
+      <div class="rb"><div class="lbl">Healthy Years Left</div><div class="val p" id="ls-healthy-left">—</div><div class="sub">From today</div></div>
+      <div class="rb"><div class="lbl">Healthy Retirement</div><div class="val y" id="ls-healthy-ret">—</div><div class="sub" id="ls-healthy-ret-sub">After your retirement age</div></div>
+    </div>
+
+    <!-- Life timeline visualization -->
+    <div class="bbar-wrap" style="margin-bottom:14px">
+      <div class="bbar-lbl">Your life, on one bar</div>
+      <div class="bbar" id="ls-bar" style="height:22px">
+        <div id="ls-bar-lived"   style="background:var(--muted)"></div>
+        <div id="ls-bar-working" style="background:var(--accent)"></div>
+        <div id="ls-bar-healthy" style="background:var(--green)"></div>
+        <div id="ls-bar-decline" style="background:var(--yellow)"></div>
+      </div>
+      <div class="bbar-key">
+        <span><span style="color:var(--muted)">■</span> Lived: <strong id="ls-key-lived">—</strong></span>
+        <span><span style="color:var(--accent)">■</span> Working: <strong id="ls-key-working">—</strong></span>
+        <span><span style="color:var(--green)">■</span> Healthy retirement: <strong id="ls-key-healthy">—</strong></span>
+        <span><span style="color:var(--yellow)">■</span> Decline: <strong id="ls-key-decline">—</strong></span>
+      </div>
+    </div>
+
+    <div class="info-box" id="ls-cost" style="font-size:0.88rem;line-height:1.6;background:rgba(232,198,133,0.08);border-left:3px solid var(--yellow)"></div>
+
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:12px;line-height:1.6">
+      <strong style="color:var(--text)">📋 About these estimates.</strong>
+      Lifespan baselines from US life-expectancy data (CDC): ~76 years male, ~81 years female at age 30. Adjustments for BMI follow Prospective Studies Collaboration (Lancet 2009) and activity adjustments follow the Copenhagen City Heart Study and Lee et al. (PLOS Med 2012). Healthspan-lifespan gap from <em>Outlive</em> (Attia, 2023) and JAMA longevity research. <strong>Not medical advice.</strong> Genetics, smoking, sleep, social ties, and luck dominate at the individual level. Use these as a thinking tool, not a prescription.
+    </div>
   </div>
 
   <div class="cw" id="retire-growth-section" style="display:none">
@@ -2088,6 +2202,7 @@ const S = {
   keepInvestPctRet: 1.0, keepInvestPctBr: 1.0,
   stopInvestAge: 60, postRetRetCont: 0, postRetBrCont: 0,
   iaaAge: 65,
+  heightIn: 68, weightLb: 170, activity: 'moderate', sex: 'f',
 };
 
 let dispMode = 'nom';
@@ -2177,6 +2292,16 @@ bindNum('n-stop-invest-age', 'stopInvestAge', null);
 bindNum('n-post-ret-cont',   'postRetRetCont', null);
 bindNum('n-post-br-cont',    'postRetBrCont',  null);
 bindNum('n-iaa-age',         'iaaAge',         null);
+bindNum('n-height-in',       'heightIn',       null);
+bindNum('n-weight-lb',       'weightLb',       null);
+// Selects: bind directly
+['n-activity','n-sex'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    const key = id === 'n-activity' ? 'activity' : 'sex';
+    el.addEventListener('change', () => { S[key] = el.value; recalc(); });
+  }
+});
 
 // Live contribution bases for the paired $ inputs.
 function currentRetContribBase() {
@@ -3487,6 +3612,107 @@ function _recalcImpl() {
   }
 
   // ──────────────────────────────────────────────────────
+  //  HEALTHSPAN VS LIFESPAN
+  //  Estimate how many active years remain vs total years.
+  //  Sources: CDC US life-expectancy tables, Prospective Studies
+  //  Collaboration (Lancet 2009) for BMI, Lee et al. (PLOS Med
+  //  2012) for activity, Outlive (Attia 2023) for healthspan gap.
+  // ──────────────────────────────────────────────────────
+  try {
+    const heightIn = +(S.heightIn || 68);
+    const weightLb = +(S.weightLb || 170);
+    const activity = S.activity || 'moderate';
+    const sex      = S.sex      || 'f';
+
+    // BMI = (lb / in²) × 703
+    const bmi = heightIn > 0 ? (weightLb / (heightIn * heightIn)) * 703 : 0;
+    let bmiCat;
+    if (bmi < 18.5)      bmiCat = 'Underweight';
+    else if (bmi < 25)   bmiCat = 'Normal';
+    else if (bmi < 30)   bmiCat = 'Overweight';
+    else if (bmi < 35)   bmiCat = 'Obese (Class I)';
+    else if (bmi < 40)   bmiCat = 'Obese (Class II)';
+    else                 bmiCat = 'Obese (Class III)';
+    set('bmi-val', bmi.toFixed(1));
+    set('bmi-cat', bmiCat);
+
+    // Lifespan baseline at age 30
+    let lifespan = sex === 'f' ? 81 : 76;
+    // BMI adjustment (Lancet 2009 PSC: each 5 BMI above 25 ≈ -2-4 yrs)
+    if (bmi < 18.5)      lifespan -= 2;
+    else if (bmi < 25)   lifespan += 0;
+    else if (bmi < 30)   lifespan -= 1;
+    else if (bmi < 35)   lifespan -= 3;
+    else if (bmi < 40)   lifespan -= 5;
+    else                 lifespan -= 8;
+    // Activity (Lee et al: 75 min/wk vigorous = +1.8 yr; sedentary = -3 yr)
+    const activityAdj = { sedentary:-3, light:-1, moderate:0, active:2, athlete:3 };
+    lifespan += activityAdj[activity] || 0;
+    lifespan = Math.max(40, Math.min(105, lifespan));
+
+    // Healthspan: lifespan minus the "decline gap" (8-12 yrs typically)
+    let gap = 10;
+    if (bmi >= 30)             gap += 2;
+    if (activity === 'sedentary') gap += 2;
+    if (activity === 'active')    gap -= 2;
+    if (activity === 'athlete')   gap -= 3;
+    const healthspan = Math.max(40, lifespan - gap);
+
+    // Derived
+    const healthyLeft  = Math.max(0, healthspan - cage);
+    const healthyRet   = Math.max(0, healthspan - rage);  // healthy years AFTER retirement
+    const declineYrs   = Math.max(0, lifespan - healthspan);
+    const livedYrs     = cage;
+    const workingYrs   = Math.max(0, rage - cage);
+    const totalSpan    = lifespan;
+
+    set('ls-healthspan',     healthspan + ' yrs');
+    set('ls-healthspan-sub', `Active years (BMI ${bmi.toFixed(1)} · ${activity})`);
+    set('ls-lifespan',       lifespan + ' yrs');
+    set('ls-lifespan-sub',   `${sex === 'f' ? 'Female' : 'Male'} baseline + adjustments`);
+    set('ls-healthy-left',   healthyLeft + ' yrs');
+    set('ls-healthy-ret',    healthyRet + ' yrs');
+    set('ls-healthy-ret-sub', healthyRet > 0
+      ? `Between age ${rage} and ${healthspan}`
+      : `Retirement age is past your projected healthspan`);
+
+    // Timeline bar widths
+    const pctBar = v => totalSpan > 0 ? (Math.max(0,v) / totalSpan * 100).toFixed(2) + '%' : '0%';
+    document.getElementById('ls-bar-lived').style.width   = pctBar(livedYrs);
+    document.getElementById('ls-bar-working').style.width = pctBar(workingYrs);
+    document.getElementById('ls-bar-healthy').style.width = pctBar(Math.max(0, Math.min(healthspan - rage, totalSpan - cage - workingYrs)));
+    document.getElementById('ls-bar-decline').style.width = pctBar(declineYrs);
+    set('ls-key-lived',   livedYrs   + ' yrs');
+    set('ls-key-working', workingYrs + ' yrs (to age ' + rage + ')');
+    set('ls-key-healthy', healthyRet + ' yrs');
+    set('ls-key-decline', declineYrs + ' yrs');
+
+    // The cost-of-working-longer message — the killer line
+    let costMsg;
+    if (healthyRet <= 0) {
+      costMsg = `🚨 <strong>Your retirement age (${rage}) is past your projected healthspan of ${healthspan}.</strong> Under this scenario, you'd reach retirement with little or no healthy time left to enjoy it. Consider retiring earlier, or invest in habits that extend healthspan: strength training, sleep, social ties, cardiovascular fitness.`;
+    } else if (workingYrs <= 0) {
+      costMsg = `✅ You're already at or past your retirement age. Every year now is a gift — spend it deliberately.`;
+    } else {
+      // Each extra year worked = ~1 healthy retirement year lost (since healthspan is fixed)
+      const monthsLostPerYear = Math.min(12, Math.round((healthyRet / Math.max(1, workingYrs)) * 12));
+      const totalHealthyMonths = healthyRet * 12;
+      const hoursPerWorkYear = 2080; // standard 40hr×52wk
+      const hoursPerHealthyRetYear = 16 * 365; // 16 waking hours/day
+      const tradeRatio = (hoursPerHealthyRetYear / hoursPerWorkYear).toFixed(1);
+
+      costMsg = `💡 <strong>The trade you're making:</strong> at retirement age ${rage}, you'll have <strong>${healthyRet} healthy years</strong> (${totalHealthyMonths} months) left for travel, family, and adventure. ` +
+        `Every extra year of work past today eats into that pool — about <strong>${monthsLostPerYear} months of healthy retirement per year worked</strong>. ` +
+        `<br><br>Each working year is ~${hoursPerWorkYear} hours of W-2 obligation. Each healthy retirement year is ~${hoursPerHealthyRetYear} waking hours of choice — a <strong>${tradeRatio}× exchange rate</strong>. The math of CoastFIRE is really the math of buying back time.`;
+    }
+    document.getElementById('ls-cost').innerHTML = costMsg;
+  } catch (err) {
+    console.error('Healthspan card error:', err);
+    const ce = document.getElementById('ls-cost');
+    if (ce) ce.innerHTML = `<span style="color:var(--red)">⚠️ ${err.message}</span>`;
+  }
+
+  // ──────────────────────────────────────────────────────
   //  401(k)/IRA GROWTH THROUGH AGE 80
   //  Long-horizon retirement-only projection. Uses the
   //  main sim inside the accumulation window, then grows
@@ -4195,6 +4421,8 @@ const INPUT_MAP = [
   { id:'n-post-ret-cont',   key:'postRetRetCont', m:1 },
   { id:'n-post-br-cont',    key:'postRetBrCont',  m:1 },
   { id:'n-iaa-age',         key:'iaaAge',         m:1 },
+  { id:'n-height-in',       key:'heightIn',       m:1 },
+  { id:'n-weight-lb',       key:'weightLb',       m:1 },
 ];
 
 function saveState() {
@@ -4225,6 +4453,10 @@ function syncUIFromState() {
   cb('sw-match-as-roth',    S.matchAsRoth);
   cb('sw-s-match-roth-too', S.sMatchRothToo);
   cb('sw-s-match-as-roth',  S.sMatchAsRoth);
+  // Selects
+  const setSel = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+  setSel('n-activity', S.activity);
+  setSel('n-sex',      S.sex);
   show('spouse-block',          S.spouseEnabled);
   show('spouse-ta401k-block',   S.spouseEnabled);
   show('spouse-taira-block',    S.spouseEnabled);
