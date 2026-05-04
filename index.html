@@ -590,7 +590,7 @@
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v65</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v66</span>
 </div>
 
 <div class="layout">
@@ -3932,44 +3932,91 @@ function _recalcImpl() {
       const totalIncomeRoi = primaryIncome + (spouseEnabled ? spouseIncome : 0);
       const postTax = totalIncomeRoi * 0.72; // approximate net of fed+state+FICA
       const wageRate = postTax / hoursPerWorkYear;
-      // Each extra year of work past current plan = 1 year of healthy retirement lost
-      // (healthspan is a fixed age — delaying retirement just shortens the back end).
-      // Hours given up = 1 year × 5840 waking hrs/yr, capped at remaining healthy retirement.
-      const healthyHrsLostPerYr = hoursPerHealthyRetYear;
-      const timeValuePerYr = healthyHrsLostPerYr * wageRate;
-      const netRoiPerYr = postTax - timeValuePerYr;
+      // The constraining healthspan endpoint (use joint endpoint for couples)
+      const effHealthspanEnd = spouse ? Math.min(healthspan, spouse.healthspan) : healthspan;
+      const yrsToHealthspanEnd = Math.max(1, effHealthspanEnd - cage);
+
+      // ─── VALUE MULTIPLIER: scarcity-of-time premium ──────
+      // The marginal utility of a healthy year SPIKES as you approach the end
+      // of healthspan. Convex curve (power 2.5) so the last few years carry
+      // dramatically more weight than early ones. Range: 0.5× wage at current
+      // age → 5.0× wage at end of healthspan. Last year is worth ~10× an
+      // early retirement year (matches behavioral economics: terminal-care
+      // willingness-to-pay studies, Kahneman peak-end rule applied to time).
+      const valueMultAt = (age) => {
+        const elapsed = Math.max(0, Math.min(1, (age - cage) / yrsToHealthspanEnd));
+        // Steep convex curve: gentle early climb, sharp acceleration near end
+        const power = 2.5;
+        return 0.5 + 4.5 * Math.pow(elapsed, power);  // 0.5× → 5.0×
+      };
+
+      // For each delay year `y` past the plan, we give up the retirement year
+      // at age (rage + y - 1) — the earliest healthy retirement year we'd
+      // otherwise have enjoyed. Each given-up year has its OWN value based on
+      // when we'd have enjoyed it.
+      const valueAtAge = (age) => wageRate * hoursPerHealthyRetYear * valueMultAt(age);
+      const cumulativeLostValue = (delayYrs) => {
+        let total = 0;
+        for (let y = 0; y < delayYrs; y++) {
+          const givenUpAge = rage + y;
+          if (givenUpAge >= effHealthspanEnd) break;
+          total += valueAtAge(givenUpAge);
+        }
+        return total;
+      };
+
+      // For headline per-year metric, use the FIRST delay year (least costly)
+      const firstDelayValue = valueAtAge(rage);
+      const netRoiPerYr = postTax - firstDelayValue;
       const roiPct = postTax > 0 ? (netRoiPerYr / postTax * 100) : 0;
 
-      // Build a small table for years 1, 3, 5, 10 (capped at remaining healthy years)
+      // Build table for delay scenarios
       const maxDelay = Math.max(1, Math.floor(effHealthyRet));
       const years = [1, 3, 5, 10].filter(y => y <= maxDelay);
-      if (years.length === 0) years.push(1); // always show at least 1
+      if (years.length === 0) years.push(1);
       const rows = years.map(y => {
         const earned = postTax * y;
-        const lost   = timeValuePerYr * y;
+        const lost   = cumulativeLostValue(y);
         const net    = earned - lost;
         const monthsGone = Math.min(effHealthyMonths, y * 12);
+        // Show range of multipliers used: from valueMultAt(rage) to valueMultAt(rage + y - 1)
+        const startMult = valueMultAt(rage).toFixed(1);
+        const endMult   = valueMultAt(Math.min(effHealthspanEnd - 1, rage + y - 1)).toFixed(1);
+        const multRange = y === 1 ? `${startMult}×` : `${startMult}× → ${endMult}×`;
         return `<tr>
           <td style="padding:6px 8px"><strong>+${y} yr${y === 1 ? '' : 's'}</strong></td>
           <td style="padding:6px 8px;text-align:right;color:var(--green);font-variant-numeric:tabular-nums">+${fmt(earned)}</td>
           <td style="padding:6px 8px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums">${monthsGone} mo</td>
+          <td style="padding:6px 8px;text-align:right;color:var(--muted);font-size:0.82rem">${multRange}</td>
           <td style="padding:6px 8px;text-align:right;color:var(--red);font-variant-numeric:tabular-nums">−${fmt(lost)}</td>
           <td style="padding:6px 8px;text-align:right;color:${net < 0 ? 'var(--red)' : 'var(--green)'};font-weight:700;font-variant-numeric:tabular-nums">${net < 0 ? '−' : '+'}${fmt(Math.abs(net))}</td>
         </tr>`;
       }).join('');
 
+      // Show a few example multipliers for the curve explanation
+      const sampleAges = [];
+      for (const a of [rage, rage + 5, rage + 10, rage + 20, effHealthspanEnd - 1]) {
+        if (a < effHealthspanEnd && (sampleAges.length === 0 || a > sampleAges[sampleAges.length-1].age)) {
+          sampleAges.push({ age: a, mult: valueMultAt(a) });
+        }
+      }
+      const curveExamples = sampleAges
+        .map(s => `<strong>age ${Math.round(s.age)}: ${s.mult.toFixed(2)}×</strong> (${fmt(wageRate * s.mult)}/hr)`)
+        .join(' · ');
+
       roiEl.innerHTML = `
-        <div class="bbar-lbl" style="margin-bottom:6px">True ROI of Delaying Retirement <span style="text-transform:none;font-weight:400;opacity:0.8">· what each extra year past your plan actually pays</span></div>
+        <div class="bbar-lbl" style="margin-bottom:6px">True ROI of Delaying Retirement <span style="text-transform:none;font-weight:400;opacity:0.8">· value escalates near end of healthspan</span></div>
         <div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.5">
-          Income earned (post-tax) <em>minus</em> the year of healthy retirement you give up, valued at your own hourly wage. Healthspan is a fixed age — push retirement back 1 year, lose 1 year of healthy retirement on the back end. If you wouldn't trade an hour of your healthy free time for an hour of W-2 work, the net ROI is negative.
+          Each delay year gives up the earliest healthy retirement year at the back end. Time value <strong>scales with proximity to end of healthspan</strong> — last years are exponentially more precious than early ones. Multipliers (against your $${wageRate.toFixed(0)}/hr post-tax wage):<br>${curveExamples}
         </div>
         <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
           <thead>
             <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left">
-              <th style="padding:6px 8px;font-weight:600">Extra years past plan</th>
-              <th style="padding:6px 8px;font-weight:600;text-align:right">💰 Earned (post-tax)</th>
-              <th style="padding:6px 8px;font-weight:600;text-align:right">⏳ Healthy time gone</th>
+              <th style="padding:6px 8px;font-weight:600">Delay</th>
+              <th style="padding:6px 8px;font-weight:600;text-align:right">💰 Earned</th>
+              <th style="padding:6px 8px;font-weight:600;text-align:right">⏳ Time gone</th>
+              <th style="padding:6px 8px;font-weight:600;text-align:right">📈 Value mult.</th>
               <th style="padding:6px 8px;font-weight:600;text-align:right">💸 Time value</th>
               <th style="padding:6px 8px;font-weight:600;text-align:right">🟥 Net ROI</th>
             </tr>
@@ -3978,7 +4025,7 @@ function _recalcImpl() {
         </table>
         </div>
         <div style="font-size:0.78rem;color:var(--muted);margin-top:10px;line-height:1.5">
-          <strong style="color:${netRoiPerYr < 0 ? 'var(--red)' : 'var(--green)'}">Per-year ROI: ${netRoiPerYr < 0 ? '−' : '+'}${fmt(Math.abs(netRoiPerYr))} (${roiPct.toFixed(0)}%)</strong> — at your post-tax wage of ${fmt(wageRate)}/hr, each extra year past your retirement plan earns you ${fmt(postTax)} but costs you ${healthyHrsLostPerYr.toLocaleString()} healthy retirement hours worth ${fmt(timeValuePerYr)}.
+          <strong style="color:${netRoiPerYr < 0 ? 'var(--red)' : 'var(--green)'}">First-year ROI: ${netRoiPerYr < 0 ? '−' : '+'}${fmt(Math.abs(netRoiPerYr))} (${roiPct.toFixed(0)}%)</strong> — your <em>cheapest</em> delay year (gives up age ${rage}, an early healthy year). Each subsequent delay year gives up an older age, and the multiplier <em>accelerates</em> sharply: convex curve from 0.5× wage at your current age to <strong>5.0× wage at end of healthspan</strong>. Last year of healthspan is worth ~10× the first year of retirement — anchored to behavioral-economics research on terminal time-value (Kahneman, terminal-care WTP studies).
         </div>
       `;
     } else if (roiEl) {
