@@ -590,7 +590,7 @@
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v69</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v70</span>
 </div>
 
 <div class="layout">
@@ -1059,6 +1059,55 @@
                 <button onclick="step('n-s-rothira-cont',-500)">▼</button>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HSA ── -->
+  <div class="acc">
+    <div class="acc-hdr" onclick="toggle('hsa')">
+      <span class="acc-title">💎 Health Savings Account (HSA) <span class="tl-tag tag-g">Triple tax-advantaged</span></span>
+      <span class="acc-arrow" id="arr-hsa">▶</span>
+    </div>
+    <div class="acc-body" id="body-hsa">
+      <div class="acc-inner">
+        <div class="info-box" style="font-size:0.72rem;line-height:1.5;margin-bottom:10px;color:var(--muted)">
+          💡 The most tax-advantaged account in the US: <strong>pre-tax contributions, tax-free growth, tax-free withdrawals for medical</strong>. Requires HDHP enrollment. 2026 limits: $4,300 single / $8,550 family (+$1,000 catch-up at 55+). Combine both spouses' HSAs in this section.
+        </div>
+        <div class="field">
+          <label class="field-label">Current Balance (Invested Portion)</label>
+          <div class="field-wrap g">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-hsa-bal" min="0" max="2000000" value="0" step="500" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-hsa-bal',500)">▲</button>
+              <button onclick="step('n-hsa-bal',-500)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">Most HSAs require a cash threshold (e.g. $1,000) before letting you invest the rest. Enter the invested portion.</div>
+        </div>
+        <div class="field">
+          <label class="field-label">Annual Contributions</label>
+          <div class="field-wrap g">
+            <span class="field-pfx">$</span>
+            <input type="number" id="n-hsa-cont" min="0" max="20000" value="0" step="500" inputmode="numeric">
+            <div class="field-steps">
+              <button onclick="step('n-hsa-cont',500)">▲</button>
+              <button onclick="step('n-hsa-cont',-500)">▼</button>
+            </div>
+          </div>
+          <div class="field-hint">Up to $8,550/yr for family HDHP coverage (2026). Add catch-up if 55+.</div>
+        </div>
+        <div class="field">
+          <label class="field-label">Withdrawal Strategy</label>
+          <select id="n-hsa-strategy" class="field-select">
+            <option value="trad" selected>Retirement use after 65 — taxed like Traditional 401k</option>
+            <option value="roth">Receipts strategy — save medical receipts, withdraw tax-free anytime</option>
+          </select>
+          <div class="field-hint">
+            <strong>Traditional</strong> (default): conservative — assume you'll use it for general retirement at 65+, taxed as ordinary income. <strong>Receipts</strong>: aggressive — track all qualified medical expenses, withdraw matching $ tax-free at any age (the "stealth Roth" strategy).
           </div>
         </div>
       </div>
@@ -2341,6 +2390,7 @@ const S = {
   sTaIraBal: 0, sTaIraCont: 0,
   sRoth401kBal: 0, sRoth401kCont: 0,
   sRothIraBal: 0, sRothIraCont: 0,
+  hsaBal: 0, hsaCont: 0, hsaStrategy: 'trad',
   brBal: 0, brCont: 0, divDrag: 0.003, ltcg: 0.15,
   retTaxRate: 0,
   penEnabled: false, pen: 24000, pAge: 65, cola: true, penTaxable: true,
@@ -2425,6 +2475,8 @@ bindNum('n-s-roth401k-bal',  'sRoth401kBal',  null);
 bindNum('n-s-roth401k-cont', 'sRoth401kCont', null);
 bindNum('n-s-rothira-bal',   'sRothIraBal',   null);
 bindNum('n-s-rothira-cont',  'sRothIraCont',  null);
+bindNum('n-hsa-bal',     'hsaBal',       null);
+bindNum('n-hsa-cont',    'hsaCont',      null);
 bindNum('n-br-bal',      'brBal',        null);
 bindNum('n-br-cont',     'brCont',       null);
 bindNum('n-ret-tax',     'retTaxRate',   v => v/100);
@@ -2455,6 +2507,7 @@ bindNum('n-s-age',           'sAge',           null);
 const SELECT_MAP = {
   'n-activity':'activity','n-sex':'sex','n-strength':'strength',
   'n-s-activity':'sActivity','n-s-sex':'sSex','n-s-strength':'sStrength',
+  'n-hsa-strategy':'hsaStrategy',
 };
 Object.entries(SELECT_MAP).forEach(([id, key]) => {
   const el = document.getElementById(id);
@@ -2683,6 +2736,7 @@ function runCalc() {
     sTaIraBal, sTaIraCont,
     sRoth401kBal, sRoth401kCont,
     sRothIraBal, sRothIraCont,
+    hsaBal, hsaCont, hsaStrategy,
     matchRate, matchCap, matchRothToo, matchAsRoth,
     sMatchRothToo, sMatchAsRoth,
     brBal, brCont, divDrag, ltcg,
@@ -2694,11 +2748,20 @@ function runCalc() {
     keepInvestPctRet, keepInvestPctBr, stopInvestAge, postRetRetCont, postRetBrCont,
   } = S;
 
+  // HSA routing: 'trad' = treat as Traditional (taxed at retirement rate),
+  // 'roth' = treat as Roth (tax-free, receipts strategy). Single household
+  // HSA bucket — combine both spouses' HSAs into hsaBal/hsaCont in the UI.
+  const hsaToTrad = hsaStrategy !== 'roth';
+  const hsaTradBal  = hsaToTrad ? (hsaBal  || 0) : 0;
+  const hsaTradCont = hsaToTrad ? (hsaCont || 0) : 0;
+  const hsaRothBal  = hsaToTrad ? 0 : (hsaBal  || 0);
+  const hsaRothCont = hsaToTrad ? 0 : (hsaCont || 0);
+
   // Aggregated aliases — rest of runCalc uses these unchanged
-  const taBal   = ta401kBal + taIraBal;
-  const taCont   = ta401kCont + taIraCont;
-  const rothBal  = roth401kBal + rothIraBal;
-  const rothCont = roth401kCont + rothIraCont;
+  const taBal   = ta401kBal + taIraBal + hsaTradBal;
+  const taCont   = ta401kCont + taIraCont + hsaTradCont;
+  const rothBal  = roth401kBal + rothIraBal + hsaRothBal;
+  const rothCont = roth401kCont + rothIraCont + hsaRothCont;
   const sTaBal   = sTa401kBal + sTaIraBal;
   const sTaCont  = sTa401kCont + sTaIraCont;
   const sRothBal  = sRoth401kBal + sRothIraBal;
@@ -4731,6 +4794,10 @@ function updateAiPrompt(R) {
     const salNote = (salaryInc || 0) > 0 ? ` · Salary growth: ${pctS(salaryInc)}/yr` : '';
     situation.push(`- Household income: ${fmt0(totalIncome)}/yr · Savings rate: ${pctS(savingsRate)}${salNote}`);
   }
+  if ((S.hsaBal || 0) > 0 || (S.hsaCont || 0) > 0) {
+    const stratLabel = S.hsaStrategy === 'roth' ? 'receipts strategy (tax-free)' : 'retirement use after 65 (Traditional treatment)';
+    situation.push(`- HSA: ${fmt0(S.hsaBal || 0)} balance + ${fmt0(S.hsaCont || 0)}/yr contributions — ${stratLabel}`);
+  }
   situation.push(`- Retirement spending target: ${fmt0(nomSpend)}/yr in today's dollars`);
   if (penEnabled       && pen > 0)       situation.push(`- Pension expected: ${fmt0(pen)}/yr (today's dollars) — ${penTaxable ? 'taxable' : 'tax-free (net cash)'}`);
   if (oiEnabled        && oi > 0)        situation.push(`- Other income expected: ${fmt0(oi)}/yr (today's dollars) — ${oiTaxable ? 'taxable' : 'tax-free (net cash)'}`);
@@ -4869,6 +4936,8 @@ const INPUT_MAP = [
   { id:'n-s-roth401k-cont', key:'sRoth401kCont',m:1   },
   { id:'n-s-rothira-bal',   key:'sRothIraBal',  m:1   },
   { id:'n-s-rothira-cont',  key:'sRothIraCont', m:1   },
+  { id:'n-hsa-bal',      key:'hsaBal',        m:1   },
+  { id:'n-hsa-cont',     key:'hsaCont',       m:1   },
   { id:'n-br-bal',       key:'brBal',         m:1   },
   { id:'n-br-cont',      key:'brCont',        m:1   },
   { id:'n-ret-tax',      key:'retTaxRate',    m:100 },
@@ -4937,6 +5006,7 @@ function syncUIFromState() {
   setSel('n-s-activity', S.sActivity);
   setSel('n-s-sex',      S.sSex);
   setSel('n-s-strength', S.sStrength);
+  setSel('n-hsa-strategy', S.hsaStrategy);
   show('spouse-block',          S.spouseEnabled);
   show('spouse-ta401k-block',   S.spouseEnabled);
   show('spouse-taira-block',    S.spouseEnabled);
