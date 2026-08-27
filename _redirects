@@ -140,3 +140,83 @@
 /manifest.webmanifest          /  301
 /site.webmanifest              /  301
 /browserconfig.xml             /  301
+
+# ═══════════════════════════════════════════════════════════════
+# Credential-harvesting scanners (observed Aug 2026: ~50 req in 3s
+# from a single scanner running a modern secrets wordlist). We're a
+# static site with no server, no secrets, and no filesystem to walk —
+# every one of these already 404s harmlessly. Redirecting purely to
+# keep analytics readable.
+# ═══════════════════════════════════════════════════════════════
+
+# Cloud SDK / deploy configs (AWS Amplify, Firebase, GCP)
+/aws-exports.js                /  301
+/aws-config.js                 /  301
+/awsConfig.js                  /  301
+/awsconfiguration.json         /  301
+/amplifyconfiguration.json     /  301
+/amplify_outputs.json          /  301
+/google-services.json          /  301
+/gcp-service.json              /  301
+/__/firebase/*                 /  301
+/src/aws-exports.js            /  301
+/src/amplifyconfiguration.json /  301
+
+# AI coding-tool configs (newer scanner target — devs sometimes
+# commit API keys into these)
+/.claude.json                  /  301
+/.claude/*                     /  301
+/.mcp.json                     /  301
+/.codex/*                      /  301
+/.aider.conf.yml               /  301
+/.continue/*                   /  301
+/.hermes/*                     /  301
+/.config/*                     /  301
+/.cursor/*                     /  301
+
+# Shell dotfiles / home-dir probes
+/.bashrc                       /  301
+/.zshrc                        /  301
+/.profile                      /  301
+/.bash_profile                 /  301
+/.bash_history                 /  301
+/.netrc                        /  301
+/.npmrc                        /  301
+/.dockerenv                    /  301
+
+# Vite/dev-server path traversal (the /@fs/ prefix)
+/@fs/*                         /  301
+/@vite/*                       /  301
+/@id/*                         /  301
+
+# Generic app config filenames
+/config.json                   /  301
+/config.js                     /  301
+/config.yaml                   /  301
+/config.yml                    /  301
+/config.toml                   /  301
+/settings.json                 /  301
+/values.yaml                   /  301
+/auth.json                     /  301
+/__env.js                      /  301
+/secrets.json                  /  301
+/credentials.json              /  301
+/config/*                      /  301
+
+# Framework-specific leftovers
+/storage/logs/*                /  301
+/wp-config.php.bak             /  301
+/wp-config.php.old             /  301
+/wp-config.php.save            /  301
+/wp-config.php~                /  301
+
+# Debug / metrics endpoints (Go pprof, Prometheus, health checks)
+/debug/*                       /  301
+/metrics                       /  301
+/_health                       /  301
+/healthz                       /  301
+/actuator/*                    /  301
+/api/config                    /  301
+/api/settings                  /  301
+/api/v1/settings               /  301
+/dashboard                     /  301
