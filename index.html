@@ -307,6 +307,89 @@
 
     .field-hint { font-size: 0.67rem; color: var(--muted); margin-top: 3px; }
 
+    /* ── Tab bar (results panel) ── */
+    .tab-bar {
+      display: flex; gap: 4px; overflow-x: auto;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 6px; margin-bottom: 18px;
+      scrollbar-width: none;
+    }
+    .tab-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0;
+      padding: 10px 14px; border-radius: 8px;
+      background: transparent; border: none;
+      color: var(--muted); font-size: 0.86rem; font-weight: 600;
+      cursor: pointer; white-space: nowrap;
+      transition: all 0.15s; font-family: inherit;
+      touch-action: manipulation;
+    }
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .tab-btn.on {
+      background: linear-gradient(135deg, rgba(201,150,92,0.22), rgba(232,198,133,0.10));
+      color: var(--accent2);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+
+    /* ── Preset modal ── */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+      z-index: 100; padding: 20px; overflow: auto;
+      display: none; align-items: flex-start; justify-content: center;
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .modal-backdrop.on { display: flex; }
+    .modal {
+      max-width: 620px; width: 100%; margin: 60px 0;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 26px 28px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .modal h2 { font-family: var(--serif); color: var(--accent2); margin-bottom: 8px; font-size: 1.5rem; }
+    .modal p { color: var(--muted); font-size: 0.9rem; margin-bottom: 18px; }
+    .preset-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 18px; }
+    .preset-card {
+      display: block; width: 100%; text-align: left;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+      color: var(--text); cursor: pointer;
+      transition: all 0.15s; font-family: inherit;
+    }
+    .preset-card:hover {
+      border-color: var(--accent);
+      background: rgba(201,150,92,0.08);
+      transform: translateY(-1px);
+    }
+    .preset-card .p-title { font-weight: 700; font-size: 1rem; color: var(--text); margin-bottom: 4px; }
+    .preset-card .p-desc  { color: var(--muted); font-size: 0.82rem; line-height: 1.5; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-btn {
+      padding: 10px 18px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text);
+      font-weight: 600; cursor: pointer; font-family: inherit; font-size: 0.9rem;
+    }
+    .modal-btn:hover { background: rgba(255,255,255,0.05); }
+
+    /* Toast notification */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--card); border: 1px solid var(--accent);
+      color: var(--text); padding: 12px 22px; border-radius: 10px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+      z-index: 150; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      font-size: 0.9rem; font-weight: 600;
+      max-width: calc(100vw - 40px);
+    }
+    .toast.on { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+    /* Save-bar button variants */
+    .save-bar button.primary-mini {
+      color: var(--accent2); border-color: rgba(201,150,92,0.3);
+      background: rgba(201,150,92,0.08);
+    }
+    .save-bar button.primary-mini:hover { background: rgba(201,150,92,0.15); color: var(--text); }
+
     /* Select dropdown matching field-wrap aesthetic */
     .field-select {
       width: 100%; padding: 9px 12px;
@@ -589,9 +672,25 @@
 <div class="save-bar">
   <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
   <button onclick="clearSave()">Reset to defaults</button>
+  <button class="primary-mini" onclick="openPresets()" title="Load a starting scenario">⚡ Load preset</button>
+  <button class="primary-mini" onclick="shareScenario()" title="Copy a link that restores these exact inputs">🔗 Share</button>
   <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v70</span>
+  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v71</span>
 </div>
+
+<!-- Preset picker modal -->
+<div class="modal-backdrop" id="preset-modal" onclick="if(event.target===this)closePresets()">
+  <div class="modal" role="dialog" aria-label="Load a preset scenario">
+    <h2>⚡ Start from a scenario</h2>
+    <p>Pick a starting point that's close to your situation, then adjust. This replaces your current inputs.</p>
+    <div class="preset-grid" id="preset-grid"></div>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closePresets()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <div class="layout">
 
@@ -1657,6 +1756,17 @@
 ══════════════════════════════════════════════ -->
 <div class="chart-area" id="results">
 
+  <div class="tab-bar" role="tablist">
+    <button class="tab-btn on" data-pane="overview"  onclick="switchPane('overview')">📊 Overview</button>
+    <button class="tab-btn"    data-pane="projection" onclick="switchPane('projection')">📈 Projection</button>
+    <button class="tab-btn"    data-pane="income"     onclick="switchPane('income')">💰 Income</button>
+    <button class="tab-btn"    data-pane="healthspan" onclick="switchPane('healthspan')">⏳ Healthspan</button>
+    <button class="tab-btn"    data-pane="stress"     onclick="switchPane('stress')">🎲 Stress Test</button>
+    <button class="tab-btn"    data-pane="resources"  onclick="switchPane('resources')">📚 Resources</button>
+  </div>
+
+  <div class="pane" id="pane-overview">
+
   <div class="card" style="margin-bottom:18px">
     <div id="banner" class="banner track">
       <span class="ico" id="b-ico">🚀</span>
@@ -1699,6 +1809,10 @@
     </div>
   </div>
 
+  </div><!-- /pane-overview -->
+
+  <div class="pane" id="pane-projection" style="display:none">
+
   <div class="cw" id="projection">
     <div class="ct">📈 Portfolio Projection <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Through age 80</span></div>
     <div style="font-size:0.76rem;color:var(--muted);margin-bottom:10px;line-height:1.5">
@@ -1706,6 +1820,12 @@
     </div>
     <canvas id="chart" height="230"></canvas>
   </div>
+
+  <div id="projection-extras"></div>
+
+  </div><!-- /pane-projection -->
+
+  <div class="pane" id="pane-income" style="display:none">
 
   <div class="cw" id="income">
     <div class="ct">💰 Retirement Income <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Age <span id="ib-rage">—</span> · year one</span></div>
@@ -1816,6 +1936,10 @@
     <div class="info-box" id="iaa-footer" style="font-size:0.82rem;line-height:1.6"></div>
   </div>
 
+  </div><!-- /pane-income -->
+
+  <div class="pane" id="pane-healthspan" style="display:none">
+
   <div class="cw" id="lifespan-card">
     <div class="ct">⏳ Healthspan vs Lifespan <span style="font-size:0.7rem;color:var(--muted);font-weight:400">The real cost of working longer</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px;line-height:1.6">
@@ -1863,6 +1987,10 @@
       Lifespan baselines: CDC US life-expectancy tables (~76 male / ~81 female at 30). BMI adjustments: Prospective Studies Collaboration (Lancet 2009). Cardio activity: Lee et al (PLOS Med 2012) and Copenhagen City Heart Study. <strong>Strength training adjustments</strong>: Saeidifard et al (2019, Mayo Clinic Proc) — resistance training 2+ days/wk = ~23% lower mortality; Stamatakis et al (2018, AJE) — strength + cardio combined = 41% lower mortality; Srikanthan & Karlamangla (2014, AJM) — muscle mass independently predicts mortality; Leong et al (Lancet 2015) — grip strength outperforms BP as a mortality predictor. Healthspan-lifespan gap: <em>Outlive</em> (Attia, 2023). <strong>Not medical advice.</strong> Genetics, smoking, sleep, social ties, and luck dominate at the individual level — use these as a thinking tool, not a prescription. Read the full piece: <a href="blog/healthspan-coastfire.html" style="color:var(--accent2)">Why Healthspan Is the Hidden Variable in Your CoastFIRE Plan →</a>
     </div>
   </div>
+
+  </div><!-- /pane-healthspan -->
+
+  <div class="pane" id="pane-growth-cards" style="display:none">
 
   <div class="cw" id="retire-growth-section" style="display:none">
     <div class="ct">🚀 401(k) / IRA Growth Through 80 <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Untouched compounding</span></div>
@@ -1974,6 +2102,10 @@
     <div class="info-box" id="ki-summary" style="margin-top:0;font-size:0.82rem;line-height:1.6"></div>
   </div>
 
+  </div><!-- /pane-growth-cards -->
+
+  <div class="pane" id="pane-stress" style="display:none">
+
   <div class="cw" id="stress">
     <div class="ct">🎲 Monte Carlo Stress Test</div>
     <div class="info-box" style="font-size:0.82rem;line-height:1.5;margin-bottom:14px">
@@ -2024,6 +2156,10 @@
       <div class="timeline" id="timeline"></div>
     </div>
   </div>
+
+  </div><!-- /pane-stress -->
+
+  <div class="pane" id="pane-resources" style="display:none">
 
   <!-- ══════════════════════════════════════════════
        STRESS-TEST WITH AI (pre-filled prompt → ChatGPT / Claude)
@@ -2368,6 +2504,8 @@
     <a href="https://venmo.com/Mivang" class="aff-cta" target="_blank" rel="noopener" style="display:inline-block;max-width:320px;background:linear-gradient(135deg,#3D95CE,#008CFF)">💙 Tip via Venmo (@Mivang) →</a>
   </div>
 
+  </div><!-- /pane-resources -->
+
 </div><!-- /right -->
 </div><!-- /layout -->
 
@@ -2406,6 +2544,10 @@ const S = {
   sHeightIn: 68, sWeightLb: 160, sActivity: 'moderate', sSex: 'm',
   sStrength: 'none', sBodyFatPct: 0, sAge: 30,
 };
+
+// Pristine copy of the defaults. Used by presets (full reset before applying)
+// and by share links (only encode keys that differ, keeping URLs short).
+const DEFAULT_STATE = JSON.parse(JSON.stringify(S));
 
 let dispMode = 'nom';
 let chart;
@@ -5297,11 +5439,237 @@ function drawMCChart(outcomesCoast, outcomesKeep, fireTarget) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+//  TABBED RESULTS PANES
+// ─────────────────────────────────────────────────────────────────────────────
+// Which panes belong to which tab. 'growth-cards' holds the 401k-growth and
+// keep-invest cards — they render under Projection but live in their own
+// container so the DOM order stays sane.
+const PANE_MAP = {
+  overview:   ['pane-overview'],
+  projection: ['pane-projection', 'pane-growth-cards'],
+  income:     ['pane-income'],
+  healthspan: ['pane-healthspan'],
+  stress:     ['pane-stress'],
+  resources:  ['pane-resources'],
+};
+
+function switchPane(name) {
+  Object.entries(PANE_MAP).forEach(([tab, ids]) => {
+    const visible = tab === name;
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = visible ? '' : 'none';
+    });
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('on', b.dataset.pane === name);
+  });
+  try { sessionStorage.setItem('cf-pane', name); } catch (e) {}
+  // Charts inside a hidden container don't size correctly — nudge them.
+  setTimeout(() => {
+    if (chart)       try { chart.resize(); }       catch (e) {}
+    if (retireChart) try { retireChart.resize(); } catch (e) {}
+    if (mcChart)     try { mcChart.resize(); }     catch (e) {}
+  }, 30);
+}
+
+// Page-nav anchors should activate the right tab before scrolling.
+const NAV_TO_PANE = {
+  '#results': 'overview', '#projection': 'projection', '#income': 'income',
+  '#lifespan-card': 'healthspan', '#stress': 'stress',
+  '#plan': 'resources', '#scenarios': 'resources', '#blog': 'resources',
+};
+document.querySelectorAll('.pagenav a').forEach(a => {
+  a.addEventListener('click', () => {
+    const pane = NAV_TO_PANE[a.getAttribute('href')];
+    if (pane) switchPane(pane);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  PRESET SCENARIOS
+// ─────────────────────────────────────────────────────────────────────────────
+const PRESETS = [
+  {
+    name: '🎓 25 — Early-Career Engineer',
+    desc: '$95K income, just started saving, 40 years of runway. The best possible CoastFIRE position.',
+    state: {
+      cage: 25, rage: 55, primaryIncome: 95000, spouseEnabled: false, salaryInc: 0.04,
+      ta401kBal: 15000, ta401kCont: 12000, matchRate: 0.50, matchCap: 0.06,
+      rothIraBal: 7000, rothIraCont: 7000, roth401kBal: 0, roth401kCont: 0,
+      taIraBal: 0, taIraCont: 0, hsaBal: 2000, hsaCont: 4300, hsaStrategy: 'trad',
+      brBal: 5000, brCont: 3000, spend: 55000, nom: 0.07, inf: 0.03, swr: 0.04,
+      retTaxRate: 0.12, ssEnabled: true, ssPrimary: 2200, ssAge: 67, penEnabled: false,
+      heightIn: 70, weightLb: 165, activity: 'active', strength: 'mid', sex: 'm',
+    },
+  },
+  {
+    name: '👩‍🏫 35 — Teacher with Pension',
+    desc: '$68K income, state pension at 60, 403(b) savings. Pension dramatically lowers the FIRE target.',
+    state: {
+      cage: 35, rage: 60, primaryIncome: 68000, spouseEnabled: false, salaryInc: 0.025,
+      ta401kBal: 85000, ta401kCont: 9000, matchRate: 0, matchCap: 0,
+      rothIraBal: 22000, rothIraCont: 7000, roth401kBal: 0, roth401kCont: 0,
+      taIraBal: 0, taIraCont: 0, hsaBal: 0, hsaCont: 0, hsaStrategy: 'trad',
+      brBal: 12000, brCont: 2000, spend: 48000, nom: 0.07, inf: 0.03, swr: 0.04,
+      retTaxRate: 0.12, penEnabled: true, pen: 32000, pAge: 60, cola: true, penTaxable: true,
+      ssEnabled: true, ssPrimary: 1900, ssAge: 67,
+      heightIn: 65, weightLb: 150, activity: 'moderate', strength: 'low', sex: 'f',
+    },
+  },
+  {
+    name: '👨‍👩‍👧 40 — Dual-Income Household',
+    desc: '$175K + $110K, two 401(k)s with match, kids at home. The classic mid-career squeeze.',
+    state: {
+      cage: 40, rage: 60, primaryIncome: 175000, spouseEnabled: true, spouseIncome: 110000,
+      salaryInc: 0.03,
+      ta401kBal: 240000, ta401kCont: 23500, matchRate: 0.50, matchCap: 0.06,
+      sTa401kBal: 140000, sTa401kCont: 15000, sMatchRate: 0.50, sMatchCap: 0.05,
+      rothIraBal: 60000, rothIraCont: 7000, sRothIraBal: 40000, sRothIraCont: 7000,
+      roth401kBal: 0, roth401kCont: 0, taIraBal: 0, taIraCont: 0,
+      hsaBal: 25000, hsaCont: 8550, hsaStrategy: 'trad',
+      brBal: 55000, brCont: 12000, spend: 105000, nom: 0.07, inf: 0.03, swr: 0.04,
+      retTaxRate: 0.15, penEnabled: false,
+      ssEnabled: true, ssPrimary: 2800, ssAge: 67, ssSpouseEnabled: true, ssSpouse: 2000, ssSpouseAge: 67,
+      heightIn: 70, weightLb: 185, activity: 'moderate', strength: 'low', sex: 'm',
+      sHeightIn: 65, sWeightLb: 145, sActivity: 'moderate', sStrength: 'low', sSex: 'f', sAge: 39,
+    },
+  },
+  {
+    name: '🩺 45 — High Earner, Late Start',
+    desc: '$280K income but started at 32 after residency. High income can still compress the timeline.',
+    state: {
+      cage: 45, rage: 58, primaryIncome: 280000, spouseEnabled: false, salaryInc: 0.02,
+      ta401kBal: 420000, ta401kCont: 23500, matchRate: 0.50, matchCap: 0.06,
+      rothIraBal: 45000, rothIraCont: 7000, roth401kBal: 90000, roth401kCont: 15000,
+      taIraBal: 0, taIraCont: 0, hsaBal: 40000, hsaCont: 8550, hsaStrategy: 'roth',
+      brBal: 180000, brCont: 40000, spend: 140000, nom: 0.07, inf: 0.03, swr: 0.035,
+      retTaxRate: 0.22, penEnabled: false, ssEnabled: true, ssPrimary: 3400, ssAge: 70,
+      heightIn: 68, weightLb: 175, activity: 'light', strength: 'none', sex: 'm',
+    },
+  },
+  {
+    name: '🌅 52 — Catch-Up Mode',
+    desc: '$120K income, 50+ catch-up contributions, 10 years to go. Late but far from hopeless.',
+    state: {
+      cage: 52, rage: 65, primaryIncome: 120000, spouseEnabled: false, salaryInc: 0.02,
+      ta401kBal: 310000, ta401kCont: 31000, matchRate: 0.50, matchCap: 0.06,
+      rothIraBal: 55000, rothIraCont: 8000, roth401kBal: 0, roth401kCont: 0,
+      taIraBal: 0, taIraCont: 0, hsaBal: 18000, hsaCont: 5300, hsaStrategy: 'trad',
+      brBal: 70000, brCont: 8000, spend: 72000, nom: 0.065, inf: 0.03, swr: 0.04,
+      retTaxRate: 0.15, penEnabled: false, ssEnabled: true, ssPrimary: 2600, ssAge: 67,
+      heightIn: 67, weightLb: 178, activity: 'light', strength: 'low', sex: 'f',
+    },
+  },
+];
+
+function openPresets() {
+  const grid = document.getElementById('preset-grid');
+  if (!grid) return;
+  grid.innerHTML = PRESETS.map((p, i) => `
+    <button class="preset-card" onclick="applyPreset(${i})">
+      <div class="p-title">${p.name}</div>
+      <div class="p-desc">${p.desc}</div>
+    </button>
+  `).join('');
+  document.getElementById('preset-modal').classList.add('on');
+}
+function closePresets() {
+  document.getElementById('preset-modal').classList.remove('on');
+}
+function applyPreset(i) {
+  const p = PRESETS[i];
+  if (!p) return;
+  // Reset to defaults first so a preset never inherits stale values from
+  // whatever the user had before (e.g. a pension left enabled).
+  Object.keys(DEFAULT_STATE).forEach(k => { S[k] = DEFAULT_STATE[k]; });
+  Object.entries(p.state).forEach(([k, v]) => { if (k in S) S[k] = v; });
+  syncUIFromState();
+  recalc();
+  closePresets();
+  switchPane('overview');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showToast(`Loaded: ${p.name}`);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  SHAREABLE SCENARIO URLS
+// ─────────────────────────────────────────────────────────────────────────────
+// Encodes the full state object into a compact base64 URL fragment so a
+// scenario can be shared as a link. Only keys that differ from defaults are
+// stored, keeping URLs short.
+function encodeState() {
+  const diff = {};
+  Object.keys(S).forEach(k => {
+    if (JSON.stringify(S[k]) !== JSON.stringify(DEFAULT_STATE[k])) diff[k] = S[k];
+  });
+  try {
+    return btoa(unescape(encodeURIComponent(JSON.stringify(diff))))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  } catch (e) { return ''; }
+}
+function decodeState(str) {
+  try {
+    const b64 = str.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(decodeURIComponent(escape(atob(b64))));
+  } catch (e) { return null; }
+}
+function shareScenario() {
+  const code = encodeState();
+  if (!code) { showToast('Could not build share link'); return; }
+  const url = `${location.origin}${location.pathname}#s=${code}`;
+  const done = () => showToast('🔗 Link copied — anyone who opens it sees these exact inputs');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(done).catch(() => prompt('Copy this link:', url));
+  } else {
+    prompt('Copy this link:', url);
+  }
+}
+function loadFromHash() {
+  const m = location.hash.match(/[#&]s=([A-Za-z0-9\-_]+)/);
+  if (!m) return false;
+  const obj = decodeState(m[1]);
+  if (!obj) return false;
+  Object.keys(DEFAULT_STATE).forEach(k => { S[k] = DEFAULT_STATE[k]; });
+  Object.entries(obj).forEach(([k, v]) => { if (k in S) S[k] = v; });
+  syncUIFromState();
+  set('save-status', 'Loaded from shared link');
+  return true;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  TOAST
+// ─────────────────────────────────────────────────────────────────────────────
+let _toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('on');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('on'), 3200);
+}
+
+// Escape closes the preset modal
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closePresets();
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 //  INIT
 // ─────────────────────────────────────────────────────────────────────────────
-loadState();
+// A shared link wins over localStorage so the recipient sees the sender's
+// scenario, not their own saved one.
+if (!loadFromHash()) loadState();
 initChart();
 recalc();
+
+// Restore the last-viewed tab within this browser session.
+try {
+  const savedPane = sessionStorage.getItem('cf-pane');
+  if (savedPane && PANE_MAP[savedPane]) switchPane(savedPane);
+  else switchPane('overview');
+} catch (e) { switchPane('overview'); }
 </script>
 
 <footer style="border-top:1px solid var(--border); margin-top:40px; padding:24px 20px; text-align:center; color:var(--muted); font-size:0.85rem; background:var(--surface);">
