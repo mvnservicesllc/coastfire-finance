@@ -157,40 +157,83 @@
     }
     header p { color: var(--muted); margin-top: 6px; font-size: 0.92rem; max-width: 560px; margin-inline: auto; }
 
-    /* ── Sticky in-page navigation ── */
-    .pagenav {
-      position: sticky; top: 0; z-index: 20;
-      background: rgba(11,25,41,0.92);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-      margin: 0 -16px 18px;
-      padding: 10px 16px;
-      overflow-x: auto;
-      white-space: nowrap;
-      scrollbar-width: none;
+    /* ── Save-bar overflow menu (rare/maintenance actions) ── */
+    .overflow-wrap { position: relative; display: inline-block; }
+    .overflow-btn { padding: 3px 8px !important; font-size: 0.95rem !important; line-height: 1; letter-spacing: 1px; }
+    .overflow-menu {
+      display: none; position: absolute; right: 0; top: calc(100% + 6px);
+      min-width: 210px; z-index: 60; text-align: left;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 6px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.45);
     }
-    .pagenav::-webkit-scrollbar { display: none; }
-    .pagenav-inner {
-      max-width: 1240px; margin: 0 auto;
-      display: flex; gap: 6px; align-items: center;
+    .overflow-menu.on { display: block; }
+    .overflow-menu button {
+      display: block; width: 100%; text-align: left;
+      padding: 9px 12px !important; border-radius: 7px;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 0.84rem !important; font-family: inherit;
+      margin: 0 !important;
     }
-    .pagenav a {
-      display: inline-flex; align-items: center;
-      padding: 7px 12px; border-radius: 8px;
-      font-size: 0.82rem; font-weight: 600;
-      color: var(--muted); text-decoration: none;
-      border: 1px solid transparent;
-      transition: all 0.15s;
-      touch-action: manipulation;
+    .overflow-menu button:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .overflow-note {
+      padding: 8px 12px 4px; font-size: 0.68rem; color: var(--muted);
+      opacity: 0.55; border-top: 1px solid var(--border); margin-top: 4px;
     }
-    .pagenav a:hover {
-      color: var(--text); background: rgba(201,150,92,0.08);
-      border-color: rgba(201,150,92,0.2);
+
+    /* ── Essentials / Advanced input mode ── */
+    .mode-switch {
+      display: flex; gap: 4px; padding: 4px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 9px; margin-bottom: 8px;
     }
-    .pagenav a.primary {
-      background: linear-gradient(135deg, rgba(201,150,92,0.18), rgba(232,198,133,0.10));
-      color: var(--accent2, #e8c685); border-color: rgba(201,150,92,0.3);
+    .mode-btn {
+      flex: 1; padding: 8px 10px; border-radius: 6px;
+      background: transparent; border: none; cursor: pointer;
+      color: var(--muted); font-size: 0.82rem; font-weight: 600;
+      font-family: inherit; transition: all 0.15s; touch-action: manipulation;
+    }
+    .mode-btn:hover { color: var(--text); }
+    .mode-btn.on {
+      background: linear-gradient(135deg, rgba(201,150,92,0.2), rgba(232,198,133,0.08));
+      color: var(--accent2);
+    }
+    .mode-hint { font-size: 0.7rem; color: var(--muted); line-height: 1.5; margin-bottom: 4px; }
+    #inputs.essentials .acc.adv,
+    #inputs.essentials .group-hdr.adv { display: none; }
+
+    /* ── Hero (the one number people came for) ── */
+    .hero {
+      background: linear-gradient(135deg, rgba(201,150,92,0.14), rgba(232,198,133,0.05));
+      border: 1px solid rgba(201,150,92,0.30);
+      border-radius: 14px; padding: 18px 22px; margin-bottom: 14px;
+    }
+    .hero.warn  { background: linear-gradient(135deg, rgba(232,198,133,0.12), rgba(232,198,133,0.03)); border-color: rgba(232,198,133,0.35); }
+    .hero.coast { background: linear-gradient(135deg, rgba(95,150,119,0.14), rgba(95,150,119,0.04)); border-color: rgba(95,150,119,0.35); }
+    .hero-main { display: flex; align-items: center; gap: 16px; }
+    .hero-ico  { font-size: 2.2rem; flex-shrink: 0; line-height: 1; }
+    .hero-body { flex: 1; min-width: 0; }
+    .hero-headline {
+      font-family: var(--serif); font-size: 1.75rem; font-weight: 700;
+      line-height: 1.15; color: var(--accent2); letter-spacing: -0.01em;
+    }
+    .hero.coast .hero-headline { color: var(--green); }
+    .hero.warn  .hero-headline { color: var(--yellow); }
+    .hero-sub { color: var(--muted); font-size: 0.86rem; margin-top: 5px; line-height: 1.5; }
+    .hero-stats {
+      display: flex; flex-wrap: wrap; gap: 8px 22px;
+      margin-top: 14px; padding-top: 13px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      font-size: 0.84rem;
+    }
+    .hero-stat { display: flex; align-items: baseline; gap: 6px; }
+    .hero-stat .k { color: var(--muted); font-size: 0.76rem; }
+    .hero-stat .v { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
+    @media (max-width: 520px) {
+      .hero { padding: 15px 16px; }
+      .hero-headline { font-size: 1.3rem; }
+      .hero-ico { font-size: 1.7rem; }
+      .hero-stats { gap: 6px 16px; font-size: 0.8rem; }
     }
 
     /* ── Section group headers (left-panel input grouping) ── */
@@ -306,6 +349,47 @@
     .field-steps button:first-child { border-bottom: 1px solid var(--border); }
 
     .field-hint { font-size: 0.67rem; color: var(--muted); margin-top: 3px; }
+
+    /* ── Compare scenarios ── */
+    .compare-bar { margin-bottom: 14px; }
+    .cmp-btn {
+      width: 100%; padding: 10px 14px; border-radius: 10px;
+      background: var(--card); border: 1px dashed var(--border);
+      color: var(--muted); font-size: 0.84rem; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+      touch-action: manipulation;
+    }
+    .cmp-btn:hover { color: var(--accent2); border-color: rgba(201,150,92,0.4); background: rgba(201,150,92,0.05); }
+    .cmp-btn.on { border-style: solid; border-color: rgba(201,150,92,0.4); color: var(--accent2); }
+    .cmp-panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 18px; margin-top: 8px;
+    }
+    .cmp-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 560px) { .cmp-cols { grid-template-columns: 1fr; gap: 14px; } }
+    .cmp-label {
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px;
+    }
+    .cmp-label span { font-weight: 400; opacity: 0.65; text-transform: none; letter-spacing: 0; }
+    .cmp-rows { display: flex; flex-direction: column; gap: 5px; }
+    .cmp-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 10px; font-size: 0.84rem; padding: 4px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .cmp-row .ck { color: var(--muted); font-size: 0.78rem; }
+    .cmp-row .cv { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .cmp-delta { font-size: 0.74rem; font-weight: 600; margin-left: 6px; }
+    .cmp-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .cmp-mini {
+      padding: 7px 12px; border-radius: 7px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--muted); font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; font-family: inherit; touch-action: manipulation;
+    }
+    .cmp-mini:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .cmp-empty { color: var(--muted); font-size: 0.8rem; font-style: italic; padding: 6px 0; }
 
     /* ── Tab bar (results panel) ── */
     .tab-bar {
@@ -655,27 +739,18 @@
   <p>Find the age you can stop saving. Compound growth handles the rest.</p>
 </header>
 
-<nav class="pagenav" aria-label="Page sections">
-  <div class="pagenav-inner">
-    <a href="#inputs" class="primary">📝 Inputs</a>
-    <a href="#results">📊 Results</a>
-    <a href="#projection">📈 Projection</a>
-    <a href="#income">💰 Income</a>
-    <a href="#stress">🎲 Stress Test</a>
-    <a href="#lifespan-card">⏳ Healthspan</a>
-    <a href="#plan">🤖 Plan</a>
-    <a href="#scenarios">🎯 Scenarios</a>
-    <a href="#blog">📚 Blog</a>
-  </div>
-</nav>
-
 <div class="save-bar">
-  <span id="save-dot"></span><span id="save-status">Inputs auto-saved in your browser</span>
-  <button onclick="clearSave()">Reset to defaults</button>
+  <span id="save-dot"></span><span id="save-status">Auto-saved</span>
   <button class="primary-mini" onclick="openPresets()" title="Load a starting scenario">⚡ Load preset</button>
   <button class="primary-mini" onclick="shareScenario()" title="Copy a link that restores these exact inputs">🔗 Share</button>
-  <button onclick="forceUpdate()" title="Unregister stale service worker, clear cache, and reload">🔄 Reload latest</button>
-  <span style="margin-left:10px;opacity:0.4;font-size:0.68rem">build v71</span>
+  <span class="overflow-wrap">
+    <button class="overflow-btn" onclick="toggleOverflow(event)" aria-label="More actions" aria-haspopup="true">⋯</button>
+    <div class="overflow-menu" id="overflow-menu">
+      <button onclick="clearSave()">↺ Reset to defaults</button>
+      <button onclick="forceUpdate()">🔄 Reload latest version</button>
+      <div class="overflow-note">build v72</div>
+    </div>
+  </span>
 </div>
 
 <!-- Preset picker modal -->
@@ -697,8 +772,14 @@
 <!-- ══════════════════════════════════════════════
      LEFT PANEL — INPUTS
 ══════════════════════════════════════════════ -->
-<div id="inputs">
+<div id="inputs" class="essentials">
 <div class="card">
+
+  <div class="mode-switch">
+    <button class="mode-btn on" id="mode-essentials" onclick="setInputMode('essentials')">Essentials</button>
+    <button class="mode-btn"    id="mode-advanced"   onclick="setInputMode('advanced')">Advanced</button>
+  </div>
+  <div class="mode-hint" id="mode-hint">The 5 inputs that drive most of the result. Switch to Advanced for pension, SS, HSA, healthspan and more.</div>
 
   <div class="group-hdr">You</div>
 
@@ -941,7 +1022,7 @@
   </div>
 
   <!-- ── TRADITIONAL IRA ── -->
-  <div class="acc">
+  <div class="acc adv">
     <div class="acc-hdr" onclick="toggle('taira')">
       <span class="acc-title">📋 Traditional IRA <span class="tl-tag tag-p">Pre-tax</span></span>
       <span class="acc-arrow" id="arr-taira">▶</span>
@@ -1005,7 +1086,7 @@
   </div>
 
   <!-- ── ROTH 401k / 403b / TSP ── -->
-  <div class="acc">
+  <div class="acc adv">
     <div class="acc-hdr" onclick="toggle('roth401k')">
       <span class="acc-title">🌱 Roth 401k / 403b / TSP <span class="tl-tag tag-g">Tax-free</span></span>
       <span class="acc-arrow" id="arr-roth401k">▶</span>
@@ -1165,7 +1246,7 @@
   </div>
 
   <!-- ── HSA ── -->
-  <div class="acc">
+  <div class="acc adv">
     <div class="acc-hdr" onclick="toggle('hsa')">
       <span class="acc-title">💎 Health Savings Account (HSA) <span class="tl-tag tag-g">Triple tax-advantaged</span></span>
       <span class="acc-arrow" id="arr-hsa">▶</span>
@@ -1214,7 +1295,7 @@
   </div>
 
   <!-- ── BROKERAGE ── -->
-  <div class="acc">
+  <div class="acc adv">
     <div class="acc-hdr" onclick="toggle('br')">
       <span class="acc-title">📈 Brokerage <span class="tl-tag tag-y">Taxable</span></span>
       <span class="acc-arrow open" id="arr-br">▶</span>
@@ -1273,10 +1354,10 @@
     </div>
   </div>
 
-  <div class="group-hdr">Future Income</div>
+  <div class="group-hdr adv">Future Income</div>
 
   <!-- ── PENSION ── -->
-  <div class="acc">
+  <div class="acc adv">
     <div class="acc-hdr" onclick="toggle('pen')">
       <span class="acc-title">🎯 Pension &amp; Annuities</span>
       <span class="acc-arrow open" id="arr-pen">▶</span>
@@ -1332,7 +1413,7 @@
   </div>
 
   <!-- ── SOCIAL SECURITY ── -->
-  <div class="acc">
+  <div class="acc adv">
     <div class="acc-hdr" onclick="toggle('ss')">
       <span class="acc-title">🏛️ Social Security</span>
       <span class="acc-arrow" id="arr-ss">▶</span>
@@ -1414,7 +1495,7 @@
   </div>
 
   <!-- ── OTHER INCOME ── -->
-  <div class="acc">
+  <div class="acc adv">
     <div class="acc-hdr" onclick="toggle('oi')">
       <span class="acc-title">💵 Other Income</span>
       <span class="acc-arrow" id="arr-oi">▶</span>
@@ -1583,10 +1664,10 @@
     </div>
   </div>
 
-  <div class="group-hdr">Time &amp; Health</div>
+  <div class="group-hdr adv">Time &amp; Health</div>
 
   <!-- ── HEALTH SPAN ── -->
-  <div class="acc">
+  <div class="acc adv">
     <div class="acc-hdr" onclick="toggle('health')">
       <span class="acc-title">⏳ Healthspan vs Lifespan</span>
       <span class="acc-arrow" id="arr-health">▶</span>
@@ -1756,6 +1837,40 @@
 ══════════════════════════════════════════════ -->
 <div class="chart-area" id="results">
 
+  <!-- Hero: the single number people came for. Stays visible on every tab. -->
+  <div class="hero" id="hero">
+    <div class="hero-main">
+      <span class="hero-ico" id="b-ico">🚀</span>
+      <div class="hero-body">
+        <div class="hero-headline" id="hero-headline">Calculating…</div>
+        <div class="hero-sub" id="b-text"></div>
+      </div>
+    </div>
+    <div class="hero-stats" id="hero-stats"></div>
+  </div>
+
+  <!-- Compare: snapshot the current scenario, tweak inputs, see the delta -->
+  <div class="compare-bar" id="compare-bar">
+    <button class="cmp-btn" id="cmp-toggle" onclick="toggleCompare()">📊 Compare scenarios</button>
+    <div class="cmp-panel" id="cmp-panel" style="display:none">
+      <div class="cmp-cols">
+        <div class="cmp-col">
+          <div class="cmp-label">Scenario A <span id="cmp-a-tag">saved</span></div>
+          <div class="cmp-rows" id="cmp-a-rows"></div>
+        </div>
+        <div class="cmp-col">
+          <div class="cmp-label" style="color:var(--accent2)">Scenario B <span>live</span></div>
+          <div class="cmp-rows" id="cmp-b-rows"></div>
+        </div>
+      </div>
+      <div class="cmp-actions">
+        <button class="cmp-mini" onclick="snapshotA()">📌 Set A = current</button>
+        <button class="cmp-mini" onclick="restoreA()">↩ Load A into inputs</button>
+        <button class="cmp-mini" onclick="clearCompare()">✕ Exit compare</button>
+      </div>
+    </div>
+  </div>
+
   <div class="tab-bar" role="tablist">
     <button class="tab-btn on" data-pane="overview"  onclick="switchPane('overview')">📊 Overview</button>
     <button class="tab-btn"    data-pane="projection" onclick="switchPane('projection')">📈 Projection</button>
@@ -1768,11 +1883,6 @@
   <div class="pane" id="pane-overview">
 
   <div class="card" style="margin-bottom:18px">
-    <div id="banner" class="banner track">
-      <span class="ico" id="b-ico">🚀</span>
-      <span id="b-text">Calculating…</span>
-    </div>
-
     <div class="disp-toggle">
       <span>Display in:</span>
       <div class="pill-group">
@@ -3242,17 +3352,25 @@ function toDisp(nomVal, yr) {
 //  RECALC
 // ─────────────────────────────────────────────────────────────────────────────
 function recalc() {
-  try { return _recalcImpl(); }
+  try {
+    const r = _recalcImpl();
+    // Keep the compare panel's live column in sync (guarded — compare may not
+    // be initialised yet on the very first paint).
+    try { if (typeof renderCompare === 'function') renderCompare(); } catch (e) {}
+    return r;
+  }
   catch (err) {
     console.error('[recalc] failed:', err);
     // Recover gracefully — at least update the banner so the user knows
     // something happened, instead of being stuck on "Calculating…"
     const bTxt = document.getElementById('b-text');
     const bIco = document.getElementById('b-ico');
-    if (bTxt) bTxt.textContent = 'Hit a snag — open DevTools console for details, or try Reset to defaults.';
+    const head = document.getElementById('hero-headline');
+    if (head) head.textContent = 'Hit a snag';
+    if (bTxt) bTxt.textContent = 'Open the browser console for details, or use ⋯ → Reset to defaults.';
     if (bIco) bIco.textContent = '⚠️';
-    const banner = document.getElementById('banner');
-    if (banner) banner.className = 'banner warn';
+    const hero = document.getElementById('hero');
+    if (hero) hero.className = 'hero warn';
   }
 }
 
@@ -4533,20 +4651,36 @@ function _recalcImpl() {
     kiSection.style.display = 'none';
   }
 
-  const banner = document.getElementById('banner');
-  const bIco   = document.getElementById('b-ico');
-  const bTxt   = document.getElementById('b-text');
+  // ─── HERO: the headline answer, visible on every tab ───
+  const hero     = document.getElementById('hero');
+  const bIco     = document.getElementById('b-ico');
+  const bTxt     = document.getElementById('b-text');
+  const heroHead = document.getElementById('hero-headline');
   if (effNow >= coastToday) {
-    banner.className = 'banner coast'; bIco.textContent = '🎉';
-    bTxt.textContent = "You've already reached CoastFIRE! Your portfolio can compound to full FIRE by retirement without further contributions.";
+    hero.className = 'hero coast'; bIco.textContent = '🎉';
+    heroHead.textContent = "You've already reached CoastFIRE";
+    bTxt.textContent = 'Your portfolio can compound to full FIRE by retirement without another dollar contributed.';
   } else if (coastAge !== null) {
-    banner.className = 'banner track'; bIco.textContent = '🚀';
     const yL = coastAge - cage;
-    bTxt.textContent = `CoastFIRE at age ${coastAge} — ${yL} year${yL !== 1 ? 's' : ''} away. Contributions become optional after that!`;
+    hero.className = 'hero'; bIco.textContent = '🏄';
+    heroHead.textContent = `CoastFIRE at age ${coastAge}`;
+    bTxt.textContent = `${yL} year${yL !== 1 ? 's' : ''} away — after that, contributions become optional.`;
   } else {
-    banner.className = 'banner warn'; bIco.textContent = '⚠️';
-    bTxt.textContent = `CoastFIRE not reached before age ${rage}. Try increasing contributions, adding pension income, or extending retirement age.`;
+    hero.className = 'hero warn'; bIco.textContent = '⚠️';
+    heroHead.textContent = `CoastFIRE not reached by ${rage}`;
+    bTxt.textContent = 'Try increasing contributions, adding pension income, or extending your retirement age.';
   }
+  // Compact stat strip under the headline
+  const gapNow = coastToday - effNow;
+  document.getElementById('hero-stats').innerHTML = [
+    `<span class="hero-stat"><span class="k">Need today</span><span class="v">${fmt(toDisp(coastToday, 0))}</span></span>`,
+    `<span class="hero-stat"><span class="k">Have now</span><span class="v">${fmt(effNow)}</span></span>`,
+    gapNow > 0
+      ? `<span class="hero-stat"><span class="k">Gap</span><span class="v" style="color:var(--yellow)">${fmt(gapNow)}</span></span>`
+      : `<span class="hero-stat"><span class="k">Surplus</span><span class="v" style="color:var(--green)">+${fmt(-gapNow)}</span></span>`,
+    `<span class="hero-stat"><span class="k">Net FIRE #</span><span class="v">${fmt(dRet(netFIRE))}</span></span>`,
+    `<span class="hero-stat"><span class="k">Retire at</span><span class="v">${rage}</span></span>`,
+  ].join('');
 
   const cv = arr => arr.map((v, i) => v == null ? null : Math.round(toDisp(v, i)));
   const hasRoth = rothBal > 0 || rothCont > 0;
@@ -5473,18 +5607,132 @@ function switchPane(name) {
   }, 30);
 }
 
-// Page-nav anchors should activate the right tab before scrolling.
-const NAV_TO_PANE = {
-  '#results': 'overview', '#projection': 'projection', '#income': 'income',
-  '#lifespan-card': 'healthspan', '#stress': 'stress',
-  '#plan': 'resources', '#scenarios': 'resources', '#blog': 'resources',
-};
-document.querySelectorAll('.pagenav a').forEach(a => {
-  a.addEventListener('click', () => {
-    const pane = NAV_TO_PANE[a.getAttribute('href')];
-    if (pane) switchPane(pane);
-  });
+// ─────────────────────────────────────────────────────────────────────────────
+//  SAVE-BAR OVERFLOW MENU
+// ─────────────────────────────────────────────────────────────────────────────
+function toggleOverflow(e) {
+  e.stopPropagation();
+  document.getElementById('overflow-menu')?.classList.toggle('on');
+}
+document.addEventListener('click', () => {
+  document.getElementById('overflow-menu')?.classList.remove('on');
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  ESSENTIALS / ADVANCED INPUT MODE
+// ─────────────────────────────────────────────────────────────────────────────
+// Essentials shows Age, Income, Traditional 401k, Roth IRA, Spending & Returns.
+// Advanced reveals IRA, Roth 401k, HSA, Brokerage, Pension, SS, Other Income,
+// and Healthspan. Preference persists in localStorage.
+function setInputMode(mode) {
+  const panel = document.getElementById('inputs');
+  if (!panel) return;
+  const essentials = mode !== 'advanced';
+  panel.classList.toggle('essentials', essentials);
+  document.getElementById('mode-essentials')?.classList.toggle('on', essentials);
+  document.getElementById('mode-advanced')?.classList.toggle('on', !essentials);
+  const hint = document.getElementById('mode-hint');
+  if (hint) {
+    hint.textContent = essentials
+      ? 'The 5 inputs that drive most of the result. Switch to Advanced for pension, SS, HSA, healthspan and more.'
+      : 'All inputs visible. Anything you leave at zero simply has no effect on the projection.';
+  }
+  try { localStorage.setItem('cf-input-mode', essentials ? 'essentials' : 'advanced'); } catch (e) {}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  COMPARE SCENARIOS (A vs B)
+// ─────────────────────────────────────────────────────────────────────────────
+// Snapshot the current inputs as "Scenario A", then keep editing. The panel
+// shows A's key results frozen alongside B (live), with the delta between them.
+let compareOn = false;
+let scenarioA = null;   // { state, results }
+
+// Pull the handful of numbers worth comparing out of a runCalc() result.
+function summarizeRun(R) {
+  if (!R) return null;
+  return {
+    coastAge:   R.coastAge,
+    coastToday: R.coastToday,
+    effNow:     R.effNow,
+    netFIRE:    R.netFIRE,
+    rage:       R.rage,
+    finalTotal: R.finalEffTotal,
+  };
+}
+
+function snapshotA() {
+  const R = runCalc();
+  if (!R) { showToast('Fix the inputs first — nothing to snapshot'); return; }
+  scenarioA = { state: JSON.parse(JSON.stringify(S)), results: summarizeRun(R) };
+  renderCompare();
+  showToast('📌 Scenario A saved — now change inputs to compare');
+}
+
+function restoreA() {
+  if (!scenarioA) { showToast('No Scenario A saved yet'); return; }
+  Object.keys(DEFAULT_STATE).forEach(k => { S[k] = DEFAULT_STATE[k]; });
+  Object.entries(scenarioA.state).forEach(([k, v]) => { if (k in S) S[k] = v; });
+  syncUIFromState();
+  recalc();
+  showToast('↩ Scenario A loaded into the inputs');
+}
+
+function toggleCompare() {
+  compareOn = !compareOn;
+  document.getElementById('cmp-panel').style.display = compareOn ? '' : 'none';
+  document.getElementById('cmp-toggle').classList.toggle('on', compareOn);
+  document.getElementById('cmp-toggle').textContent = compareOn
+    ? '📊 Comparing — A vs B' : '📊 Compare scenarios';
+  if (compareOn && !scenarioA) snapshotA();
+  else if (compareOn) renderCompare();
+}
+
+function clearCompare() {
+  compareOn = false; scenarioA = null;
+  document.getElementById('cmp-panel').style.display = 'none';
+  document.getElementById('cmp-toggle').classList.remove('on');
+  document.getElementById('cmp-toggle').textContent = '📊 Compare scenarios';
+}
+
+function renderCompare() {
+  if (!compareOn) return;
+  const aEl = document.getElementById('cmp-a-rows');
+  const bEl = document.getElementById('cmp-b-rows');
+  if (!aEl || !bEl) return;
+
+  const B = summarizeRun(runCalc());
+  const A = scenarioA ? scenarioA.results : null;
+  if (!A) { aEl.innerHTML = '<div class="cmp-empty">Click "Set A = current" to snapshot.</div>'; bEl.innerHTML = ''; return; }
+  if (!B) { bEl.innerHTML = '<div class="cmp-empty">Current inputs are invalid.</div>'; return; }
+
+  const ageTxt = v => v === null ? 'not reached' : String(v);
+  // For CoastFIRE age and the gap, lower is better; for balances, higher is better.
+  const rows = [
+    { k: 'CoastFIRE age', a: ageTxt(A.coastAge), b: ageTxt(B.coastAge),
+      d: (A.coastAge !== null && B.coastAge !== null) ? B.coastAge - A.coastAge : null, lowerBetter: true, unit: 'yr' },
+    { k: 'Need today',    a: fmt(A.coastToday), b: fmt(B.coastToday), d: B.coastToday - A.coastToday, lowerBetter: true },
+    { k: 'Net FIRE #',    a: fmt(A.netFIRE),    b: fmt(B.netFIRE),    d: B.netFIRE - A.netFIRE,       lowerBetter: true },
+    { k: 'At retirement', a: fmt(A.finalTotal), b: fmt(B.finalTotal), d: B.finalTotal - A.finalTotal, lowerBetter: false },
+    { k: 'Retire age',    a: String(A.rage),    b: String(B.rage),    d: B.rage - A.rage,             lowerBetter: true, unit: 'yr' },
+  ];
+
+  aEl.innerHTML = rows.map(r =>
+    `<div class="cmp-row"><span class="ck">${r.k}</span><span class="cv">${r.a}</span></div>`
+  ).join('');
+
+  bEl.innerHTML = rows.map(r => {
+    let delta = '';
+    if (r.d !== null && Math.abs(r.d) > 0.5) {
+      const better = r.lowerBetter ? r.d < 0 : r.d > 0;
+      const color  = better ? 'var(--green)' : 'var(--red)';
+      const sign   = r.d > 0 ? '+' : '−';
+      const mag    = r.unit === 'yr' ? Math.abs(r.d) + ' yr' : fmt(Math.abs(r.d));
+      delta = `<span class="cmp-delta" style="color:${color}">${sign}${mag}</span>`;
+    }
+    return `<div class="cmp-row"><span class="ck">${r.k}</span><span class="cv">${r.b}${delta}</span></div>`;
+  }).join('');
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  PRESET SCENARIOS
@@ -5650,9 +5898,12 @@ function showToast(msg) {
   _toastTimer = setTimeout(() => t.classList.remove('on'), 3200);
 }
 
-// Escape closes the preset modal
+// Escape closes the preset modal and the overflow menu
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closePresets();
+  if (e.key === 'Escape') {
+    closePresets();
+    document.getElementById('overflow-menu')?.classList.remove('on');
+  }
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -5670,6 +5921,20 @@ try {
   if (savedPane && PANE_MAP[savedPane]) switchPane(savedPane);
   else switchPane('overview');
 } catch (e) { switchPane('overview'); }
+
+// Restore Essentials/Advanced preference. Auto-switch to Advanced if the saved
+// scenario actually uses advanced features — otherwise those inputs would be
+// invisible while still affecting the result.
+try {
+  const savedMode = localStorage.getItem('cf-input-mode');
+  const usesAdvanced =
+    S.penEnabled || S.ssEnabled || S.oiEnabled ||
+    (S.hsaBal > 0 || S.hsaCont > 0) ||
+    (S.brBal > 0 || S.brCont > 0) ||
+    (S.taIraBal > 0 || S.taIraCont > 0) ||
+    (S.roth401kBal > 0 || S.roth401kCont > 0);
+  setInputMode(savedMode === 'advanced' || usesAdvanced ? 'advanced' : 'essentials');
+} catch (e) { setInputMode('essentials'); }
 </script>
 
 <footer style="border-top:1px solid var(--border); margin-top:40px; padding:24px 20px; text-align:center; color:var(--muted); font-size:0.85rem; background:var(--surface);">
