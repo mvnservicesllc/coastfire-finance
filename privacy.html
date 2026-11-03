@@ -43,18 +43,31 @@
 <div class="wrap">
 
 <h1>Privacy Policy</h1>
-<div class="meta">Last updated: April 2026</div>
+<div class="meta">Last updated: November 2026</div>
 
 <p>This Privacy Policy explains how <strong>CoastFIRE Finance</strong> (operated by MVN Services LLC, referred to as "we," "us," or "our") handles information when you visit <a class="inline" href="https://coastfirefinance.com/">coastfirefinance.com</a>.</p>
 
 <div class="callout">
-  <strong>Summary in plain English:</strong> We don't have accounts. We don't sell your data. Your calculator inputs stay on your device. We use basic analytics to count visits, and we use affiliate links that may set cookies when you click them.
+  <strong>Summary in plain English:</strong> We don't have accounts. We don't sell your data. Your calculator inputs stay on your device — with one exception: if you ask the built-in assistant a question, your inputs are sent along with it so the answer can use your actual numbers. We use basic analytics to count visits, and we use affiliate links that may set cookies when you click them.
 </div>
 
 <h2>1. Information we collect</h2>
 
 <h3>Information you provide to the calculator</h3>
 <p>When you use the CoastFIRE calculator, your inputs (age, income, savings, expected returns, etc.) are processed <strong>entirely in your browser</strong>. They are not transmitted to any server we operate and are not stored on any database. Reload the page and those numbers are gone unless your browser's local storage preserved them for your convenience.</p>
+
+<h3>The built-in assistant ("Ask About Your Numbers")</h3>
+<p>There is one exception to the above. The calculator includes an optional assistant that answers questions about your plan on the page. <strong>It only runs when you send it a question</strong> — it is silent otherwise, and nothing is transmitted if you never use it.</p>
+<p>When you do send a question, we pass two things to <a class="inline" href="https://www.anthropic.com/" target="_blank" rel="noopener">Anthropic</a>'s Claude API: your question, and a text summary of your current calculator state. That summary is the same information shown on screen — your age, retirement age, account balances, contributions, income, spending target, and the calculator's own outputs. The last few messages of the conversation are replayed with each question so follow-ups make sense.</p>
+<p>What happens to it:</p>
+<ul>
+  <li>We do not store your question, your inputs, or the answer. The request passes through our serverless function and is discarded; there is no database and no log of what you asked.</li>
+  <li>Anthropic processes the request and may retain it briefly for abuse monitoring. Under their commercial terms, API inputs and outputs are <strong>not used to train their models</strong>. See <a class="inline" href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener">Anthropic's privacy policy</a>.</li>
+  <li>Your conversation lives only in your browser tab. Close or reload the page and it's gone.</li>
+  <li>We apply rate limits using your IP address, held in memory only and never written to disk.</li>
+</ul>
+<p>If you would rather not send anything, use the <strong>Copy prompt</strong> button instead. It builds the same summary and puts it on your clipboard so you can paste it into ChatGPT, Claude, or anywhere else you choose — nothing leaves your device through us.</p>
+<p>The assistant is an automated tool, not a financial advisor, and its answers are general information rather than personalized advice. See our <a class="inline" href="terms.html">Terms</a>.</p>
 
 <h3>Information collected automatically</h3>
 <p>When you visit the site, our hosting provider (Netlify) and analytics tools may collect:</p>
@@ -88,6 +101,7 @@
 <p>This site relies on the following third parties, each with their own privacy policies:</p>
 <ul>
   <li><strong>Netlify</strong> — our hosting and CDN provider (<a class="inline" href="https://www.netlify.com/privacy/" target="_blank" rel="noopener">privacy policy</a>)</li>
+  <li><strong>Anthropic</strong> — powers the built-in assistant, and only receives data when you send it a question (<a class="inline" href="https://www.anthropic.com/legal/privacy" target="_blank" rel="noopener">privacy policy</a>)</li>
   <li><strong>Cloudflare CDN</strong> — delivers the Chart.js library used by the calculator</li>
   <li><strong>Amazon Associates</strong> — our book affiliate partner</li>
   <li><strong>Impact.com</strong> — affiliate network (if/when our application is approved)</li>
