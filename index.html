@@ -96,7 +96,10 @@
   }
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <!-- Deferred: the numbers do not need Chart.js, so it must not block first paint.
+       Charts are booted from the DOMContentLoaded handler at the end of the page. -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; scroll-padding-top: 70px; }
@@ -830,7 +833,7 @@
     <div class="overflow-menu" id="overflow-menu">
       <button onclick="clearSave()">↺ Reset to defaults</button>
       <button onclick="forceUpdate()">🔄 Reload latest version</button>
-      <div class="overflow-note">build v75</div>
+      <div class="overflow-note">build v76</div>
     </div>
   </span>
 </div>
@@ -875,7 +878,7 @@
       <div class="acc-inner">
         <div class="field-row">
           <div class="field">
-            <label class="field-label">Current Age</label>
+            <label class="field-label" for="n-cage">Current Age</label>
             <div class="field-wrap">
               <input type="number" id="n-cage" min="18" max="70" value="30" step="1" inputmode="numeric">
               <div class="field-steps">
@@ -886,7 +889,7 @@
             <div class="field-hint">18 – 70 yrs</div>
           </div>
           <div class="field">
-            <label class="field-label">Retirement Age</label>
+            <label class="field-label" for="n-rage">Retirement Age</label>
             <div class="field-wrap">
               <input type="number" id="n-rage" min="40" max="85" value="60" step="1" inputmode="numeric">
               <div class="field-steps">
@@ -912,7 +915,7 @@
 
         <div class="sub-hdr">Primary</div>
         <div class="field">
-          <label class="field-label">Annual Income</label>
+          <label class="field-label" for="n-p-inc">Annual Income</label>
           <div class="field-wrap">
             <span class="field-pfx">$</span>
             <input type="number" id="n-p-inc" min="0" max="300000" value="80000" step="1000" inputmode="numeric">
@@ -929,13 +932,13 @@
             <div>Include Spouse / Partner</div>
             <div class="sw-row-sub">Adds spouse income &amp; separate employer match</div>
           </div>
-          <label class="sw"><input type="checkbox" id="sw-spouse" onchange="toggleSpouse()"><span class="sw-track"></span></label>
+          <label class="sw"><input type="checkbox" id="sw-spouse" aria-label="Include spouse or partner" onchange="toggleSpouse()"><span class="sw-track"></span></label>
         </div>
 
         <div id="spouse-block" style="display:none">
           <div class="sub-hdr">Spouse / Partner</div>
           <div class="field">
-            <label class="field-label">Annual Income</label>
+            <label class="field-label" for="n-s-inc">Annual Income</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-s-inc" min="0" max="300000" value="60000" step="1000" inputmode="numeric">
@@ -949,7 +952,7 @@
         </div>
 
         <div class="field">
-          <label class="field-label">Annual Salary Increase</label>
+          <label class="field-label" for="n-salary-inc">Annual Salary Increase</label>
           <div class="field-wrap g">
             <input type="number" id="n-salary-inc" min="0" max="15" value="0" step="0.25" inputmode="decimal">
             <span class="field-sfx">%</span>
@@ -995,7 +998,7 @@
         </div>
         <div class="sub-hdr">Primary 401k / 403b / TSP</div>
         <div class="field">
-          <label class="field-label">Current Balance</label>
+          <label class="field-label" for="n-ta401k-bal">Current Balance</label>
           <div class="field-wrap">
             <span class="field-pfx">$</span>
             <input type="number" id="n-ta401k-bal" min="0" max="10000000" value="50000" step="1000" inputmode="numeric">
@@ -1006,7 +1009,7 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Your Annual Contributions</label>
+          <label class="field-label" for="n-ta401k-cont">Your Annual Contributions</label>
           <div class="field-wrap">
             <span class="field-pfx">$</span>
             <input type="number" id="n-ta401k-cont" min="0" max="150000" value="15000" step="500" inputmode="numeric">
@@ -1019,7 +1022,7 @@
         </div>
         <div class="field-row">
           <div class="field">
-            <label class="field-label">Employer Match Rate</label>
+            <label class="field-label" for="n-match-rate">Employer Match Rate</label>
             <div class="field-wrap g">
               <input type="number" id="n-match-rate" min="0" max="200" value="50" step="25" inputmode="decimal">
               <span class="field-sfx">%</span>
@@ -1030,7 +1033,7 @@
             </div>
           </div>
           <div class="field">
-            <label class="field-label">Match Cap (% salary)</label>
+            <label class="field-label" for="n-match-cap">Match Cap (% salary)</label>
             <div class="field-wrap g">
               <input type="number" id="n-match-cap" min="0" max="15" value="6" step="0.5" inputmode="decimal">
               <span class="field-sfx">%</span>
@@ -1049,7 +1052,7 @@
         <div id="spouse-ta401k-block" style="display:none">
           <div class="sub-hdr" style="margin-top:16px">Spouse 401k / 403b / TSP <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
           <div class="field">
-            <label class="field-label">Current Balance</label>
+            <label class="field-label" for="n-s-ta401k-bal">Current Balance</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-s-ta401k-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
@@ -1060,7 +1063,7 @@
             </div>
           </div>
           <div class="field">
-            <label class="field-label">Spouse Annual Contributions</label>
+            <label class="field-label" for="n-s-ta401k-cont">Spouse Annual Contributions</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-s-ta401k-cont" min="0" max="150000" value="10000" step="500" inputmode="numeric">
@@ -1072,7 +1075,7 @@
           </div>
           <div class="field-row">
             <div class="field">
-              <label class="field-label">Spouse Match Rate</label>
+              <label class="field-label" for="n-s-match-rate">Spouse Match Rate</label>
               <div class="field-wrap y">
                 <input type="number" id="n-s-match-rate" min="0" max="200" value="50" step="25" inputmode="decimal">
                 <span class="field-sfx">%</span>
@@ -1083,7 +1086,7 @@
               </div>
             </div>
             <div class="field">
-              <label class="field-label">Match Cap (% salary)</label>
+              <label class="field-label" for="n-s-match-cap">Match Cap (% salary)</label>
               <div class="field-wrap y">
                 <input type="number" id="n-s-match-cap" min="0" max="15" value="6" step="0.5" inputmode="decimal">
                 <span class="field-sfx">%</span>
@@ -1115,7 +1118,7 @@
           💡 Traditional IRA: tax-deductible contributions (income limits apply); withdrawals taxed. 2026 limit: $7,000 ($8,000 if 50+).
         </div>
         <div class="field">
-          <label class="field-label">Current Balance</label>
+          <label class="field-label" for="n-taira-bal">Current Balance</label>
           <div class="field-wrap">
             <span class="field-pfx">$</span>
             <input type="number" id="n-taira-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
@@ -1126,7 +1129,7 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Your Annual Contributions</label>
+          <label class="field-label" for="n-taira-cont">Your Annual Contributions</label>
           <div class="field-wrap">
             <span class="field-pfx">$</span>
             <input type="number" id="n-taira-cont" min="0" max="10000" value="0" step="500" inputmode="numeric">
@@ -1141,7 +1144,7 @@
         <div id="spouse-taira-block" style="display:none">
           <div class="sub-hdr" style="margin-top:16px">Spouse Traditional IRA <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
           <div class="field">
-            <label class="field-label">Current Balance</label>
+            <label class="field-label" for="n-s-taira-bal">Current Balance</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-s-taira-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
@@ -1152,7 +1155,7 @@
             </div>
           </div>
           <div class="field">
-            <label class="field-label">Spouse Annual Contributions</label>
+            <label class="field-label" for="n-s-taira-cont">Spouse Annual Contributions</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-s-taira-cont" min="0" max="10000" value="0" step="500" inputmode="numeric">
@@ -1179,7 +1182,7 @@
           💡 After-tax workplace Roth. Qualified withdrawals are 100% tax-free. 2026 limit: $23,500 ($31,000 if 50+).
         </div>
         <div class="field">
-          <label class="field-label">Current Balance</label>
+          <label class="field-label" for="n-roth401k-bal">Current Balance</label>
           <div class="field-wrap g">
             <span class="field-pfx">$</span>
             <input type="number" id="n-roth401k-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
@@ -1190,7 +1193,7 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Your Annual Contributions</label>
+          <label class="field-label" for="n-roth401k-cont">Your Annual Contributions</label>
           <div class="field-wrap g">
             <span class="field-pfx">$</span>
             <input type="number" id="n-roth401k-cont" min="0" max="50000" value="0" step="500" inputmode="numeric">
@@ -1208,20 +1211,20 @@
             <div>Company matches my Roth 401k too</div>
             <div class="sw-row-sub">Most plans match total contributions (Trad + Roth) against the cap. Match rate &amp; cap come from the Traditional 401k card.</div>
           </div>
-          <label class="sw"><input type="checkbox" class="g" id="sw-match-roth-too" onchange="recalc()"><span class="sw-track"></span></label>
+          <label class="sw"><input type="checkbox" class="g" id="sw-match-roth-too" aria-label="Employer matches my Roth 401k too" onchange="recalc()"><span class="sw-track"></span></label>
         </div>
         <div class="sw-row">
           <div>
             <div>Deposit match into Roth (SECURE 2.0)</div>
             <div class="sw-row-sub">Default = match goes to Traditional. Plan must offer this option.</div>
           </div>
-          <label class="sw"><input type="checkbox" class="g" id="sw-match-as-roth" onchange="recalc()"><span class="sw-track"></span></label>
+          <label class="sw"><input type="checkbox" class="g" id="sw-match-as-roth" aria-label="Deposit employer match into Roth" onchange="recalc()"><span class="sw-track"></span></label>
         </div>
 
         <div id="spouse-roth401k-block" style="display:none">
           <div class="sub-hdr" style="margin-top:16px">Spouse Roth 401k / 403b / TSP <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
           <div class="field">
-            <label class="field-label">Current Balance</label>
+            <label class="field-label" for="n-s-roth401k-bal">Current Balance</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-s-roth401k-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
@@ -1232,7 +1235,7 @@
             </div>
           </div>
           <div class="field">
-            <label class="field-label">Spouse Annual Contributions</label>
+            <label class="field-label" for="n-s-roth401k-cont">Spouse Annual Contributions</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-s-roth401k-cont" min="0" max="50000" value="0" step="500" inputmode="numeric">
@@ -1249,14 +1252,14 @@
               <div>Spouse company matches Roth too</div>
               <div class="sw-row-sub">Total contributions counted toward match cap</div>
             </div>
-            <label class="sw"><input type="checkbox" class="y" id="sw-s-match-roth-too" onchange="recalc()"><span class="sw-track"></span></label>
+            <label class="sw"><input type="checkbox" class="y" id="sw-s-match-roth-too" aria-label="Spouse employer matches Roth too" onchange="recalc()"><span class="sw-track"></span></label>
           </div>
           <div class="sw-row">
             <div>
               <div>Spouse match deposited into Roth (SECURE 2.0)</div>
               <div class="sw-row-sub">Default = match goes to Traditional</div>
             </div>
-            <label class="sw"><input type="checkbox" class="y" id="sw-s-match-as-roth" onchange="recalc()"><span class="sw-track"></span></label>
+            <label class="sw"><input type="checkbox" class="y" id="sw-s-match-as-roth" aria-label="Deposit spouse employer match into Roth" onchange="recalc()"><span class="sw-track"></span></label>
           </div>
         </div>
       </div>
@@ -1275,7 +1278,7 @@
           💡 Roth IRA: after-tax, grows tax-free, no RMDs. Also include backdoor Roth or Roth conversion balances here. 2026 limit: $7,000 ($8,000 if 50+).
         </div>
         <div class="field">
-          <label class="field-label">Current Balance</label>
+          <label class="field-label" for="n-rothira-bal">Current Balance</label>
           <div class="field-wrap g">
             <span class="field-pfx">$</span>
             <input type="number" id="n-rothira-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
@@ -1286,7 +1289,7 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Your Annual Contributions</label>
+          <label class="field-label" for="n-rothira-cont">Your Annual Contributions</label>
           <div class="field-wrap g">
             <span class="field-pfx">$</span>
             <input type="number" id="n-rothira-cont" min="0" max="10000" value="0" step="500" inputmode="numeric">
@@ -1301,7 +1304,7 @@
         <div id="spouse-rothira-block" style="display:none">
           <div class="sub-hdr" style="margin-top:16px">Spouse Roth IRA <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
           <div class="field">
-            <label class="field-label">Current Balance</label>
+            <label class="field-label" for="n-s-rothira-bal">Current Balance</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-s-rothira-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
@@ -1312,7 +1315,7 @@
             </div>
           </div>
           <div class="field">
-            <label class="field-label">Spouse Annual Contributions</label>
+            <label class="field-label" for="n-s-rothira-cont">Spouse Annual Contributions</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-s-rothira-cont" min="0" max="10000" value="0" step="500" inputmode="numeric">
@@ -1339,7 +1342,7 @@
           💡 The most tax-advantaged account in the US: <strong>pre-tax contributions, tax-free growth, tax-free withdrawals for medical</strong>. Requires HDHP enrollment. 2026 limits: $4,300 single / $8,550 family (+$1,000 catch-up at 55+). Combine both spouses' HSAs in this section.
         </div>
         <div class="field">
-          <label class="field-label">Current Balance (Invested Portion)</label>
+          <label class="field-label" for="n-hsa-bal">Current Balance (Invested Portion)</label>
           <div class="field-wrap g">
             <span class="field-pfx">$</span>
             <input type="number" id="n-hsa-bal" min="0" max="2000000" value="0" step="500" inputmode="numeric">
@@ -1351,7 +1354,7 @@
           <div class="field-hint">Most HSAs require a cash threshold (e.g. $1,000) before letting you invest the rest. Enter the invested portion.</div>
         </div>
         <div class="field">
-          <label class="field-label">Annual Contributions</label>
+          <label class="field-label" for="n-hsa-cont">Annual Contributions</label>
           <div class="field-wrap g">
             <span class="field-pfx">$</span>
             <input type="number" id="n-hsa-cont" min="0" max="20000" value="0" step="500" inputmode="numeric">
@@ -1363,7 +1366,7 @@
           <div class="field-hint">Up to $8,550/yr for family HDHP coverage (2026). Add catch-up if 55+.</div>
         </div>
         <div class="field">
-          <label class="field-label">Withdrawal Strategy</label>
+          <label class="field-label" for="n-hsa-strategy">Withdrawal Strategy</label>
           <select id="n-hsa-strategy" class="field-select">
             <option value="trad" selected>Retirement use after 65: taxed like Traditional 401k</option>
             <option value="roth">Receipts strategy: save medical receipts, withdraw tax-free anytime</option>
@@ -1385,7 +1388,7 @@
     <div class="acc-body open" id="body-br">
       <div class="acc-inner">
         <div class="field">
-          <label class="field-label">Current Balance</label>
+          <label class="field-label" for="n-br-bal">Current Balance</label>
           <div class="field-wrap y">
             <span class="field-pfx">$</span>
             <input type="number" id="n-br-bal" min="0" max="10000000" value="0" step="1000" inputmode="numeric">
@@ -1396,7 +1399,7 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Annual Contributions</label>
+          <label class="field-label" for="n-br-cont">Annual Contributions</label>
           <div class="field-wrap y">
             <span class="field-pfx">$</span>
             <input type="number" id="n-br-cont" min="0" max="150000" value="0" step="500" inputmode="numeric">
@@ -1408,7 +1411,7 @@
         </div>
         <div class="field-row">
           <div class="field">
-            <label class="field-label">Dividend Tax Drag</label>
+            <label class="field-label" for="n-div-drag">Dividend Tax Drag</label>
             <div class="field-wrap y">
               <input type="number" id="n-div-drag" min="0" max="2" value="0.3" step="0.05" inputmode="decimal">
               <span class="field-sfx">%</span>
@@ -1420,7 +1423,7 @@
             <div class="field-hint">Annual tax on dividends</div>
           </div>
           <div class="field">
-            <label class="field-label">LTCG Rate</label>
+            <label class="field-label" for="n-ltcg">LTCG Rate</label>
             <div class="field-wrap y">
               <input type="number" id="n-ltcg" min="0" max="40" value="15" step="1" inputmode="numeric">
               <span class="field-sfx">%</span>
@@ -1451,11 +1454,11 @@
             <div>Include Mortgage</div>
             <div class="sw-row-sub">Payments that outlive your retirement date raise your FIRE number</div>
           </div>
-          <label class="sw"><input type="checkbox" class="y" id="sw-mort" onchange="toggleMortgage()"><span class="sw-track"></span></label>
+          <label class="sw"><input type="checkbox" class="y" id="sw-mort" aria-label="Include mortgage" onchange="toggleMortgage()"><span class="sw-track"></span></label>
         </div>
         <div id="mort-block" style="display:none">
           <div class="field">
-            <label class="field-label">Current Balance</label>
+            <label class="field-label" for="n-mort-bal">Current Balance</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-mort-bal" min="0" max="5000000" value="320000" step="5000" inputmode="numeric">
@@ -1467,7 +1470,7 @@
           </div>
           <div class="field-row">
             <div class="field">
-              <label class="field-label">Interest Rate</label>
+              <label class="field-label" for="n-mort-rate">Interest Rate</label>
               <div class="field-wrap y">
                 <input type="number" id="n-mort-rate" min="0" max="15" value="6.5" step="0.125" inputmode="decimal">
                 <span class="field-sfx">%</span>
@@ -1478,7 +1481,7 @@
               </div>
             </div>
             <div class="field">
-              <label class="field-label">Monthly P&amp;I</label>
+              <label class="field-label" for="n-mort-pmt">Monthly P&amp;I</label>
               <div class="field-wrap y">
                 <span class="field-pfx">$</span>
                 <input type="number" id="n-mort-pmt" min="0" max="30000" value="2100" step="50" inputmode="numeric">
@@ -1491,7 +1494,7 @@
           </div>
           <div class="field-hint" style="margin-top:-6px">Principal &amp; interest only: leave out taxes and insurance, since those continue after payoff.</div>
           <div class="field">
-            <label class="field-label">Extra Principal / Month</label>
+            <label class="field-label" for="n-mort-extra">Extra Principal / Month</label>
             <div class="field-wrap g">
               <span class="field-pfx">$</span>
               <input type="number" id="n-mort-extra" min="0" max="20000" value="0" step="50" inputmode="numeric">
@@ -1507,7 +1510,7 @@
               <div>Mortgage is inside my retirement spending</div>
               <div class="sw-row-sub">On = the spending number above already includes this payment. Off = spending excludes it and the payment is added on top.</div>
             </div>
-            <label class="sw"><input type="checkbox" class="g" id="sw-mort-in-spend" checked onchange="recalc()"><span class="sw-track"></span></label>
+            <label class="sw"><input type="checkbox" class="g" id="sw-mort-in-spend" aria-label="Mortgage is inside my retirement spending" checked onchange="recalc()"><span class="sw-track"></span></label>
           </div>
           <div class="info-box info-box-y" id="mort-preview" style="margin-top:10px">
             Payoff: <strong id="mort-payoff-lbl">—</strong>
@@ -1530,11 +1533,11 @@
             <div>Include Pension / Annuity Income</div>
             <div class="sw-row-sub">Reduces the portfolio withdrawal needed</div>
           </div>
-          <label class="sw"><input type="checkbox" class="p" id="sw-pen" onchange="recalc()"><span class="sw-track"></span></label>
+          <label class="sw"><input type="checkbox" class="p" id="sw-pen" aria-label="Include pension or annuity income" onchange="recalc()"><span class="sw-track"></span></label>
         </div>
         <div id="pen-block">
           <div class="field">
-            <label class="field-label">Annual Pension Income (Today's $)</label>
+            <label class="field-label" for="n-pen">Annual Pension Income (Today's $)</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-pen" min="0" max="300000" value="24000" step="500" inputmode="numeric">
@@ -1545,7 +1548,7 @@
             </div>
           </div>
           <div class="field">
-            <label class="field-label">Pension Starts at Age</label>
+            <label class="field-label" for="n-page">Pension Starts at Age</label>
             <div class="field-wrap y">
               <input type="number" id="n-page" min="50" max="80" value="65" step="1" inputmode="numeric">
               <div class="field-steps">
@@ -1559,14 +1562,14 @@
               <div>COLA: Inflation-Adjusted</div>
               <div class="sw-row-sub">Social Security &amp; most gov pensions are COLA</div>
             </div>
-            <label class="sw"><input type="checkbox" class="g" id="sw-cola" checked onchange="recalc()"><span class="sw-track"></span></label>
+            <label class="sw"><input type="checkbox" class="g" id="sw-cola" aria-label="Pension is inflation-adjusted (COLA)" checked onchange="recalc()"><span class="sw-track"></span></label>
           </div>
           <div class="sw-row">
             <div>
               <div>Taxable</div>
               <div class="sw-row-sub">Off = after-tax annuity or tax-exempt pension (delivered as net cash)</div>
             </div>
-            <label class="sw"><input type="checkbox" class="g" id="sw-pen-taxable" checked onchange="recalc()"><span class="sw-track"></span></label>
+            <label class="sw"><input type="checkbox" class="g" id="sw-pen-taxable" aria-label="Pension income is taxable" checked onchange="recalc()"><span class="sw-track"></span></label>
           </div>
         </div>
       </div>
@@ -1586,12 +1589,12 @@
             <div>Include Social Security Income</div>
             <div class="sw-row-sub">Always COLA-adjusted: reduces your FIRE portfolio target</div>
           </div>
-          <label class="sw"><input type="checkbox" class="g" id="sw-ss" onchange="toggleSS()"><span class="sw-track"></span></label>
+          <label class="sw"><input type="checkbox" class="g" id="sw-ss" aria-label="Include Social Security income" onchange="toggleSS()"><span class="sw-track"></span></label>
         </div>
         <div id="ss-block" style="display:none">
           <div class="sub-hdr">Your Benefit</div>
           <div class="field">
-            <label class="field-label">Your Monthly Benefit (Today's $)</label>
+            <label class="field-label" for="n-ss-primary">Your Monthly Benefit (Today's $)</label>
             <div class="field-wrap g">
               <span class="field-pfx">$</span>
               <input type="number" id="n-ss-primary" min="0" max="5000" value="2000" step="50" inputmode="numeric">
@@ -1604,7 +1607,7 @@
             <div class="field-hint">Check <strong>ssa.gov/myaccount</strong> for your estimate</div>
           </div>
           <div class="field">
-            <label class="field-label">Claim Age</label>
+            <label class="field-label" for="n-ss-age">Claim Age</label>
             <div class="field-wrap g">
               <input type="number" id="n-ss-age" min="62" max="70" value="67" step="1" inputmode="numeric">
               <div class="field-steps">
@@ -1619,12 +1622,12 @@
               <div>Include Spouse / Partner SS</div>
               <div class="sw-row-sub">Spouse's own earned benefit or spousal benefit</div>
             </div>
-            <label class="sw"><input type="checkbox" class="y" id="sw-ss-spouse" onchange="toggleSSSpouse()"><span class="sw-track"></span></label>
+            <label class="sw"><input type="checkbox" class="y" id="sw-ss-spouse" aria-label="Include spouse Social Security" onchange="toggleSSSpouse()"><span class="sw-track"></span></label>
           </div>
           <div id="ss-spouse-block" style="display:none">
             <div class="sub-hdr">Spouse Benefit</div>
             <div class="field">
-              <label class="field-label">Spouse Monthly Benefit (Today's $)</label>
+              <label class="field-label" for="n-ss-spouse">Spouse Monthly Benefit (Today's $)</label>
               <div class="field-wrap y">
                 <span class="field-pfx">$</span>
                 <input type="number" id="n-ss-spouse" min="0" max="5000" value="1500" step="50" inputmode="numeric">
@@ -1636,7 +1639,7 @@
               </div>
             </div>
             <div class="field">
-              <label class="field-label">Spouse Claim Age</label>
+              <label class="field-label" for="n-ss-spouse-age">Spouse Claim Age</label>
               <div class="field-wrap y">
                 <input type="number" id="n-ss-spouse-age" min="62" max="70" value="67" step="1" inputmode="numeric">
                 <div class="field-steps">
@@ -1668,11 +1671,11 @@
             <div>Include Other Recurring Income</div>
             <div class="sw-row-sub">Rental, royalties, part-time work, trust distributions, etc.</div>
           </div>
-          <label class="sw"><input type="checkbox" class="p" id="sw-oi" onchange="recalc()"><span class="sw-track"></span></label>
+          <label class="sw"><input type="checkbox" class="p" id="sw-oi" aria-label="Include other recurring income" onchange="recalc()"><span class="sw-track"></span></label>
         </div>
         <div id="oi-block" style="display:none">
           <div class="field">
-            <label class="field-label">Annual Other Income (Today's $)</label>
+            <label class="field-label" for="n-oi">Annual Other Income (Today's $)</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-oi" min="0" max="500000" value="0" step="500" inputmode="numeric">
@@ -1684,7 +1687,7 @@
             <div class="field-hint">Recurring passive/semi-passive income. One-time windfalls don't belong here.</div>
           </div>
           <div class="field">
-            <label class="field-label">Income Starts at Age</label>
+            <label class="field-label" for="n-oi-age">Income Starts at Age</label>
             <div class="field-wrap y">
               <input type="number" id="n-oi-age" min="30" max="90" value="60" step="1" inputmode="numeric">
               <div class="field-steps">
@@ -1699,14 +1702,14 @@
               <div>COLA: Inflation-Adjusted</div>
               <div class="sw-row-sub">On = keeps up with inflation (typical for rents). Off = fixed nominal.</div>
             </div>
-            <label class="sw"><input type="checkbox" class="g" id="sw-oi-cola" checked onchange="recalc()"><span class="sw-track"></span></label>
+            <label class="sw"><input type="checkbox" class="g" id="sw-oi-cola" aria-label="Other income is inflation-adjusted (COLA)" checked onchange="recalc()"><span class="sw-track"></span></label>
           </div>
           <div class="sw-row">
             <div>
               <div>Taxable</div>
               <div class="sw-row-sub">Off = tax-free (e.g. muni bond coupons, Roth-funded annuity, HSA-qualified)</div>
             </div>
-            <label class="sw"><input type="checkbox" class="g" id="sw-oi-taxable" checked onchange="recalc()"><span class="sw-track"></span></label>
+            <label class="sw"><input type="checkbox" class="g" id="sw-oi-taxable" aria-label="Other income is taxable" checked onchange="recalc()"><span class="sw-track"></span></label>
           </div>
         </div>
       </div>
@@ -1724,7 +1727,7 @@
     <div class="acc-body open" id="body-ret">
       <div class="acc-inner">
         <div class="field">
-          <label class="field-label">Annual Retirement Spending (Today's $)</label>
+          <label class="field-label" for="n-spend">Annual Retirement Spending (Today's $)</label>
           <div class="field-wrap">
             <span class="field-pfx">$</span>
             <input type="number" id="n-spend" min="0" max="500000" value="60000" step="1000" inputmode="numeric">
@@ -1736,7 +1739,7 @@
         </div>
         <div class="field-row">
           <div class="field">
-            <label class="field-label">Nominal Return</label>
+            <label class="field-label" for="n-nom">Nominal Return</label>
             <div class="field-wrap">
               <input type="number" id="n-nom" min="0" max="20" value="7" step="0.5" inputmode="decimal">
               <span class="field-sfx">%</span>
@@ -1747,7 +1750,7 @@
             </div>
           </div>
           <div class="field">
-            <label class="field-label">Inflation Rate</label>
+            <label class="field-label" for="n-inf">Inflation Rate</label>
             <div class="field-wrap">
               <input type="number" id="n-inf" min="0" max="15" value="3" step="0.25" inputmode="decimal">
               <span class="field-sfx">%</span>
@@ -1759,7 +1762,7 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Safe Withdrawal Rate (SWR)</label>
+          <label class="field-label" for="n-swr">Safe Withdrawal Rate (SWR)</label>
           <div class="field-wrap">
             <input type="number" id="n-swr" min="2" max="8" value="4" step="0.25" inputmode="decimal">
             <span class="field-sfx">%</span>
@@ -1771,7 +1774,7 @@
           <div class="field-hint">4% = Trinity study standard; 3.5% = conservative</div>
         </div>
         <div class="field">
-          <label class="field-label">Effective Retirement Tax Rate</label>
+          <label class="field-label" for="n-ret-tax">Effective Retirement Tax Rate</label>
           <div class="field-wrap">
             <input type="number" id="n-ret-tax" min="0" max="40" value="0" step="1" inputmode="decimal">
             <span class="field-sfx">%</span>
@@ -1784,7 +1787,7 @@
         </div>
         <div class="sub-hdr" style="margin-top:14px">Investing Past Retirement <span style="font-size:0.7rem;font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0">· optional</span></div>
         <div class="field">
-          <label class="field-label">Stop Contributing at Age</label>
+          <label class="field-label" for="n-stop-invest-age">Stop Contributing at Age</label>
           <div class="field-wrap">
             <input type="number" id="n-stop-invest-age" min="40" max="80" value="60" step="1" inputmode="numeric">
             <div class="field-steps">
@@ -1796,7 +1799,7 @@
         </div>
         <div class="field-row">
           <div class="field">
-            <label class="field-label">Post-Retire: Retirement $</label>
+            <label class="field-label" for="n-post-ret-cont">Post-Retire: Retirement $</label>
             <div class="field-wrap g">
               <span class="field-pfx">$</span>
               <input type="number" id="n-post-ret-cont" min="0" max="200000" value="0" step="500" inputmode="numeric">
@@ -1808,7 +1811,7 @@
             <div class="field-hint">/yr to 401k + IRA</div>
           </div>
           <div class="field">
-            <label class="field-label">Post-Retire: Brokerage $</label>
+            <label class="field-label" for="n-post-br-cont">Post-Retire: Brokerage $</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-post-br-cont" min="0" max="200000" value="0" step="500" inputmode="numeric">
@@ -1840,7 +1843,7 @@
         </div>
         <div class="field-row">
           <div class="field">
-            <label class="field-label">Height</label>
+            <label class="field-label" for="n-height-in">Height</label>
             <div class="field-wrap">
               <input type="number" id="n-height-in" min="48" max="84" value="68" step="1" inputmode="numeric">
               <span class="field-sfx">in</span>
@@ -1851,7 +1854,7 @@
             </div>
           </div>
           <div class="field">
-            <label class="field-label">Weight</label>
+            <label class="field-label" for="n-weight-lb">Weight</label>
             <div class="field-wrap">
               <input type="number" id="n-weight-lb" min="80" max="500" value="170" step="1" inputmode="numeric">
               <span class="field-sfx">lb</span>
@@ -1863,7 +1866,7 @@
           </div>
         </div>
         <div class="field">
-          <label class="field-label">Cardio Activity</label>
+          <label class="field-label" for="n-activity">Cardio Activity</label>
           <select id="n-activity" class="field-select">
             <option value="sedentary">Sedentary: desk job, no cardio</option>
             <option value="light">Light: 1–3 days/week light cardio</option>
@@ -1873,7 +1876,7 @@
           </select>
         </div>
         <div class="field">
-          <label class="field-label">Strength Training</label>
+          <label class="field-label" for="n-strength">Strength Training</label>
           <select id="n-strength" class="field-select">
             <option value="none" selected>None</option>
             <option value="low">1–2 days/week</option>
@@ -1883,7 +1886,7 @@
           <div class="field-hint">Resistance training is the strongest single predictor of mortality after 50, separate from cardio.</div>
         </div>
         <div class="field">
-          <label class="field-label">Body Fat % <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <label class="field-label" for="n-bodyfat">Body Fat % <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
           <div class="field-wrap">
             <input type="number" id="n-bodyfat" min="0" max="60" value="0" step="1" inputmode="numeric">
             <span class="field-sfx">%</span>
@@ -1895,7 +1898,7 @@
           <div class="field-hint">Leave 0 if unknown. If provided, overrides BMI penalty (useful for muscular folks BMI mislabels). DEXA / InBody / smart scales give estimates.</div>
         </div>
         <div class="field">
-          <label class="field-label">Sex (affects baseline lifespan)</label>
+          <label class="field-label" for="n-sex">Sex (affects baseline lifespan)</label>
           <select id="n-sex" class="field-select">
             <option value="m">Male</option>
             <option value="f" selected>Female</option>
@@ -1909,7 +1912,7 @@
           <div class="sub-hdr" style="margin-top:18px">Spouse Health <span class="tl-tag tag-y" style="margin-left:6px">Spouse</span></div>
           <div class="field-row">
             <div class="field">
-              <label class="field-label">Spouse Height</label>
+              <label class="field-label" for="n-s-height-in">Spouse Height</label>
               <div class="field-wrap y">
                 <input type="number" id="n-s-height-in" min="48" max="84" value="68" step="1" inputmode="numeric">
                 <span class="field-sfx">in</span>
@@ -1920,7 +1923,7 @@
               </div>
             </div>
             <div class="field">
-              <label class="field-label">Spouse Weight</label>
+              <label class="field-label" for="n-s-weight-lb">Spouse Weight</label>
               <div class="field-wrap y">
                 <input type="number" id="n-s-weight-lb" min="80" max="500" value="160" step="1" inputmode="numeric">
                 <span class="field-sfx">lb</span>
@@ -1932,7 +1935,7 @@
             </div>
           </div>
           <div class="field">
-            <label class="field-label">Spouse Cardio</label>
+            <label class="field-label" for="n-s-activity">Spouse Cardio</label>
             <select id="n-s-activity" class="field-select">
               <option value="sedentary">Sedentary</option>
               <option value="light">Light: 1–3 days/wk</option>
@@ -1942,7 +1945,7 @@
             </select>
           </div>
           <div class="field">
-            <label class="field-label">Spouse Strength Training</label>
+            <label class="field-label" for="n-s-strength">Spouse Strength Training</label>
             <select id="n-s-strength" class="field-select">
               <option value="none" selected>None</option>
               <option value="low">1–2 days/week</option>
@@ -1952,7 +1955,7 @@
           </div>
           <div class="field-row">
             <div class="field">
-              <label class="field-label">Spouse Body Fat % <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(opt)</span></label>
+              <label class="field-label" for="n-s-bodyfat">Spouse Body Fat % <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(opt)</span></label>
               <div class="field-wrap y">
                 <input type="number" id="n-s-bodyfat" min="0" max="60" value="0" step="1" inputmode="numeric">
                 <span class="field-sfx">%</span>
@@ -1963,7 +1966,7 @@
               </div>
             </div>
             <div class="field">
-              <label class="field-label">Spouse Sex</label>
+              <label class="field-label" for="n-s-sex">Spouse Sex</label>
               <select id="n-s-sex" class="field-select">
                 <option value="m" selected>Male</option>
                 <option value="f">Female</option>
@@ -1971,7 +1974,7 @@
             </div>
           </div>
           <div class="field">
-            <label class="field-label">Spouse Current Age</label>
+            <label class="field-label" for="n-s-age">Spouse Current Age</label>
             <div class="field-wrap y">
               <input type="number" id="n-s-age" min="18" max="90" value="30" step="1" inputmode="numeric">
               <span class="field-sfx">yr</span>
@@ -2183,7 +2186,7 @@
     </div>
 
     <div class="field" style="max-width:200px">
-      <label class="field-label">What age?</label>
+      <label class="field-label" for="n-iaa-age">What age?</label>
       <div class="field-wrap">
         <input type="number" id="n-iaa-age" min="20" max="80" value="65" step="1" inputmode="numeric">
         <div class="field-steps">
@@ -2332,7 +2335,7 @@
       Stop saving at CoastFIRE vs keep contributing through retirement. To extend contributions past retirement, use <strong>Stop Contributing at Age</strong> + <strong>Post-Retire $</strong> fields in Spending &amp; Returns.
     </div>
     <div style="margin-bottom:14px">
-      <label class="field-label">After CoastFIRE, keep investing...</label>
+      <label class="field-label" for="n-keep-ret-pct">After CoastFIRE, keep investing...</label>
 
       <div style="margin-top:10px;margin-bottom:12px">
         <div style="font-size:0.7rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">
@@ -5471,7 +5474,12 @@ function updateAiPrompt(R) {
     const stratLabel = S.hsaStrategy === 'roth' ? 'receipts strategy (tax-free)' : 'retirement use after 65 (Traditional treatment)';
     situation.push(`- HSA: ${fmt0(S.hsaBal || 0)} balance + ${fmt0(S.hsaCont || 0)}/yr contributions, ${stratLabel}`);
   }
-  situation.push(`- Retirement spending target: ${fmt0(nomSpend)}/yr in today's dollars`);
+  // nomSpend is the inflated figure AT retirement, and it already excludes the
+  // mortgage when that is bundled into spending. Give the model both numbers and
+  // say which is which, rather than labelling the nominal one "today's dollars".
+  situation.push(`- Retirement spending target: ${fmt0(S.spend)}/yr in today's dollars`);
+  situation.push(`- Same target inflated to age ${S.rage}: ${fmt0(nomSpend)}/yr nominal${
+    (S.mortEnabled && S.mortBalance > 0 && S.mortInSpend) ? ' (excludes the mortgage payment, which is modelled separately as a fixed non-inflating stream)' : ''}`);
   if (S.mortEnabled && S.mortBalance > 0) {
     const mp = R.mortPayoffAge;
     const payoffTxt = (mp && isFinite(mp)) ? `pays off at age ${mp.toFixed(1)}` : 'never amortises at current payment';
@@ -6510,8 +6518,22 @@ document.addEventListener('keydown', e => {
 // A shared link wins over localStorage so the recipient sees the sender's
 // scenario, not their own saved one.
 if (!loadFromHash()) loadState();
-initChart();
-recalc();
+
+// Chart.js is loaded with `defer`, so it is not available while this inline
+// script runs. Deferred scripts finish before DOMContentLoaded, so booting the
+// charts there is enough; no polling, and first paint is not held up by a
+// ~200KB download. The guard keeps this working if the tag ever goes back to
+// being synchronous.
+function bootCharts() {
+  if (typeof Chart === 'undefined') {
+    console.warn('[coastfire] Chart.js unavailable; showing numbers without charts.');
+  } else {
+    initChart();
+  }
+  recalc();
+}
+if (typeof Chart !== 'undefined') bootCharts();
+else document.addEventListener('DOMContentLoaded', bootCharts, { once: true });
 
 renderChatChips();
 
