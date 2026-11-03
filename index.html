@@ -830,7 +830,7 @@
     <div class="overflow-menu" id="overflow-menu">
       <button onclick="clearSave()">↺ Reset to defaults</button>
       <button onclick="forceUpdate()">🔄 Reload latest version</button>
-      <div class="overflow-note">build v73</div>
+      <div class="overflow-note">build v74</div>
     </div>
   </span>
 </div>
@@ -6174,11 +6174,13 @@ async function sendChat() {
     });
     const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
-      const fallback = data.error === 'not_configured'
+    if (!res.ok || data.error) {
+      const msg = data.error === 'not_configured'
         ? 'The in-page assistant isn\'t switched on for this site yet. Use <strong>Copy prompt</strong> below to ask in ChatGPT or Claude instead.'
         : escHtml(data.message || 'Something went wrong. Try again in a moment.');
-      thinking.querySelector('.body').innerHTML = fallback;
+      // `detail` is a short setup-diagnostic code (auth / model / bad_request…)
+      const hint = data.detail ? `<br><span style="opacity:0.6;font-size:0.78rem">code: ${escHtml(data.detail)}</span>` : '';
+      thinking.querySelector('.body').innerHTML = msg + hint;
       thinking.classList.add('err');
       set('chat-status', '');
       return;
