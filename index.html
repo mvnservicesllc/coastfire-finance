@@ -15,12 +15,12 @@
   <link rel="apple-touch-icon" href="icon.svg">
 
   <!-- SEO / description -->
-  <meta name="description" content="Free CoastFIRE Calculator — find the age you can stop saving and let compound growth carry you to retirement. Monte Carlo simulation, tax-aware projections, Social Security and pension offsets included.">
+  <meta name="description" content="Free CoastFIRE Calculator: find the age you can stop saving and let compound growth carry you to retirement. Monte Carlo simulation, tax-aware projections, Social Security and pension offsets included.">
 
   <!-- Open Graph (Facebook, LinkedIn, iMessage link previews) -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CoastFIRE Finance">
-  <meta property="og:title" content="CoastFIRE Calculator — Find the Age You Can Stop Saving">
+  <meta property="og:title" content="CoastFIRE Calculator: Find the Age You Can Stop Saving">
   <meta property="og:description" content="Free calculator with Monte Carlo simulation. Tax-aware. Pension and Social Security offsets. See your path to financial independence with clear math, not hype.">
   <meta property="og:url" content="https://coastfirefinance.com/">
   <meta property="og:image" content="https://coastfirefinance.com/og-image.png">
@@ -29,7 +29,7 @@
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="CoastFIRE Calculator — Find the Age You Can Stop Saving">
+  <meta name="twitter:title" content="CoastFIRE Calculator: Find the Age You Can Stop Saving">
   <meta name="twitter:description" content="Free calculator with Monte Carlo simulation. Tax-aware. Pension and Social Security offsets. See your path to financial independence with clear math.">
   <meta name="twitter:image" content="https://coastfirefinance.com/og-image.png">
 
@@ -329,7 +329,7 @@
       padding: 9px 10px;
       background: none; border: none; outline: none;
       color: var(--text);
-      font-size: 1rem; /* 16px minimum — prevents iOS auto-zoom */
+      font-size: 1rem; /* 16px minimum: prevents iOS auto-zoom */
       font-weight: 500;
       -moz-appearance: textfield;
     }
@@ -852,7 +852,7 @@
 <div class="layout">
 
 <!-- ══════════════════════════════════════════════
-     LEFT PANEL — INPUTS
+     LEFT PANEL: INPUTS
 ══════════════════════════════════════════════ -->
 <div id="inputs" class="essentials">
 <div class="card">
@@ -1365,11 +1365,11 @@
         <div class="field">
           <label class="field-label">Withdrawal Strategy</label>
           <select id="n-hsa-strategy" class="field-select">
-            <option value="trad" selected>Retirement use after 65 — taxed like Traditional 401k</option>
-            <option value="roth">Receipts strategy — save medical receipts, withdraw tax-free anytime</option>
+            <option value="trad" selected>Retirement use after 65: taxed like Traditional 401k</option>
+            <option value="roth">Receipts strategy: save medical receipts, withdraw tax-free anytime</option>
           </select>
           <div class="field-hint">
-            <strong>Traditional</strong> (default): conservative — assume you'll use it for general retirement at 65+, taxed as ordinary income. <strong>Receipts</strong>: aggressive — track all qualified medical expenses, withdraw matching $ tax-free at any age (the "stealth Roth" strategy).
+            <strong>Traditional</strong> (default): conservative, assume you'll use it for general retirement at 65+, taxed as ordinary income. <strong>Receipts</strong>: aggressive, track all qualified medical expenses, withdraw matching $ tax-free at any age (the "stealth Roth" strategy).
           </div>
         </div>
       </div>
@@ -1489,7 +1489,7 @@
               </div>
             </div>
           </div>
-          <div class="field-hint" style="margin-top:-6px">Principal &amp; interest only — leave out taxes and insurance, since those continue after payoff.</div>
+          <div class="field-hint" style="margin-top:-6px">Principal &amp; interest only: leave out taxes and insurance, since those continue after payoff.</div>
           <div class="field">
             <label class="field-label">Extra Principal / Month</label>
             <div class="field-wrap g">
@@ -1556,7 +1556,7 @@
           </div>
           <div class="sw-row">
             <div>
-              <div>COLA — Inflation-Adjusted</div>
+              <div>COLA: Inflation-Adjusted</div>
               <div class="sw-row-sub">Social Security &amp; most gov pensions are COLA</div>
             </div>
             <label class="sw"><input type="checkbox" class="g" id="sw-cola" checked onchange="recalc()"><span class="sw-track"></span></label>
@@ -1584,7 +1584,7 @@
         <div class="sw-row">
           <div>
             <div>Include Social Security Income</div>
-            <div class="sw-row-sub">Always COLA-adjusted — reduces your FIRE portfolio target</div>
+            <div class="sw-row-sub">Always COLA-adjusted: reduces your FIRE portfolio target</div>
           </div>
           <label class="sw"><input type="checkbox" class="g" id="sw-ss" onchange="toggleSS()"><span class="sw-track"></span></label>
         </div>
@@ -1692,11 +1692,11 @@
                 <button onclick="step('n-oi-age',-1)">▼</button>
               </div>
             </div>
-            <div class="field-hint">Typically your retirement age — but rental income can start earlier.</div>
+            <div class="field-hint">Typically your retirement age, but rental income can start earlier.</div>
           </div>
           <div class="sw-row">
             <div>
-              <div>COLA — Inflation-Adjusted</div>
+              <div>COLA: Inflation-Adjusted</div>
               <div class="sw-row-sub">On = keeps up with inflation (typical for rents). Off = fixed nominal.</div>
             </div>
             <label class="sw"><input type="checkbox" class="g" id="sw-oi-cola" checked onchange="recalc()"><span class="sw-track"></span></label>
@@ -1796,7 +1796,7 @@
         </div>
         <div class="field-row">
           <div class="field">
-            <label class="field-label">Post-Retire — Retirement $</label>
+            <label class="field-label">Post-Retire: Retirement $</label>
             <div class="field-wrap g">
               <span class="field-pfx">$</span>
               <input type="number" id="n-post-ret-cont" min="0" max="200000" value="0" step="500" inputmode="numeric">
@@ -1808,7 +1808,7 @@
             <div class="field-hint">/yr to 401k + IRA</div>
           </div>
           <div class="field">
-            <label class="field-label">Post-Retire — Brokerage $</label>
+            <label class="field-label">Post-Retire: Brokerage $</label>
             <div class="field-wrap y">
               <span class="field-pfx">$</span>
               <input type="number" id="n-post-br-cont" min="0" max="200000" value="0" step="500" inputmode="numeric">
@@ -1820,7 +1820,7 @@
             <div class="field-hint">/yr to taxable</div>
           </div>
         </div>
-        <div class="field-hint" style="margin-top:-4px">Used during years between your retirement age and the "Stop Contributing" age above. Both default to $0 — explicit values let you model reduced post-retirement saving (e.g. consulting income → IRA, side projects → brokerage).</div>
+        <div class="field-hint" style="margin-top:-4px">Used during years between your retirement age and the "Stop Contributing" age above. Both default to $0, explicit values let you model reduced post-retirement saving (e.g. consulting income → IRA, side projects → brokerage).</div>
       </div>
     </div>
   </div>
@@ -1836,7 +1836,7 @@
     <div class="acc-body" id="body-health">
       <div class="acc-inner">
         <div class="info-box" style="font-size:0.72rem;line-height:1.5;margin-bottom:10px;color:var(--muted)">
-          💡 Estimate how many <strong>healthy, active</strong> years you have left vs. your total lifespan. Money loses meaning past your healthspan — this shows the real cost of working longer.
+          💡 Estimate how many <strong>healthy, active</strong> years you have left vs. your total lifespan. Money loses meaning past your healthspan, this shows the real cost of working longer.
         </div>
         <div class="field-row">
           <div class="field">
@@ -1865,11 +1865,11 @@
         <div class="field">
           <label class="field-label">Cardio Activity</label>
           <select id="n-activity" class="field-select">
-            <option value="sedentary">Sedentary — desk job, no cardio</option>
-            <option value="light">Light — 1–3 days/week light cardio</option>
-            <option value="moderate" selected>Moderate — 3–5 days/week</option>
-            <option value="active">Active — daily or 5+ days vigorous</option>
-            <option value="athlete">Athlete — intensive training</option>
+            <option value="sedentary">Sedentary: desk job, no cardio</option>
+            <option value="light">Light: 1–3 days/week light cardio</option>
+            <option value="moderate" selected>Moderate: 3–5 days/week</option>
+            <option value="active">Active: daily or 5+ days vigorous</option>
+            <option value="athlete">Athlete: intensive training</option>
           </select>
         </div>
         <div class="field">
@@ -1880,7 +1880,7 @@
             <option value="mid">3 days/week</option>
             <option value="high">4+ days/week</option>
           </select>
-          <div class="field-hint">Resistance training is the strongest single predictor of mortality after 50 — separate from cardio.</div>
+          <div class="field-hint">Resistance training is the strongest single predictor of mortality after 50, separate from cardio.</div>
         </div>
         <div class="field">
           <label class="field-label">Body Fat % <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
@@ -1935,9 +1935,9 @@
             <label class="field-label">Spouse Cardio</label>
             <select id="n-s-activity" class="field-select">
               <option value="sedentary">Sedentary</option>
-              <option value="light">Light — 1–3 days/wk</option>
-              <option value="moderate" selected>Moderate — 3–5 days/wk</option>
-              <option value="active">Active — daily or 5+ days vigorous</option>
+              <option value="light">Light: 1–3 days/wk</option>
+              <option value="moderate" selected>Moderate: 3–5 days/wk</option>
+              <option value="active">Active: daily or 5+ days vigorous</option>
               <option value="athlete">Athlete</option>
             </select>
           </div>
@@ -1994,7 +1994,7 @@
 </div><!-- /left -->
 
 <!-- ══════════════════════════════════════════════
-     RIGHT PANEL — RESULTS
+     RIGHT PANEL: RESULTS
 ══════════════════════════════════════════════ -->
 <div class="chart-area" id="results">
 
@@ -2179,7 +2179,7 @@
   <div class="cw" id="income-at-age-card">
     <div class="ct">🎯 Income at Any Age <span style="font-size:0.7rem;color:var(--muted);font-weight:400">"What if I stopped at..."</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      Pick any age — see your portfolio and total annual income if you stopped working then. Withdrawal at your SWR (currently <span id="iaa-swr-lbl">4.0%</span>), plus pension/SS/Other Income that's active by that age.
+      Pick any age, see your portfolio and total annual income if you stopped working then. Withdrawal at your SWR (currently <span id="iaa-swr-lbl">4.0%</span>), plus pension/SS/Other Income that's active by that age.
     </div>
 
     <div class="field" style="max-width:200px">
@@ -2210,7 +2210,7 @@
   <div class="cw" id="mortgage-card" style="display:none">
     <div class="ct">🏠 Mortgage &amp; Payoff <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Fixed nominal debt</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px;line-height:1.6">
-      A fixed-rate mortgage is the one expense that <strong>doesn't inflate</strong> — and it <strong>ends</strong>. That makes it fundamentally different from the rest of your retirement spending, so it's modelled as a finite nominal obligation rather than a 25× SWR problem.
+      A fixed-rate mortgage is the one expense that <strong>doesn't inflate</strong>, and it <strong>ends</strong>. That makes it fundamentally different from the rest of your retirement spending, so it's modelled as a finite nominal obligation rather than a 25× SWR problem.
     </div>
 
     <div class="rg" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-bottom:14px">
@@ -2241,7 +2241,7 @@
 
     <div style="font-size:0.72rem;color:var(--muted);margin-top:12px;line-height:1.6">
       <strong style="color:var(--text)">📋 How this is modelled.</strong>
-      Principal &amp; interest only — property tax and insurance continue after payoff, so leave them in your regular spending. The payment is treated as a flat nominal stream (never inflated), which is why a 30-year mortgage feels cheaper every year in real terms. Payments landing after your retirement date are discounted to a present value at your nominal return and added to the Net FIRE number as a lump sum, rather than multiplied by 25 — you only owe them for a finite number of years.
+      Principal &amp; interest only: property tax and insurance continue after payoff, so leave them in your regular spending. The payment is treated as a flat nominal stream (never inflated), which is why a 30-year mortgage feels cheaper every year in real terms. Payments landing after your retirement date are discounted to a present value at your nominal return and added to the Net FIRE number as a lump sum, rather than multiplied by 25, you only owe them for a finite number of years.
     </div>
   </div>
 
@@ -2293,7 +2293,7 @@
 
     <div style="font-size:0.72rem;color:var(--muted);margin-top:12px;line-height:1.6">
       <strong style="color:var(--text)">📋 About these estimates.</strong>
-      Lifespan baselines: CDC US life-expectancy tables (~76 male / ~81 female at 30). BMI adjustments: Prospective Studies Collaboration (Lancet 2009). Cardio activity: Lee et al (PLOS Med 2012) and Copenhagen City Heart Study. <strong>Strength training adjustments</strong>: Saeidifard et al (2019, Mayo Clinic Proc) — resistance training 2+ days/wk = ~23% lower mortality; Stamatakis et al (2018, AJE) — strength + cardio combined = 41% lower mortality; Srikanthan & Karlamangla (2014, AJM) — muscle mass independently predicts mortality; Leong et al (Lancet 2015) — grip strength outperforms BP as a mortality predictor. Healthspan-lifespan gap: <em>Outlive</em> (Attia, 2023). <strong>Not medical advice.</strong> Genetics, smoking, sleep, social ties, and luck dominate at the individual level — use these as a thinking tool, not a prescription. Read the full piece: <a href="blog/healthspan-coastfire.html" style="color:var(--accent2)">Why Healthspan Is the Hidden Variable in Your CoastFIRE Plan →</a>
+      Lifespan baselines: CDC US life-expectancy tables (~76 male / ~81 female at 30). BMI adjustments: Prospective Studies Collaboration (Lancet 2009). Cardio activity: Lee et al (PLOS Med 2012) and Copenhagen City Heart Study. <strong>Strength training adjustments</strong>: Saeidifard et al (2019, Mayo Clinic Proc), resistance training 2+ days/wk = ~23% lower mortality; Stamatakis et al (2018, AJE), strength + cardio combined = 41% lower mortality; Srikanthan & Karlamangla (2014, AJM), muscle mass independently predicts mortality; Leong et al (Lancet 2015), grip strength outperforms BP as a mortality predictor. Healthspan-lifespan gap: <em>Outlive</em> (Attia, 2023). <strong>Not medical advice.</strong> Genetics, smoking, sleep, social ties, and luck dominate at the individual level, use these as a thinking tool, not a prescription. Read the full piece: <a href="blog/healthspan-coastfire.html" style="color:var(--accent2)">Why Healthspan Is the Hidden Variable in Your CoastFIRE Plan →</a>
     </div>
   </div>
 
@@ -2304,7 +2304,7 @@
   <div class="cw" id="retire-growth-section" style="display:none">
     <div class="ct">🚀 401(k) / IRA Growth Through 80 <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Untouched compounding</span></div>
     <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px">
-      Trad + Roth combined. Grows untouched after retirement (no withdrawals modeled) — shows what's waiting at 59½, RMDs at 73, and beyond.
+      Trad + Roth combined. Grows untouched after retirement (no withdrawals modeled), shows what's waiting at 59½, RMDs at 73, and beyond.
     </div>
     <canvas id="retire-chart" height="220"></canvas>
     <div id="retire-chart-legend" style="display:none;margin-top:10px;font-size:0.78rem;color:var(--muted);text-align:center">
@@ -2404,8 +2404,8 @@
     </div>
     <div style="font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:8px">Brokerage Account Only <span style="font-weight:400;text-transform:none;letter-spacing:0">(taxable)</span></div>
     <div class="rg" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:14px">
-      <div class="rb"><div class="lbl">Brokerage — Coast</div><div class="val y" id="ki-br-coast">—</div><div class="sub">After LTCG, stop at coast</div></div>
-      <div class="rb"><div class="lbl">Brokerage — Keep</div><div class="val" style="color:#d4a96c" id="ki-br-keep">—</div><div class="sub">After LTCG, keep adding</div></div>
+      <div class="rb"><div class="lbl">Brokerage: Coast</div><div class="val y" id="ki-br-coast">—</div><div class="sub">After LTCG, stop at coast</div></div>
+      <div class="rb"><div class="lbl">Brokerage: Keep</div><div class="val" style="color:#d4a96c" id="ki-br-keep">—</div><div class="sub">After LTCG, keep adding</div></div>
       <div class="rb"><div class="lbl">Brokerage Extra</div><div class="val g" id="ki-br-extra">—</div><div class="sub">From continued contributions</div></div>
     </div>
     <div class="info-box" id="ki-summary" style="margin-top:0;font-size:0.82rem;line-height:1.6"></div>
@@ -2418,7 +2418,7 @@
   <div class="cw" id="stress">
     <div class="ct">🎲 Monte Carlo Stress Test</div>
     <div class="info-box" style="font-size:0.82rem;line-height:1.5;margin-bottom:14px">
-      1,000 simulated futures (15% market volatility) from CoastFIRE to retirement — under two strategies: <strong>coast</strong> (stop contributing) or <strong>keep investing</strong>.
+      1,000 simulated futures (15% market volatility) from CoastFIRE to retirement, under two strategies: <strong>coast</strong> (stop contributing) or <strong>keep investing</strong>.
     </div>
     <button class="mc-run-btn" id="mc-run" onclick="runMonteCarlo()">▶ Run 1,000 Simulations</button>
 
@@ -2479,7 +2479,7 @@
   <div class="cw" id="ai-card" style="margin-bottom:20px;display:none">
     <div class="ct">🤖 Ask About Your Numbers</div>
     <div style="font-size:0.82rem;color:var(--muted);line-height:1.5;margin-bottom:12px">
-      Ask anything about your plan and get an answer right here — your current inputs are sent with the question, so the reply uses your actual figures. Nothing is stored; see <a href="privacy.html" style="color:var(--accent2)">privacy</a>.
+      Ask anything about your plan and get an answer right here, your current inputs are sent with the question, so the reply uses your actual figures. Nothing is stored; see <a href="privacy.html" style="color:var(--accent2)">privacy</a>.
     </div>
 
     <div class="chat-log" id="chat-log">
@@ -2506,22 +2506,22 @@
         <a href="#" id="ai-claude"  class="aff-cta g" target="_blank" rel="noopener" style="flex:1;min-width:140px;text-align:center">Ask Claude →</a>
         <a href="#" id="ai-copy"    class="aff-cta y" style="flex:1;min-width:140px;text-align:center">📋 Copy prompt</a>
       </div>
-      <div id="ai-copy-status" style="display:none;font-size:0.8rem;color:var(--green);margin-bottom:8px">✓ Copied — paste it into Gemini, Perplexity, or any other AI tool.</div>
+      <div id="ai-copy-status" style="display:none;font-size:0.8rem;color:var(--green);margin-bottom:8px">✓ Copied: paste it into Gemini, Perplexity, or any other AI tool.</div>
       <pre id="ai-prompt-preview" style="white-space:pre-wrap;word-wrap:break-word;background:var(--surface2);padding:12px;border-radius:6px;margin-top:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.76rem;line-height:1.5;border:1px solid var(--border);color:var(--text);max-height:300px;overflow:auto"></pre>
     </details>
 
     <div style="font-size:0.72rem;color:var(--muted);margin-top:12px">
-      Answers are generated by Claude from the numbers on this page. Not financial advice — verify anything material with a fee-only fiduciary. Your inputs are sent to the model to answer the question and are not stored.
+      Answers are generated by Claude from the numbers on this page. Not financial advice, verify anything material with a fee-only fiduciary. Your inputs are sent to the model to answer the question and are not stored.
     </div>
   </div>
 
   <!-- ══════════════════════════════════════════════
-       CONTEXTUAL RECOMMENDATIONS (live — based on inputs)
+       CONTEXTUAL RECOMMENDATIONS (live, based on inputs)
   ══════════════════════════════════════════════ -->
   <div class="cw" id="ctx-card" style="margin-bottom:20px;display:none">
     <div class="ct">✨ Recommended for You</div>
     <div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px">
-      Picked based on the inputs above. <em>Disclosure: affiliate links — no extra cost to you.</em>
+      Picked based on the inputs above. <em>Disclosure: affiliate links, no extra cost to you.</em>
     </div>
     <div class="aff-grid" id="ctx-grid"></div>
   </div>
@@ -2534,7 +2534,7 @@
   <div class="cw" style="margin-bottom:0">
     <div class="ct">💰 Tools to Execute the Plan</div>
     <div class="aff-disclosure" style="font-size:0.74rem">
-      <em>Affiliate links — we may earn a commission. No extra cost to you. We only list tools we'd use ourselves.</em>
+      <em>Affiliate links: we may earn a commission. No extra cost to you. We only list tools we'd use ourselves.</em>
     </div>
     <div class="aff-grid">
 
@@ -2562,7 +2562,7 @@
           </div>
         </div>
         <div class="aff-desc">
-          Auto-invest into your "Pie" portfolio on a schedule. Perfect for brokerage contributions — set it once and coast.
+          Auto-invest into your "Pie" portfolio on a schedule. Perfect for brokerage contributions, set it once and coast.
         </div>
         <!-- Replace with your M1 Finance affiliate URL -->
         <a href="https://m1.com/" class="aff-cta y" target="_blank" rel="noopener sponsored">Start Investing with M1 →</a>
@@ -2577,7 +2577,7 @@
           </div>
         </div>
         <div class="aff-desc">
-          Commission-free brokerage with a Roth/Traditional IRA that offers a <strong>1–3% contribution match</strong> (Gold) — rare free money on retirement contributions. Great for your Roth bucket and VTI-style core holdings.
+          Commission-free brokerage with a Roth/Traditional IRA that offers a <strong>1–3% contribution match</strong> (Gold), rare free money on retirement contributions. Great for your Roth bucket and VTI-style core holdings.
         </div>
         <!-- TODO: Replace with your Robinhood affiliate URL from Impact once approved -->
         <a href="https://robinhood.com/" class="aff-cta" target="_blank" rel="noopener sponsored">Open Robinhood Account →</a>
@@ -2621,7 +2621,7 @@
           </div>
         </div>
         <div class="aff-desc">
-          The best free tool for tracking your entire financial picture in one place — perfect complement to this calculator. Links all your accounts (401k, IRA, brokerage, cash) and shows your real net worth.
+          The best free tool for tracking your entire financial picture in one place, perfect complement to this calculator. Links all your accounts (401k, IRA, brokerage, cash) and shows your real net worth.
         </div>
         <!-- TODO: Replace with your Empower/Impact affiliate URL -->
         <a href="https://www.empower.com/" class="aff-cta g" target="_blank" rel="noopener sponsored">Get Empower Free →</a>
@@ -2636,7 +2636,7 @@
           </div>
         </div>
         <div class="aff-desc">
-          All-in-one budgeting and net-worth tracker — think Mint's replacement but built for people who actually care about their numbers. Great for couples sharing finances.
+          All-in-one budgeting and net-worth tracker, think Mint's replacement but built for people who actually care about their numbers. Great for couples sharing finances.
         </div>
         <!-- TODO: Replace with your Monarch affiliate URL after approval via PartnerStack -->
         <a href="https://www.monarchmoney.com/" class="aff-cta" target="_blank" rel="noopener sponsored">Try Monarch →</a>
@@ -2651,7 +2651,7 @@
           </div>
         </div>
         <div class="aff-desc">
-          The budgeting app FIRE folks swear by. Built around giving every dollar a job — the fastest way to find extra savings room without feeling squeezed. No card required for the trial.
+          The budgeting app FIRE folks swear by. Built around giving every dollar a job, the fastest way to find extra savings room without feeling squeezed. No card required for the trial.
         </div>
         <!-- TODO: Replace with your YNAB affiliate URL after approval at https://www.ynab.com/affiliates -->
         <a href="https://www.ynab.com/" class="aff-cta g" target="_blank" rel="noopener sponsored">Try YNAB Free →</a>
@@ -2666,7 +2666,7 @@
           </div>
         </div>
         <div class="aff-desc">
-          Commission-free brokerage with automated Roth IRAs, active investing, and cash management. Clean mobile app and no minimums — good for investors getting started on their CoastFIRE path.
+          Commission-free brokerage with automated Roth IRAs, active investing, and cash management. Clean mobile app and no minimums, good for investors getting started on their CoastFIRE path.
         </div>
         <!-- TODO: Replace with your SoFi/Impact affiliate URL -->
         <a href="https://www.sofi.com/invest/" class="aff-cta" target="_blank" rel="noopener sponsored">Open SoFi Invest →</a>
@@ -2695,7 +2695,7 @@
           </div>
         </div>
         <div class="aff-desc">
-          The canonical book on <strong>healthspan vs lifespan</strong>. Explains why the last decade of life is mostly decline — and how strength training, Zone 2 cardio, and metabolic health compress that gap. The medical companion to CoastFIRE: money buys time, this book teaches you how to keep the time worth living.
+          The canonical book on <strong>healthspan vs lifespan</strong>. Explains why the last decade of life is mostly decline, and how strength training, Zone 2 cardio, and metabolic health compress that gap. The medical companion to CoastFIRE: money buys time, this book teaches you how to keep the time worth living.
         </div>
         <a href="https://www.amazon.com/dp/0593236599?tag=angelnguyen0e-20" class="aff-cta" target="_blank" rel="noopener sponsored">Read on Amazon →</a>
       </div>
@@ -2723,7 +2723,7 @@
   <div class="cw" style="margin-top:20px;margin-bottom:0">
     <div class="ct">✉️ Contact &amp; Consultation</div>
     <div style="font-size:0.88rem;line-height:1.6;margin-bottom:12px">
-      I'm a <strong>consultant for this calculator</strong> — not a licensed financial advisor. Reach out for:
+      I'm a <strong>consultant for this calculator</strong>, not a licensed financial advisor. Reach out for:
       <ul style="margin:6px 0 8px;padding-left:22px;color:var(--text)">
         <li>How to use the tool / what each input means</li>
         <li>Walkthroughs of your results (math only, not advice)</li>
@@ -2827,7 +2827,7 @@
   <div class="cw" style="margin-top:20px;margin-bottom:0">
     <div class="ct">💙 Support the Site</div>
     <div style="font-size:0.88rem;line-height:1.6;margin-bottom:12px">
-      Free forever — no logins, ads, or tracking. Tips help cover hosting. Even $3 is appreciated.
+      Free forever: no logins, ads, or tracking. Tips help cover hosting. Even $3 is appreciated.
     </div>
     <a href="https://venmo.com/Mivang" class="aff-cta" target="_blank" rel="noopener" style="display:inline-block;max-width:320px;background:linear-gradient(135deg,#3D95CE,#008CFF)">💙 Tip via Venmo (@Mivang) →</a>
   </div>
@@ -3237,14 +3237,14 @@ function runCalc() {
 
   // HSA routing: 'trad' = treat as Traditional (taxed at retirement rate),
   // 'roth' = treat as Roth (tax-free, receipts strategy). Single household
-  // HSA bucket — combine both spouses' HSAs into hsaBal/hsaCont in the UI.
+  // HSA bucket: combine both spouses' HSAs into hsaBal/hsaCont in the UI.
   const hsaToTrad = hsaStrategy !== 'roth';
   const hsaTradBal  = hsaToTrad ? (hsaBal  || 0) : 0;
   const hsaTradCont = hsaToTrad ? (hsaCont || 0) : 0;
   const hsaRothBal  = hsaToTrad ? 0 : (hsaBal  || 0);
   const hsaRothCont = hsaToTrad ? 0 : (hsaCont || 0);
 
-  // Aggregated aliases — rest of runCalc uses these unchanged
+  // Aggregated aliases: rest of runCalc uses these unchanged
   const taBal   = ta401kBal + taIraBal + hsaTradBal;
   const taCont   = ta401kCont + taIraCont + hsaTradCont;
   const rothBal  = roth401kBal + rothIraBal + hsaRothBal;
@@ -3283,7 +3283,7 @@ function runCalc() {
   const mortPayoffAge = isFinite(mortYears) ? cage + mortYears : Infinity;
   const mortTotalInterest = isFinite(mortMonths) ? (mortTotalPmt * mortMonths - mortBalance) : Infinity;
 
-  // Same loan with no extra payment — used for the "extra payment is worth it?" comparison.
+  // Same loan with no extra payment, used for the "extra payment is worth it?" comparison.
   let mortBaseMonths = Infinity;
   if (mortOn && mortPayment > 0) {
     if (mortMoRate <= 0) mortBaseMonths = mortBalance / mortPayment;
@@ -3404,7 +3404,7 @@ function runCalc() {
 
   // Non-taxable income streams (after-tax annuity / tax-exempt pension / muni
   // bond coupons / etc.) are delivered as net cash, so they reduce the net
-  // spending need directly — dollar-for-dollar — before gross-up. Remaining
+  // spending need directly, dollar-for-dollar, before gross-up. Remaining
   // taxable need is grossed up for blended income tax.
   const taxableNeedNet   = Math.max(nomSpend - totalNonTaxable, 0);
   const taxableNeedGross = taxableNeedNet * taxGrossUp;
@@ -3414,7 +3414,7 @@ function runCalc() {
   // Taxable pension + SS are pre-tax offsets against the gross spend requirement.
   // Whatever remains must come (pre-tax) from the portfolio.
   // SWR covers perpetual inflation-adjusted spending. The mortgage is a
-  // finite nominal obligation, so it isn't a 25x problem — it's a lump sum
+  // finite nominal obligation, so it isn't a 25x problem, it's a lump sum
   // equal to the present value of the payments still due after retirement.
   const netFIREBase = Math.max((grossSpend - totalNomOffset) / swr, 0);
   const netFIRE     = netFIREBase + mortPvAtRetire;
@@ -3514,7 +3514,7 @@ function runCalc() {
   //  Extends the summary lines (Total, Coast, Keep-Invest, targets)
   //  past retirement with a simple drawdown model so the Portfolio
   //  Projection chart reaches age 80. Per-bucket (Trad/Roth/Brokerage)
-  //  filled areas stop at rage — drawdown order/mechanics don't
+  //  filled areas stop at rage: drawdown order/mechanics don't
   //  translate cleanly to stacked buckets without extra assumptions.
   // ──────────────────────────────────────────────────────
   const HORIZON_AGE = 80;
@@ -3545,7 +3545,7 @@ function runCalc() {
     const taxableNeedNet_y   = Math.max(spend_y - nonTaxOffsets_y, 0);
     const taxableNeedGross_y = taxableNeedNet_y * taxGrossUp;
     // Mortgage: a flat nominal payment that stops dead at payoff. Not inflated,
-    // and not grossed up — principal is already after-tax money leaving the door.
+    // and not grossed up: principal is already after-tax money leaving the door.
     const mort_y = (mortOn && age < mortPayoffAge) ? mortAnnual : 0;
     return Math.max(taxableNeedGross_y - taxOffsets_y, 0) + mort_y;
   };
@@ -3560,7 +3560,7 @@ function runCalc() {
       brVals.push(null);
       effBrVals.push(null);
       phases.push('retired');
-      // CoastFIRE Target is an accumulation-phase concept — stop drawing it past rage.
+      // CoastFIRE Target is an accumulation-phase concept, stop drawing it past rage.
       coastTargets.push(null);
     }
 
@@ -3585,7 +3585,7 @@ function runCalc() {
       for (let y = yrs + 1; y <= horizonYears; y++) coastPath.push(null);
     }
 
-    // Keep-investing path drawdown — optionally keep contributing past retirement
+    // Keep-investing path drawdown: optionally keep contributing past retirement
     // up to `stopInvestAge` (e.g. part-time work, rental income, pension surplus).
     // Post-retirement contributions use EXPLICIT values (postRetRetCont, postRetBrCont)
     // so users can model reduced part-time saving distinct from their pre-retirement rate.
@@ -3659,14 +3659,14 @@ function toDisp(nomVal, yr) {
 function recalc() {
   try {
     const r = _recalcImpl();
-    // Keep the compare panel's live column in sync (guarded — compare may not
+    // Keep the compare panel's live column in sync (guarded: compare may not
     // be initialised yet on the very first paint).
     try { if (typeof renderCompare === 'function') renderCompare(); } catch (e) {}
     return r;
   }
   catch (err) {
     console.error('[recalc] failed:', err);
-    // Recover gracefully — at least update the banner so the user knows
+    // Recover gracefully: at least update the banner so the user knows
     // something happened, instead of being stuck on "Calculating…"
     const bTxt = document.getElementById('b-text');
     const bIco = document.getElementById('b-ico');
@@ -3753,7 +3753,7 @@ function _recalcImpl() {
       prevLines.push(`Combined SS: <strong>${fmt(ssPrimary + ssSpouse)}/mo today</strong> · <strong>${fmt(dRet(nomCombined))}/yr</strong> at retirement (nominal)`);
     }
     if (nomSS === 0) {
-      prevLines.push(`<span style="color:var(--red)">⚠️ SS claim age is after your retirement age — benefit not counted.</span>`);
+      prevLines.push(`<span style="color:var(--red)">⚠️ SS claim age is after your retirement age, benefit not counted.</span>`);
     } else {
       prevLines.push(`Reduces FIRE target by: <strong>${fmt(dRet(nomSS / swr))}</strong>`);
     }
@@ -3876,13 +3876,13 @@ function _recalcImpl() {
     const gap         = balDisp - netFireDisp;
     if (netFIRE <= 0) {
       fireIconEl.textContent = '📊';
-      fireMsgEl.innerHTML = `Portfolio target is $0 (pension/SS fully cover spending) — your balance at retirement is a <strong>pure surplus</strong>.`;
+      fireMsgEl.innerHTML = `Portfolio target is $0 (pension/SS fully cover spending), your balance at retirement is a <strong>pure surplus</strong>.`;
       fireBoxEl.style.background = 'rgba(95,150,119,0.08)';
       fireBoxEl.style.borderColor = 'rgba(95,150,119,0.3)';
     } else if (gap >= 0) {
       const over = (gap / netFireDisp) * 100;
       fireIconEl.textContent = '✅';
-      fireMsgEl.innerHTML = `You're <strong style="color:var(--green)">on track</strong> — balance at retirement (${fmt(balDisp)}) is <strong>${fmt(gap)}</strong> above your Net FIRE # of ${fmt(netFireDisp)} (+${over.toFixed(0)}% cushion).`;
+      fireMsgEl.innerHTML = `You're <strong style="color:var(--green)">on track</strong>, balance at retirement (${fmt(balDisp)}) is <strong>${fmt(gap)}</strong> above your Net FIRE # of ${fmt(netFireDisp)} (+${over.toFixed(0)}% cushion).`;
       fireBoxEl.style.background = 'rgba(95,150,119,0.08)';
       fireBoxEl.style.borderColor = 'rgba(95,150,119,0.3)';
     } else {
@@ -3923,7 +3923,7 @@ function _recalcImpl() {
     // Tax applies only to taxable sources (portfolio + taxable offsets).
     const totalTaxBill       = grossTotal - nomSpend;
 
-    // Display-mode conversion — these values are at year `yrs` (retirement).
+    // Display-mode conversion, these values are at year `yrs` (retirement).
     const dRetAmt = v => toDisp(v, yrs);
     set('ib-gross', fmt(dRetAmt(grossTotal))       + '/yr');
     set('ib-net',   fmt(dRetAmt(nomSpend))         + '/yr');
@@ -3957,16 +3957,16 @@ function _recalcImpl() {
       statusSub   = 'No portfolio withdrawal needed';
     } else if (wrActual <= wrTarget) {
       statusLabel = '✅ Under SWR'; statusColor = 'var(--green)';
-      statusSub   = `${(Math.abs(wrDiff)*100).toFixed(2)}% below target — sustainable`;
+      statusSub   = `${(Math.abs(wrDiff)*100).toFixed(2)}% below target, sustainable`;
     } else if (wrActual <= wrTarget + 0.005) {
       statusLabel = '⚠️ At SWR'; statusColor = 'var(--yellow)';
-      statusSub   = `Right at target — borderline`;
+      statusSub   = `Right at target: borderline`;
     } else if (wrActual <= wrTarget + 0.015) {
       statusLabel = '⚠️ Over SWR'; statusColor = 'var(--yellow)';
-      statusSub   = `+${(wrDiff*100).toFixed(2)}% above target — risky`;
+      statusSub   = `+${(wrDiff*100).toFixed(2)}% above target, risky`;
     } else {
       statusLabel = '🚨 Way over SWR'; statusColor = 'var(--red)';
-      statusSub   = `+${(wrDiff*100).toFixed(2)}% above target — likely depletes early`;
+      statusSub   = `+${(wrDiff*100).toFixed(2)}% above target, likely depletes early`;
     }
 
     set('ib-wr-actual',     grossFromPortfolio > 0 ? wrActualPct : '—');
@@ -3994,7 +3994,7 @@ function _recalcImpl() {
       }
       bucketsEl.innerHTML = buckets.join('') || '<span style="color:var(--muted)">No portfolio buckets at retirement</span>';
     } else {
-      bucketsEl.innerHTML = '<span style="color:var(--muted)">No portfolio withdrawal — pension/SS/Other Income covers everything.</span>';
+      bucketsEl.innerHTML = '<span style="color:var(--muted)">No portfolio withdrawal: pension/SS/Other Income covers everything.</span>';
     }
     } catch (err) { console.error('Withdrawal Analysis error:', err); }
 
@@ -4205,12 +4205,12 @@ function _recalcImpl() {
       const stableIdx = stableAge - cage;
 
       const names = deferred.map(d => `${d.name} at ${d.age}`).join(', ');
-      footer  = `⏳ <strong>${names}</strong> kick${deferred.length === 1 ? 's' : ''} in after retirement — until then, your portfolio shoulders the full spending gap. `;
+      footer  = `⏳ <strong>${names}</strong> kick${deferred.length === 1 ? 's' : ''} in after retirement, until then, your portfolio shoulders the full spending gap. `;
       footer += `Once all sources are active at <strong>age ${stableAge}</strong>, your total pre-tax income is roughly <strong>${fmt(toDisp(grossTotalStable, stableIdx))}/yr</strong> `;
       footer += `(portfolio: ${fmt(toDisp(grossFromPortStable, stableIdx))}, pension/SS: ${fmt(toDisp(offsetsStable, stableIdx))}). `;
       const reduction = grossFromPortfolio - grossFromPortStable;
       if (reduction > 0) {
-        footer += `That reduces the portfolio draw by <strong>${fmt(toDisp(reduction, stableIdx))}/yr</strong> — big SWR relief in the later years.`;
+        footer += `That reduces the portfolio draw by <strong>${fmt(toDisp(reduction, stableIdx))}/yr</strong>, big SWR relief in the later years.`;
       }
     } else if (offsetsAtRage > 0) {
       const offsetPct = pctOf(offsetsAtRage);
@@ -4219,7 +4219,7 @@ function _recalcImpl() {
       if (ss1AtRage > 0 || ss2AtRage > 0) sources.push('Social Security');
       if (oiAtRage > 0) sources.push('Other Income');
       const sourcesLabel = sources.join(' + ');
-      footer = `✅ All income sources are active at retirement. ${sourcesLabel} provides <strong>${offsetPct.toFixed(0)}%</strong> of your retirement income — your portfolio only has to generate the remaining <strong>${fmt(dRetAmt(grossFromPortfolio))}/yr</strong> pre-tax. `;
+      footer = `✅ All income sources are active at retirement. ${sourcesLabel} provides <strong>${offsetPct.toFixed(0)}%</strong> of your retirement income, your portfolio only has to generate the remaining <strong>${fmt(dRetAmt(grossFromPortfolio))}/yr</strong> pre-tax. `;
       if (totalTaxBill > 0) {
         footer += `After an estimated ${fmt(dRetAmt(totalTaxBill))}/yr in taxes on the full income, you're left with ${fmt(dRetAmt(nomSpend))} to spend.`;
       }
@@ -4231,7 +4231,7 @@ function _recalcImpl() {
   }
 
   // ──────────────────────────────────────────────────────
-  //  INCOME AT ANY AGE — what would my income be if I
+  //  INCOME AT ANY AGE: what would my income be if I
   //  stopped working at age X? Pre-59½, only Brokerage
   //  AND Roth IRA basis (contributions) are penalty-free.
   //  Roth IRA basis tracked via inline projection here.
@@ -4250,17 +4250,17 @@ function _recalcImpl() {
     set('iaa-age-lbl', String(iaaAge));
 
     // ─── Per-bucket balances at the chosen age ───────────
-    // The IAA card asks "what if I stopped working at age X?" — meaning
+    // The IAA card asks "what if I stopped working at age X?", meaning
     // the portfolio compounded UNTOUCHED past retirement (no drawdown).
     // Don't use effTotals past rage (it includes drawdown for spending).
     let taAtY = 0, roAtY = 0, brAtY = 0, totalAtAge = 0;
     if (iaaY <= yrs && taVals[iaaY] != null) {
-      // Inside accumulation window — per-bucket data is direct
+      // Inside accumulation window: per-bucket data is direct
       taAtY = taVals[iaaY] || 0;
       roAtY = rothVals[iaaY] || 0;
       brAtY = effBrVals[iaaY] || 0;
     } else {
-      // Past rage — grow each bucket UNTOUCHED at nominal return
+      // Past rage: grow each bucket UNTOUCHED at nominal return
       // (brokerage grows at nom - divDrag for the annual dividend tax drag)
       const yrsBeyondRage = iaaY - yrs;
       const grow   = Math.pow(1 + nom, yrsBeyondRage);
@@ -4385,7 +4385,7 @@ function _recalcImpl() {
     if (iaaY < yrs) {
       ftrParts.push(`At <strong>${iaaAge}</strong>, you'd be retiring <strong>${yrs - iaaY} year${yrs - iaaY === 1 ? '' : 's'} early</strong>.`);
     } else if (iaaY === yrs) {
-      ftrParts.push(`This matches your retirement age — same numbers as the main retirement income card.`);
+      ftrParts.push(`This matches your retirement age: same numbers as the main retirement income card.`);
     } else {
       ftrParts.push(`At <strong>${iaaAge}</strong>, you'd be retiring <strong>${iaaY - yrs} year${iaaY - yrs === 1 ? '' : 's'} after</strong> your target retirement age.`);
     }
@@ -4446,16 +4446,16 @@ function _recalcImpl() {
         let mgMsg;
         if (mortPayoffAge <= rage) {
           const slack = rage - mortPayoffAge;
-          mgMsg = `✅ <strong>Mortgage clears at age ${mortPayoffAge.toFixed(1)}</strong> — ${slack.toFixed(1)} year${slack === 1 ? '' : 's'} before you retire at ${rage}. It adds nothing to your FIRE number. ` +
+          mgMsg = `✅ <strong>Mortgage clears at age ${mortPayoffAge.toFixed(1)}</strong>, ${slack.toFixed(1)} year${slack === 1 ? '' : 's'} before you retire at ${rage}. It adds nothing to your FIRE number. ` +
             `From ${mortPayoffAge.toFixed(0)} onward that ${fmt(mortAnnual)}/yr is free cash flow: redirect it to investments and your CoastFIRE date moves earlier.`;
         } else {
           mgMsg = `⚠️ <strong>You'll still owe ${yearsInRetire.toFixed(1)} years of payments in retirement</strong> (${fmt(mortAnnual)}/yr until age ${mortPayoffAge.toFixed(1)}). ` +
-            `That's ${fmt(mortPvAtRetire)} of extra capital your portfolio has to carry on day one — it's why your Net FIRE number is ${fmt(netFIREBase)} + ${fmt(mortPvAtRetire)} = <strong>${fmt(netFIRE)}</strong>. ` +
+            `That's ${fmt(mortPvAtRetire)} of extra capital your portfolio has to carry on day one, it's why your Net FIRE number is ${fmt(netFIREBase)} + ${fmt(mortPvAtRetire)} = <strong>${fmt(netFIRE)}</strong>. ` +
             `<br><br>Two ways to kill it: pay extra now, or push retirement to ${Math.ceil(mortPayoffAge)} so the loan is gone the day you stop working.`;
         }
         document.getElementById('mg-summary').innerHTML = mgMsg;
 
-        // Extra-payment comparison — only meaningful when they're actually paying extra
+        // Extra-payment comparison: only meaningful when they're actually paying extra
         const extraBox = document.getElementById('mg-extra-box');
         if (mortExtra > 0 && isFinite(mortInterestSaved)) {
           extraBox.style.display = '';
@@ -4480,8 +4480,8 @@ function _recalcImpl() {
             </tr>`;
           const moSaved = mortMonthsSaved;
           document.getElementById('mg-extra-verdict').innerHTML = payoffBetter
-            ? `<strong style="color:var(--green)">Paying extra wins by ${fmt(mortInterestSaved - investGain)}</strong> — your ${pct(mortRate)} mortgage rate beats the ${pct(nom)} you'd expect from the market, and it's guaranteed. The extra ${fmt(mortExtra)}/mo also pulls payoff in by <strong>${(moSaved / 12).toFixed(1)} years</strong>.`
-            : `<strong style="color:var(--accent2)">Investing wins by ${fmt(investGain - mortInterestSaved)}</strong> on expected value — but that's a forecast, not a guarantee, while the ${pct(mortRate)} saved is certain. The extra ${fmt(mortExtra)}/mo still pulls payoff in by <strong>${(moSaved / 12).toFixed(1)} years</strong>, which has real value if being debt-free early matters to you.`;
+            ? `<strong style="color:var(--green)">Paying extra wins by ${fmt(mortInterestSaved - investGain)}</strong>, your ${pct(mortRate)} mortgage rate beats the ${pct(nom)} you'd expect from the market, and it's guaranteed. The extra ${fmt(mortExtra)}/mo also pulls payoff in by <strong>${(moSaved / 12).toFixed(1)} years</strong>.`
+            : `<strong style="color:var(--accent2)">Investing wins by ${fmt(investGain - mortInterestSaved)}</strong> on expected value, but that's a forecast, not a guarantee, while the ${pct(mortRate)} saved is certain. The extra ${fmt(mortExtra)}/mo still pulls payoff in by <strong>${(moSaved / 12).toFixed(1)} years</strong>, which has real value if being debt-free early matters to you.`;
         } else {
           extraBox.style.display = 'none';
         }
@@ -4499,7 +4499,7 @@ function _recalcImpl() {
   //  2012) for activity, Outlive (Attia 2023) for healthspan gap.
   // ──────────────────────────────────────────────────────
   try {
-    // Reusable healthspan/lifespan calculator — runs once for primary, once for spouse.
+    // Reusable healthspan/lifespan calculator, runs once for primary, once for spouse.
     function computeHealth({ heightIn, weightLb, activity, strength, bodyFat, sex }) {
       const bmi = heightIn > 0 ? (weightLb / (heightIn * heightIn)) * 703 : 0;
       let bmiCat;
@@ -4566,9 +4566,9 @@ function _recalcImpl() {
     set('bmi-val', bmi.toFixed(1));
     let bmiNote = bmiCat;
     if (bmi >= 25 && (strength === 'mid' || strength === 'high') && bodyFat === 0) {
-      bmiNote += ` — but BMI penalty reduced ${strength === 'high' ? '80%' : '60%'} for strength training (likely muscle, not fat)`;
+      bmiNote += `, but BMI penalty reduced ${strength === 'high' ? '80%' : '60%'} for strength training (likely muscle, not fat)`;
     } else if (bodyFat > 0) {
-      bmiNote += ` — body fat ${bodyFat}% used instead of BMI`;
+      bmiNote += `, body fat ${bodyFat}% used instead of BMI`;
     }
     set('bmi-cat', bmiNote);
 
@@ -4587,9 +4587,9 @@ function _recalcImpl() {
       const sStr = S.sStrength || 'none';
       const sBf  = +(S.sBodyFatPct || 0);
       if (spouse.bmi >= 25 && (sStr === 'mid' || sStr === 'high') && sBf === 0) {
-        sBmiNote += ` — penalty reduced ${sStr === 'high' ? '80%' : '60%'} (strength training)`;
+        sBmiNote += `, penalty reduced ${sStr === 'high' ? '80%' : '60%'} (strength training)`;
       } else if (sBf > 0) {
-        sBmiNote += ` — body fat ${sBf}% used`;
+        sBmiNote += `, body fat ${sBf}% used`;
       }
       set('s-bmi-cat', sBmiNote);
     }
@@ -4637,7 +4637,7 @@ function _recalcImpl() {
       ? jointHealthyRet + ' yrs (joint)'
       : healthyRet + ' yrs');
     set('ls-healthy-ret-sub', spouse
-      ? `Both healthy after retirement — the shared adventure window`
+      ? `Both healthy after retirement: the shared adventure window`
       : (healthyRet > 0
         ? `Between age ${rage} and ${healthspan}`
         : `Retirement age is past your projected healthspan`));
@@ -4653,7 +4653,7 @@ function _recalcImpl() {
     set('ls-key-healthy', healthyRet + ' yrs' + (spouse ? ` (you) · ${jointHealthyRet} joint` : ''));
     set('ls-key-decline', declineYrs + ' yrs');
 
-    // The cost-of-working-longer message — the killer line
+    // The cost-of-working-longer message, the killer line
     let costMsg;
     const totalHealthyMonths = healthyRet * 12;
     const hoursPerWorkYear = 2080;        // 40hr × 52wk
@@ -4670,12 +4670,12 @@ function _recalcImpl() {
     if (effHealthyRet <= 0) {
       costMsg = `🚨 <strong>Your retirement age (${rage}) is past ${spouse ? "the earlier of you and your spouse's" : 'your'} projected healthspan.</strong> Under this scenario, ${spouse ? "at least one of you" : 'you'} would reach retirement with little or no healthy time left. Consider retiring earlier, or invest in habits that extend healthspan: strength training, sleep, social ties, cardiovascular fitness.`;
     } else if (workingYrs <= 0) {
-      costMsg = `✅ You're already at or past your retirement age. Every year now is a gift — spend it deliberately.`;
+      costMsg = `✅ You're already at or past your retirement age. Every year now is a gift, spend it deliberately.`;
     } else {
       const spouseClause = spouse ? ` (the constraint is whichever of you reaches the end of healthspan first)` : '';
       costMsg = `💡 <strong>The trade you're making:</strong> at retirement age ${rage}, you'll have <strong>${effHealthyRet} ${windowLabel} years</strong> (${effHealthyMonths} months) left for travel, family, and adventure${spouseClause}. ` +
         `Each year you delay retirement past your current plan = <strong>${MONTHS_LOST_PER_DELAY_YEAR} months of healthy retirement lost</strong> (healthspan is a fixed age, so pushing retirement later just shortens the healthy window 1:1). ` +
-        `<br><br>Each working year is ~${hoursPerWorkYear} hours of W-2 obligation. Each healthy retirement year is ~${hoursPerHealthyRetYear} waking hours of choice — a <strong>${tradeRatio}× exchange rate</strong>. The math of CoastFIRE is really the math of buying back time.`;
+        `<br><br>Each working year is ~${hoursPerWorkYear} hours of W-2 obligation. Each healthy retirement year is ~${hoursPerHealthyRetYear} waking hours of choice, a <strong>${tradeRatio}× exchange rate</strong>. The math of CoastFIRE is really the math of buying back time.`;
     }
     document.getElementById('ls-cost').innerHTML = costMsg;
 
@@ -4706,7 +4706,7 @@ function _recalcImpl() {
       };
 
       // For each delay year `y` past the plan, we give up the retirement year
-      // at age (rage + y - 1) — the earliest healthy retirement year we'd
+      // at age (rage + y - 1): the earliest healthy retirement year we'd
       // otherwise have enjoyed. Each given-up year has its OWN value based on
       // when we'd have enjoyed it.
       const valueAtAge = (age) => wageRate * hoursPerHealthyRetYear * valueMultAt(age);
@@ -4767,7 +4767,7 @@ function _recalcImpl() {
         <div class="bbar-lbl" style="margin-bottom:6px">True ROI of Delaying Retirement <span style="text-transform:none;font-weight:400;opacity:0.8">· value escalates near end of healthspan</span></div>
         <div style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;line-height:1.5">
           <strong style="color:var(--text)">Income basis:</strong> ${incomeBreakdown}.<br>
-          Each delay year gives up the earliest healthy retirement year at the back end. Time value <strong>scales with proximity to end of healthspan</strong> — last years are exponentially more precious. Multipliers (against your $${wageRate.toFixed(0)}/hr post-tax wage):<br>${curveExamples}
+          Each delay year gives up the earliest healthy retirement year at the back end. Time value <strong>scales with proximity to end of healthspan</strong>, last years are exponentially more precious. Multipliers (against your $${wageRate.toFixed(0)}/hr post-tax wage):<br>${curveExamples}
         </div>
         <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
@@ -4785,7 +4785,7 @@ function _recalcImpl() {
         </table>
         </div>
         <div style="font-size:0.78rem;color:var(--muted);margin-top:10px;line-height:1.5">
-          <strong style="color:${netRoiPerYr < 0 ? 'var(--red)' : 'var(--green)'}">First-year ROI: ${netRoiPerYr < 0 ? '−' : '+'}${fmt(Math.abs(netRoiPerYr))} (${roiPct.toFixed(0)}%)</strong> — your <em>cheapest</em> delay year (gives up age ${rage}, an early healthy year). Each subsequent delay year gives up an older age, and the multiplier <em>accelerates</em> sharply: convex curve from 0.5× wage at your current age to <strong>5.0× wage at end of healthspan</strong>. Last year of healthspan is worth ~10× the first year of retirement — anchored to behavioral-economics research on terminal time-value (Kahneman, terminal-care WTP studies).
+          <strong style="color:${netRoiPerYr < 0 ? 'var(--red)' : 'var(--green)'}">First-year ROI: ${netRoiPerYr < 0 ? '−' : '+'}${fmt(Math.abs(netRoiPerYr))} (${roiPct.toFixed(0)}%)</strong>, your <em>cheapest</em> delay year (gives up age ${rage}, an early healthy year). Each subsequent delay year gives up an older age, and the multiplier <em>accelerates</em> sharply: convex curve from 0.5× wage at your current age to <strong>5.0× wage at end of healthspan</strong>. Last year of healthspan is worth ~10× the first year of retirement, anchored to behavioral-economics research on terminal time-value (Kahneman, terminal-care WTP studies).
         </div>
       `;
     } else if (roiEl) {
@@ -4946,7 +4946,7 @@ function _recalcImpl() {
     // Toggle legend visibility
     document.getElementById('retire-chart-legend').style.display = showKeep ? '' : 'none';
 
-    // Milestone grid — discount each value to the display mode's basis at that year index.
+    // Milestone grid: discount each value to the display mode's basis at that year index.
     // When keep-invest is showing, primary number stays base case; sub-line shows keep-invest value.
     const milestoneSet = (valId, altId, targetAge) => {
       const idx = targetAge - cage;
@@ -4987,16 +4987,16 @@ function _recalcImpl() {
     milestoneSet('rg-75', 'rg-75-alt', 75);
     milestoneSet('rg-80', 'rg-80-alt', 80);
 
-    // Footer — dollar figure at 80 plus growth multiple vs today
+    // Footer, dollar figure at 80 plus growth multiple vs today
     const v80  = rgVals[rgVals.length - 1];
     const vNow = rgVals[0];
     const mult = vNow > 0 ? (v80 / vNow) : null;
     const v80d = toDisp(v80, horizonYears);
     let rgFooter = `At <strong>80</strong>, your retirement accounts are projected to be worth <strong>${fmt(v80d)}</strong>`;
-    if (mult != null) rgFooter += ` — roughly <strong>${mult.toFixed(1)}×</strong> today's combined Trad + Roth balance`;
+    if (mult != null) rgFooter += `, roughly <strong>${mult.toFixed(1)}×</strong> today's combined Trad + Roth balance`;
     rgFooter += `. `;
     if (rage < END_AGE) {
-      rgFooter += `Post-retirement (after age ${rage}), this chart assumes you leave retirement accounts untouched and let them keep compounding at ${(nom * 100).toFixed(1)}% nominal. In reality you'll draw some down — but RMDs at 73 and longevity risk make it worth seeing the upper bound.`;
+      rgFooter += `Post-retirement (after age ${rage}), this chart assumes you leave retirement accounts untouched and let them keep compounding at ${(nom * 100).toFixed(1)}% nominal. In reality you'll draw some down, but RMDs at 73 and longevity risk make it worth seeing the upper bound.`;
     }
     if (showKeep && rgKeepVals.length) {
       const k80  = rgKeepVals[rgKeepVals.length - 1];
@@ -5040,9 +5040,9 @@ function _recalcImpl() {
       : `${rPct}% into retirement + ${bPct}% into brokerage`;
     let summary = `By coasting at age <strong>${coastAge}</strong> you'd have <strong>${fmt(dFinal(finalEffTotal))}</strong> at retirement. `;
     summary += `If you kept investing <strong>${fmt(keepTotalAdd)}/yr</strong> (${paceLabel}) for ${yrsInvesting} more year${yrsInvesting !== 1 ? 's' : ''}, `;
-    summary += `you'd arrive at <strong style="color:#a98fc9">${fmt(dFinal(keepFinalTotal))}</strong> — <strong>+${pctMore}% more</strong> (${fmt(dFinal(extra))} extra).`;
+    summary += `you'd arrive at <strong style="color:#a98fc9">${fmt(dFinal(keepFinalTotal))}</strong>, <strong>+${pctMore}% more</strong> (${fmt(dFinal(extra))} extra).`;
     if (extraYrs) summary += ` That's roughly <strong>${extraYrs} extra years</strong> of retirement spending.`;
-    summary += `<br><span style="color:var(--muted);font-size:0.72rem">⚠️ CoastFIRE means you <em>don't need</em> to keep working — the choice to invest more is purely optional upside.</span>`;
+    summary += `<br><span style="color:var(--muted);font-size:0.72rem">⚠️ CoastFIRE means you <em>don't need</em> to keep working: the choice to invest more is purely optional upside.</span>`;
     document.getElementById('ki-summary').innerHTML = summary;
   } else {
     kiSection.style.display = 'none';
@@ -5061,7 +5061,7 @@ function _recalcImpl() {
     const yL = coastAge - cage;
     hero.className = 'hero'; bIco.textContent = '🏄';
     heroHead.textContent = `CoastFIRE at age ${coastAge}`;
-    bTxt.textContent = `${yL} year${yL !== 1 ? 's' : ''} away — after that, contributions become optional.`;
+    bTxt.textContent = `${yL} year${yL !== 1 ? 's' : ''} away, after that, contributions become optional.`;
   } else {
     hero.className = 'hero warn'; bIco.textContent = '⚠️';
     heroHead.textContent = `CoastFIRE not reached by ${rage}`;
@@ -5083,23 +5083,23 @@ function _recalcImpl() {
   const hasRoth = rothBal > 0 || rothCont > 0;
   chart.data.labels   = ages;
   chart.data.datasets = [
-    // 1. Traditional (pre-tax) — COPPER (brand primary, filled area)
+    // 1. Traditional (pre-tax), COPPER (brand primary, filled area)
     { label: 'Traditional (Pre-Tax)',    data: cv(taVals),           borderColor: '#c9965c', backgroundColor: 'rgba(201,150,92,0.14)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
-    // 2. Roth IRA / Roth 401k — SALMON (warm, tax-free cousin of Traditional)
+    // 2. Roth IRA / Roth 401k, SALMON (warm, tax-free cousin of Traditional)
     ...(hasRoth ? [{ label: 'Roth (Tax-Free)',          data: cv(rothVals),         borderColor: '#e89b7b', backgroundColor: 'rgba(232,155,123,0.12)', borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 }] : []),
-    // 3. Brokerage — TEAL (cool, distinct from copper/gold family)
+    // 3. Brokerage, TEAL (cool, distinct from copper/gold family)
     { label: 'Brokerage (After-Tax)',   data: cv(effBrVals),        borderColor: '#4db6a8', backgroundColor: 'rgba(77,182,168,0.12)',  borderWidth: 2.5, fill: true,  tension: 0.3, pointRadius: 0, pointHoverRadius: 5 },
-    // 3. Total Portfolio — WHITE (neutral summary line)
+    // 3. Total Portfolio, WHITE (neutral summary line)
     { label: 'Total Portfolio',         data: cv(effTotals),        borderColor: 'rgba(232,236,241,0.85)', borderWidth: 2, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,2] },
-    // 4. Coast-Only Path — SAGE GREEN (the "good outcome" line)
+    // 4. Coast-Only Path, SAGE GREEN (the "good outcome" line)
     { label: 'Coast-Only Path',         data: cv(coastPath),        borderColor: '#5f9677', borderWidth: 2.2, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [8,4] },
-    // 5. Keep Investing — Total — PURPLE (cool, clearly separated from the warm family)
-    { label: 'Keep Investing — Total',  data: cv(keepInvestPath||[]),borderColor: '#a98fc9', borderWidth: 2.5, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [6,3] },
-    // 6. Keep Investing — Broker. — SKY BLUE (distinct sub-line under the purple total)
-    { label: 'Keep Investing — Broker.',data: cv(keepBrPath||[]),   borderColor: '#7ba8d4', borderWidth: 1.8, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,4] },
-    // 7. CoastFIRE Target — GOLD (the target line — "what you're aiming at")
+    // 5. Keep Investing, Total, PURPLE (cool, clearly separated from the warm family)
+    { label: 'Keep Investing: Total',  data: cv(keepInvestPath||[]),borderColor: '#a98fc9', borderWidth: 2.5, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [6,3] },
+    // 6. Keep Investing, Broker., SKY BLUE (distinct sub-line under the purple total)
+    { label: 'Keep Investing: Broker.',data: cv(keepBrPath||[]),   borderColor: '#7ba8d4', borderWidth: 1.8, fill: false, tension: 0.3, pointRadius: 0, pointHoverRadius: 5, borderDash: [3,4] },
+    // 7. CoastFIRE Target, GOLD (the target line, "what you're aiming at")
     { label: 'CoastFIRE Target',        data: cv(coastTargets),     borderColor: 'rgba(232,198,133,0.75)', borderWidth: 1.8, fill: false, tension: 0.3, pointRadius: 0, borderDash: [4,3] },
-    // 8. Net FIRE Number — PINK (distinct from red + neutral; horizontal reference)
+    // 8. Net FIRE Number, PINK (distinct from red + neutral; horizontal reference)
     { label: 'Net FIRE Number',         data: ages.map(() => Math.round(toDisp(netFIRE, yrs))), borderColor: 'rgba(212,107,138,0.8)', borderWidth: 1.8, fill: false, tension: 0, pointRadius: 0, borderDash: [3,3] },
   ];
   chart.update();
@@ -5140,7 +5140,7 @@ function _recalcImpl() {
   const todayBreakdown = [`${fmt(taBal)} Traditional`];
   if (rothBal > 0) todayBreakdown.push(`${fmt(rothBal)} Roth`);
   if (brBal > 0)   todayBreakdown.push(`${fmt(brBal)} brokerage`);
-  items.push({ ico: '📍', title: `Today — Age ${cage}`,
+  items.push({ ico: '📍', title: `Today: Age ${cage}`,
     detail: [
       `Portfolio: <strong>${fmt(effNow)}</strong> (${todayBreakdown.join(' + ')})`,
       totalIncome > 0 ? `Household income: <strong>${fmt(totalIncome)}/yr</strong> · Savings rate: <strong>${pct(savingsRate)}</strong>` : '',
@@ -5159,7 +5159,7 @@ function _recalcImpl() {
     const taxTag = penTaxable
       ? `<span class="tl-tag tag-y">Taxable</span>`
       : `<span class="tl-tag tag-g">Tax-Free</span>`;
-    items.push({ ico: '🎯', title: `Pension / Annuity — Starts Age ${pAge} <span class="tl-tag tag-y">${cola ? 'COLA' : 'Fixed'}</span> ${taxTag}`,
+    items.push({ ico: '🎯', title: `Pension / Annuity: Starts Age ${pAge} <span class="tl-tag tag-y">${cola ? 'COLA' : 'Fixed'}</span> ${taxTag}`,
       detail: [
         `Income: <strong>${fmt(pen)}/yr</strong> today's dollars${penTaxable ? '' : ' (net cash)'}`,
         cola ? `At retirement (nominal): <strong>${fmt(dRet(nomPension))}/yr</strong>` : `Fixed nominal: <strong>${fmt(pen)}/yr</strong> (loses purchasing power)`,
@@ -5176,7 +5176,7 @@ function _recalcImpl() {
     const oiTaxTag = oiTaxable
       ? `<span class="tl-tag tag-y">Taxable</span>`
       : `<span class="tl-tag tag-g">Tax-Free</span>`;
-    items.push({ ico: '💵', title: `Other Income — Starts Age ${oiAge} <span class="tl-tag tag-y">${oiCola ? 'COLA' : 'Fixed'}</span> ${oiTaxTag}`,
+    items.push({ ico: '💵', title: `Other Income: Starts Age ${oiAge} <span class="tl-tag tag-y">${oiCola ? 'COLA' : 'Fixed'}</span> ${oiTaxTag}`,
       detail: [
         `Income: <strong>${fmt(oi)}/yr</strong> today's dollars${oiTaxable ? '' : ' (net cash)'}`,
         oiCola ? `At retirement (nominal): <strong>${fmt(dRet(nomOtherIncome))}/yr</strong>` : `Fixed nominal: <strong>${fmt(oi)}/yr</strong> (loses purchasing power)`,
@@ -5205,7 +5205,7 @@ function _recalcImpl() {
     const ci   = coastAge - cage;
     const cTgt = toDisp(coastTargets[ci], ci);
     const cTot = toDisp(effTotals[ci],    ci);
-    items.push({ ico: '🏄', title: `CoastFIRE — Age ${coastAge} (${nowYear + ci}) <span class="tl-tag tag-g">Stop Contributing</span>`,
+    items.push({ ico: '🏄', title: `CoastFIRE: Age ${coastAge} (${nowYear + ci}) <span class="tl-tag tag-g">Stop Contributing</span>`,
       detail: [
         `Portfolio: <strong>${fmt(cTot)}</strong> vs target <strong>${fmt(cTgt)}</strong>`,
         `Compound growth alone carries you to retirement from here.`,
@@ -5217,7 +5217,7 @@ function _recalcImpl() {
       detail: `Portfolio of <strong>${fmt(effNow)}</strong> already exceeds CoastFIRE target of <strong>${fmt(coastToday)}</strong>.`
     });
   } else {
-    items.push({ ico: '⚠️', title: `CoastFIRE — Not Reached Before Retirement`,
+    items.push({ ico: '⚠️', title: `CoastFIRE, Not Reached Before Retirement`,
       detail: `Portfolio doesn't hit CoastFIRE target before age ${rage}. Increase contributions or adjust retirement timeline.`
     });
   }
@@ -5236,7 +5236,7 @@ function _recalcImpl() {
     if (hasOI)  offParts.push(`Other <strong>${fmt(dRet(nomOtherIncome))}/yr</strong>${oiTaxable ? '' : ' <span style="color:var(--green);font-weight:400">(tax-free)</span>'}`);
     retirementDetails.push(`Income offsets: ${offParts.join(' + ')} = <strong>${fmt(dRet(totalNomIncome))}/yr</strong> of your <strong>${fmt(dRet(nomSpend))}/yr</strong> spending.`);
   }
-  items.push({ ico: '🏖️', title: `Full FIRE — Age ${rage} (${nowYear + yrs})`, detail: retirementDetails.join('<br>') });
+  items.push({ ico: '🏖️', title: `Full FIRE: Age ${rage} (${nowYear + yrs})`, detail: retirementDetails.join('<br>') });
 
   document.getElementById('timeline').innerHTML = items.map(p => `
     <div class="tl-item">
@@ -5355,31 +5355,31 @@ function updateContextual(R) {
   const farFromCoast = yearsToCoast !== null && yearsToCoast > 10;
 
   if (alreadyCoast) {
-    add('empower',     "You've hit CoastFIRE — time to track your net worth closely.");
-    add('diewithzero', "You're past the math — now the question is how to spend it. This book reframes that.");
-    add('outlive',     "You've already won the money game. The next question is healthspan — Attia's roadmap.");
+    add('empower',     "You've hit CoastFIRE: time to track your net worth closely.");
+    add('diewithzero', "You're past the math: now the question is how to spend it. This book reframes that.");
+    add('outlive',     "You've already won the money game. The next question is healthspan, Attia's roadmap.");
   } else if (nearCoast) {
-    add('m1',          `You're ~${yearsToCoast} yrs from CoastFIRE — automate contributions so you land it.`);
+    add('m1',          `You're ~${yearsToCoast} yrs from CoastFIRE, automate contributions so you land it.`);
     add('empower',     'Track every account in one place as you close the gap.');
-    add('outlive',     "Close to coast — start optimizing for the years you'll buy back, not just the dollars.");
+    add('outlive',     "Close to coast: start optimizing for the years you'll buy back, not just the dollars.");
   } else if (farFromCoast) {
-    add('book',        'Long runway — the fundamentals of index investing will compound for you.');
-    add('robinhood',   "Decades ahead — Robinhood's 1–3% IRA match is free money compounding for 30+ years.");
+    add('book',        'Long runway: the fundamentals of index investing will compound for you.');
+    add('robinhood',   "Decades ahead: Robinhood's 1–3% IRA match is free money compounding for 30+ years.");
     add('sofi',        'Start a Roth IRA now; decades of tax-free growth ahead.');
   } else {
-    add('fidelity',    'Solid base for tax-advantaged accounts — FZROX, Roth IRA, 401k rollovers.');
-    add('robinhood',   'Roth IRA with a 1–3% contribution match — rare free boost on retirement savings.');
+    add('fidelity',    'Solid base for tax-advantaged accounts, FZROX, Roth IRA, 401k rollovers.');
+    add('robinhood',   'Roth IRA with a 1–3% contribution match, rare free boost on retirement savings.');
     add('m1',          'Automate your contributions with a Pie portfolio and coast.');
   }
 
   if (brCont > 0 || brBal > 0) {
-    add('wealthfront', 'You have taxable savings — a HYSA is a better home for your emergency fund.');
+    add('wealthfront', 'You have taxable savings: a HYSA is a better home for your emergency fund.');
   }
   if (penEnabled || ssEnabled || oiEnabled) {
     add('empower', 'With pension/SS/other income streams, a unified dashboard helps you see the full picture.');
   }
   if (typeof savingsRate === 'number' && savingsRate < 0.15) {
-    add('ynab',       'Savings rate is tight — YNAB helps you find room in your budget without feeling squeezed.');
+    add('ynab',       'Savings rate is tight: YNAB helps you find room in your budget without feeling squeezed.');
     add('newsletter', 'Free newsletter with tips to find more to save each month.');
   }
 
@@ -5442,7 +5442,7 @@ function updateAiPrompt(R) {
   if (coastAge === null) {
     coastLine = `- CoastFIRE: not reached before my retirement age on current inputs`;
   } else if (coastAge <= cage) {
-    coastLine = `- CoastFIRE: already reached — I could stop contributing now in theory`;
+    coastLine = `- CoastFIRE: already reached: I could stop contributing now in theory`;
   } else {
     coastLine = `- CoastFIRE age: ${coastAge} (${coastAge - cage} years from now) on current inputs`;
   }
@@ -5469,7 +5469,7 @@ function updateAiPrompt(R) {
   }
   if ((S.hsaBal || 0) > 0 || (S.hsaCont || 0) > 0) {
     const stratLabel = S.hsaStrategy === 'roth' ? 'receipts strategy (tax-free)' : 'retirement use after 65 (Traditional treatment)';
-    situation.push(`- HSA: ${fmt0(S.hsaBal || 0)} balance + ${fmt0(S.hsaCont || 0)}/yr contributions — ${stratLabel}`);
+    situation.push(`- HSA: ${fmt0(S.hsaBal || 0)} balance + ${fmt0(S.hsaCont || 0)}/yr contributions, ${stratLabel}`);
   }
   situation.push(`- Retirement spending target: ${fmt0(nomSpend)}/yr in today's dollars`);
   if (S.mortEnabled && S.mortBalance > 0) {
@@ -5478,10 +5478,10 @@ function updateAiPrompt(R) {
     const retireTxt = (R.mortMonthsInRetire > 0)
       ? `, still owed ${(R.mortMonthsInRetire/12).toFixed(1)} yrs into retirement (adds ${fmt0(R.mortPvAtRetire)} to the FIRE number)`
       : ', clear before retirement';
-    situation.push(`- Mortgage: ${fmt0(S.mortBalance)} at ${pctS(S.mortRate)}, ${fmt0(S.mortPayment)}/mo P&I${S.mortExtra > 0 ? ` + ${fmt0(S.mortExtra)}/mo extra` : ''} — ${payoffTxt}${retireTxt}`);
+    situation.push(`- Mortgage: ${fmt0(S.mortBalance)} at ${pctS(S.mortRate)}, ${fmt0(S.mortPayment)}/mo P&I${S.mortExtra > 0 ? ` + ${fmt0(S.mortExtra)}/mo extra` : ''}: ${payoffTxt}${retireTxt}`);
   }
-  if (penEnabled       && pen > 0)       situation.push(`- Pension expected: ${fmt0(pen)}/yr (today's dollars) — ${penTaxable ? 'taxable' : 'tax-free (net cash)'}`);
-  if (oiEnabled        && oi > 0)        situation.push(`- Other income expected: ${fmt0(oi)}/yr (today's dollars) — ${oiTaxable ? 'taxable' : 'tax-free (net cash)'}`);
+  if (penEnabled       && pen > 0)       situation.push(`- Pension expected: ${fmt0(pen)}/yr (today's dollars): ${penTaxable ? 'taxable' : 'tax-free (net cash)'}`);
+  if (oiEnabled        && oi > 0)        situation.push(`- Other income expected: ${fmt0(oi)}/yr (today's dollars): ${oiTaxable ? 'taxable' : 'tax-free (net cash)'}`);
   if (ssEnabled        && ssPrimary > 0) situation.push(`- Social Security (me): ${fmt0(ssPrimary)}/yr projected`);
   if (ssSpouseEnabled  && ssSpouse > 0)  situation.push(`- Social Security (spouse): ${fmt0(ssSpouse)}/yr projected`);
   if (totalMatch > 0 && (matchRothToo || matchAsRoth || sMatchRothToo || sMatchAsRoth)) {
@@ -5502,7 +5502,7 @@ function updateAiPrompt(R) {
   }
 
   const prompt =
-`I'm using a CoastFIRE calculator and want you to stress-test my plan. Be direct — tell me what's risky, what I'm probably wrong about, and what I should consider that the calculator can't model.
+`I'm using a CoastFIRE calculator and want you to stress-test my plan. Be direct, tell me what's risky, what I'm probably wrong about, and what I should consider that the calculator can't model.
 
 My situation:
 ${situation.join('\n')}
@@ -5512,7 +5512,7 @@ My assumptions:
 - Inflation: ${pctS(inf)}
 - Real return: ${pctS(realReturn)}
 - Safe withdrawal rate: ${pctS(swr)}
-- Effective retirement tax rate on Traditional withdrawals: ${pctS(retTaxRate)}${retTaxRate > 0 ? ` (blended: ${pctS(effTax)} after accounting for ${pctS(1-tradShare)} Roth share)` : ' (not modeled — spending already assumed post-tax)'}
+- Effective retirement tax rate on Traditional withdrawals: ${pctS(retTaxRate)}${retTaxRate > 0 ? ` (blended: ${pctS(effTax)} after accounting for ${pctS(1-tradShare)} Roth share)` : ' (not modeled, spending already assumed post-tax)'}
 
 Calculator output:
 ${coastLine}
@@ -5563,8 +5563,8 @@ Be blunt. I'd rather hear a hard truth now than discover it at 65.`;
 
       if (statusEl) {
         statusEl.textContent = ok
-          ? '✓ Copied — paste it into Gemini, Perplexity, or any other AI tool.'
-          : '⚠ Couldn\'t copy automatically — open the preview below and copy manually.';
+          ? '✓ Copied: paste it into Gemini, Perplexity, or any other AI tool.'
+          : '⚠ Couldn\'t copy automatically: open the preview below and copy manually.';
         statusEl.style.color = ok ? 'var(--green)' : 'var(--red)';
         statusEl.style.display = '';
         clearTimeout(copyEl._t);
@@ -5710,7 +5710,7 @@ function syncUIFromState() {
 function loadState() {
   try {
     const raw = localStorage.getItem(LS_KEY);
-    if (!raw) { set('save-status', 'No saved data — using defaults'); return; }
+    if (!raw) { set('save-status', 'No saved data: using defaults'); return; }
     const saved = JSON.parse(raw);
     // Backward-compat: older saves used a single `keepInvestPct` for both buckets.
     if ('keepInvestPct' in saved) {
@@ -5810,7 +5810,7 @@ function runMonteCarlo() {
     if (!R) { btn.disabled = false; btn.textContent = '▶ Run 1,000 Simulations'; return; }
 
     // The simulation starts AT THE MOMENT you hit CoastFIRE (or now, if already past it)
-    // and projects forward to retirement age — answering: "What happens to your money
+    // and projects forward to retirement age, answering: "What happens to your money
     // after you hit CoastFIRE, whether you keep investing or coast?"
     const { cage, rage, yrs, taBal, brBal, effectiveTaCont, effectiveRothCont, brCont, nom, inf, netFIRE, coastAge, coastToday, keepTotalAdd } = R;
     const fireTarget   = netFIRE;
@@ -5854,7 +5854,7 @@ function runMonteCarlo() {
     }
 
     // Run TWO post-CoastFIRE scenarios:
-    // (1) Coast: stop contributing at CoastFIRE — just let compound growth run
+    // (1) Coast: stop contributing at CoastFIRE, just let compound growth run
     // (2) Keep investing: continue adding annualCont/yr (inflation-adjusted)
     const outcomesCoast = [];
     const outcomesKeep  = [];
@@ -5909,12 +5909,12 @@ function runMonteCarlo() {
     document.getElementById('mc-summary').innerHTML =
       `<strong>${anchor}</strong><br><br>` +
       `💤 <strong>If you coast</strong> (stop contributing): ${successCoast.toFixed(0)}% of simulated futures hit your FIRE target of ${fmt(fireTarget)}. Median ending balance: <strong>${fmt(coastP50)}</strong>.<br>` +
-      `💪 <strong>If you keep investing</strong> ${fmt(annualCont)}/yr: ${successKeep.toFixed(0)}% success rate — a ${delta >= 0 ? '+' : ''}${delta.toFixed(0)}-point buffer. Median ending balance: <strong>${fmt(keepP50)}</strong>.<br><br>` +
+      `💪 <strong>If you keep investing</strong> ${fmt(annualCont)}/yr: ${successKeep.toFixed(0)}% success rate, a ${delta >= 0 ? '+' : ''}${delta.toFixed(0)}-point buffer. Median ending balance: <strong>${fmt(keepP50)}</strong>.<br><br>` +
       (successCoast >= 80
-        ? `✅ Coasting after CoastFIRE is a solid plan — your odds are strong either way.`
+        ? `✅ Coasting after CoastFIRE is a solid plan, your odds are strong either way.`
         : successCoast >= 50
-        ? `⚠️ Coasting is borderline — continuing to invest meaningfully reduces your downside risk.`
-        : `🚨 Volatility could bite hard if you coast — staying invested adds real insurance.`);
+        ? `⚠️ Coasting is borderline: continuing to invest meaningfully reduces your downside risk.`
+        : `🚨 Volatility could bite hard if you coast, staying invested adds real insurance.`);
 
     drawMCChart(outcomesCoast, outcomesKeep, fireTarget);
 
@@ -5988,7 +5988,7 @@ function drawMCChart(outcomesCoast, outcomesKeep, fireTarget) {
 //  TABBED RESULTS PANES
 // ─────────────────────────────────────────────────────────────────────────────
 // Which panes belong to which tab. 'growth-cards' holds the 401k-growth and
-// keep-invest cards — they render under Projection but live in their own
+// keep-invest cards, they render under Projection but live in their own
 // container so the DOM order stays sane.
 const PANE_MAP = {
   overview:   ['pane-overview'],
@@ -6011,7 +6011,7 @@ function switchPane(name) {
     b.classList.toggle('on', b.dataset.pane === name);
   });
   try { sessionStorage.setItem('cf-pane', name); } catch (e) {}
-  // Charts inside a hidden container don't size correctly — nudge them.
+  // Charts inside a hidden container don't size correctly: nudge them.
   setTimeout(() => {
     if (chart)       try { chart.resize(); }       catch (e) {}
     if (retireChart) try { retireChart.resize(); } catch (e) {}
@@ -6032,7 +6032,7 @@ let chatBusy = false;
 const CHAT_SUGGESTIONS = [
   "What's the fastest way to pull my CoastFIRE date earlier?",
   'Should I prioritise my 401k, Roth IRA, or brokerage next?',
-  "What breaks this plan — what am I not accounting for?",
+  "What breaks this plan: what am I not accounting for?",
   'Can I retire 5 years earlier than planned?',
   'Is my withdrawal rate actually safe?',
 ];
@@ -6056,7 +6056,7 @@ function escHtml(s) {
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-// Deliberately small Markdown subset — the model is told to stick to bold,
+// Deliberately small Markdown subset, the model is told to stick to bold,
 // lists, code spans and simple tables, so a full parser would be overkill.
 function mdToHtml(src) {
   const lines = escHtml(src).split('\n');
@@ -6261,10 +6261,10 @@ function summarizeRun(R) {
 
 function snapshotA() {
   const R = runCalc();
-  if (!R) { showToast('Fix the inputs first — nothing to snapshot'); return; }
+  if (!R) { showToast('Fix the inputs first: nothing to snapshot'); return; }
   scenarioA = { state: JSON.parse(JSON.stringify(S)), results: summarizeRun(R) };
   renderCompare();
-  showToast('📌 Scenario A saved — now change inputs to compare');
+  showToast('📌 Scenario A saved: now change inputs to compare');
 }
 
 function restoreA() {
@@ -6281,7 +6281,7 @@ function toggleCompare() {
   document.getElementById('cmp-panel').style.display = compareOn ? '' : 'none';
   document.getElementById('cmp-toggle').classList.toggle('on', compareOn);
   document.getElementById('cmp-toggle').textContent = compareOn
-    ? '📊 Comparing — A vs B' : '📊 Compare scenarios';
+    ? '📊 Comparing: A vs B' : '📊 Compare scenarios';
   if (compareOn && !scenarioA) snapshotA();
   else if (compareOn) renderCompare();
 }
@@ -6337,7 +6337,7 @@ function renderCompare() {
 // ─────────────────────────────────────────────────────────────────────────────
 const PRESETS = [
   {
-    name: '🎓 25 — Early-Career Engineer',
+    name: '🎓 25: Early-Career Engineer',
     desc: '$95K income, just started saving, 40 years of runway. The best possible CoastFIRE position.',
     state: {
       cage: 25, rage: 55, primaryIncome: 95000, spouseEnabled: false, salaryInc: 0.04,
@@ -6350,7 +6350,7 @@ const PRESETS = [
     },
   },
   {
-    name: '👩‍🏫 35 — Teacher with Pension',
+    name: '👩‍🏫 35: Teacher with Pension',
     desc: '$68K income, state pension at 60, 403(b) savings. Pension dramatically lowers the FIRE target.',
     state: {
       cage: 35, rage: 60, primaryIncome: 68000, spouseEnabled: false, salaryInc: 0.025,
@@ -6364,7 +6364,7 @@ const PRESETS = [
     },
   },
   {
-    name: '👨‍👩‍👧 40 — Dual-Income Household',
+    name: '👨‍👩‍👧 40: Dual-Income Household',
     desc: '$175K + $110K, two 401(k)s with match, kids at home. The classic mid-career squeeze.',
     state: {
       cage: 40, rage: 60, primaryIncome: 175000, spouseEnabled: true, spouseIncome: 110000,
@@ -6382,7 +6382,7 @@ const PRESETS = [
     },
   },
   {
-    name: '🩺 45 — High Earner, Late Start',
+    name: '🩺 45: High Earner, Late Start',
     desc: '$280K income but started at 32 after residency. High income can still compress the timeline.',
     state: {
       cage: 45, rage: 58, primaryIncome: 280000, spouseEnabled: false, salaryInc: 0.02,
@@ -6395,7 +6395,7 @@ const PRESETS = [
     },
   },
   {
-    name: '🌅 52 — Catch-Up Mode',
+    name: '🌅 52: Catch-Up Mode',
     desc: '$120K income, 50+ catch-up contributions, 10 years to go. Late but far from hopeless.',
     state: {
       cage: 52, rage: 65, primaryIncome: 120000, spouseEnabled: false, salaryInc: 0.02,
@@ -6464,7 +6464,7 @@ function shareScenario() {
   const code = encodeState();
   if (!code) { showToast('Could not build share link'); return; }
   const url = `${location.origin}${location.pathname}#s=${code}`;
-  const done = () => showToast('🔗 Link copied — anyone who opens it sees these exact inputs');
+  const done = () => showToast('🔗 Link copied: anyone who opens it sees these exact inputs');
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(url).then(done).catch(() => prompt('Copy this link:', url));
   } else {
@@ -6523,7 +6523,7 @@ try {
 } catch (e) { switchPane('overview'); }
 
 // Restore Essentials/Advanced preference. Auto-switch to Advanced if the saved
-// scenario actually uses advanced features — otherwise those inputs would be
+// scenario actually uses advanced features, otherwise those inputs would be
 // invisible while still affecting the result.
 try {
   const savedMode = localStorage.getItem('cf-input-mode');

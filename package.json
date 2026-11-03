@@ -2,8 +2,8 @@
   "name": "coastfire-finance",
   "version": "1.0.0",
   "private": true,
-  "description": "CoastFIRE calculator — static site plus one serverless function for the in-page assistant.",
-  "type": "module",
+  "description": "CoastFIRE calculator: static site plus one serverless function for the in-page assistant.",
+  "_comment": "No \"type\": \"module\" here on purpose. The Netlify function is .mjs so it is ESM regardless, and the build scripts in scripts/ are CommonJS.",
   "dependencies": {
     "@anthropic-ai/sdk": "^1.4.0"
   }

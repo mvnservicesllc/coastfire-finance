@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /* ─────────────────────────────────────────────────────────────────────────────
- * ping-search-engines.js — Notify search engines of new/updated URLs
+ * ping-search-engines.js: Notify search engines of new/updated URLs
  *
  * Pings:
- *   • IndexNow (Bing, Yandex, Seznam, Naver) — instant indexing protocol
- *   • Google sitemap ping — Google deprecated direct ping, but submitting
+ *   • IndexNow (Bing, Yandex, Seznam, Naver): instant indexing protocol
+ *   • Google sitemap ping: Google deprecated direct ping, but submitting
  *     a fresh sitemap to GSC manually is what works now.
  *
  * Usage:

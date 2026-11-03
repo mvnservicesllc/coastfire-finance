@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* ─────────────────────────────────────────────────────────────────────────────
- * generate-pseo.js — Programmatic SEO landing page generator for CoastFIRE Finance
+ * generate-pseo.js, Programmatic SEO landing page generator for CoastFIRE Finance
  *
  * Generates static HTML pages for long-tail CoastFIRE queries:
  *   /coastfire/age-{age}-income-{k}k.html       (matrix: ages × incomes)
@@ -41,28 +41,28 @@ const SINGLE_AGE_GUIDES = [25, 28, 30, 32, 35, 40, 45, 50, 55];
 const PROFESSIONS = [
   { slug:'teachers',   name:'Teachers',
     typIncome:65000, hasPension:true, accountType:'403(b) and 457(b)',
-    note:'Most teachers have access to both a pension and a 403(b)/457(b). The pension dramatically lowers your CoastFIRE number — every $1,000/yr of pension income reduces your portfolio target by $25,000 (at a 4% SWR).' },
+    note:'Most teachers have access to both a pension and a 403(b)/457(b). The pension dramatically lowers your CoastFIRE number, every $1,000/yr of pension income reduces your portfolio target by $25,000 (at a 4% SWR).' },
   { slug:'nurses',     name:'Nurses',
     typIncome:85000, hasPension:false, accountType:'403(b) or 401(k)',
-    note:'RNs in hospital systems typically have a 403(b) with employer match. Travel nurses can often save 50%+ of income while housing is covered — perfect for hitting CoastFIRE early.' },
+    note:'RNs in hospital systems typically have a 403(b) with employer match. Travel nurses can often save 50%+ of income while housing is covered, perfect for hitting CoastFIRE early.' },
   { slug:'engineers',  name:'Software Engineers',
     typIncome:140000, hasPension:false, accountType:'401(k) with mega-backdoor Roth',
-    note:'Tech engineers often have access to mega-backdoor Roth (after-tax 401(k) up to $70k/yr in 2026), which can put CoastFIRE within reach in your early 30s.' },
+    note:'Tech engineers often have access to mega-backdoor Roth (after-tax 401(k) up to $72k/yr in 2026), which can put CoastFIRE within reach in your early 30s.' },
   { slug:'doctors',    name:'Doctors',
     typIncome:280000, hasPension:false, accountType:'401(k), 457(b), or PSP',
-    note:'High-income physicians face a CoastFIRE paradox: huge income but late start (30+ when residency ends) and high spending. The math still works — just compress your saving years.' },
+    note:'High-income physicians face a CoastFIRE paradox: huge income but late start (30+ when residency ends) and high spending. The math still works, just compress your saving years.' },
   { slug:'military',   name:'Military Members',
     typIncome:80000, hasPension:true, accountType:'TSP and military pension',
     note:'Active-duty military have the strongest CoastFIRE setup: a vested pension after 20 years, plus tax-advantaged TSP, plus the BAH/BAS that effectively boost your savings rate.' },
   { slug:'government', name:'Government Employees',
     typIncome:75000, hasPension:true, accountType:'TSP and FERS pension',
-    note:'Federal employees (FERS) and most state workers have a defined-benefit pension on top of their TSP/457(b). Run your CoastFIRE number with the pension toggle on — it changes everything.' },
+    note:'Federal employees (FERS) and most state workers have a defined-benefit pension on top of their TSP/457(b). Run your CoastFIRE number with the pension toggle on, it changes everything.' },
   { slug:'freelancers', name:'Freelancers and Self-Employed',
     typIncome:90000, hasPension:false, accountType:'Solo 401(k) or SEP IRA',
-    note:'Self-employed CoastFIRE plans hinge on contribution limits. A Solo 401(k) lets you contribute as both employer and employee — up to $70k/yr in 2026 if profits allow.' },
+    note:'Self-employed CoastFIRE plans hinge on contribution limits. A Solo 401(k) lets you contribute as both employer and employee, up to $72k/yr in 2026 if profits allow.' },
   { slug:'small-business-owners', name:'Small Business Owners',
     typIncome:110000, hasPension:false, accountType:'Solo 401(k), SEP, or Defined Benefit Plan',
-    note:'High-earning S-Corp owners can layer a Defined Benefit Plan on top of a Solo 401(k) and shelter $200k+ per year from taxes — a CoastFIRE accelerant most miss.' },
+    note:'High-earning S-Corp owners can layer a Defined Benefit Plan on top of a Solo 401(k) and shelter $200k+ per year from taxes, a CoastFIRE accelerant most miss.' },
   { slug:'remote-workers', name:'Remote Workers',
     typIncome:95000, hasPension:false, accountType:'401(k) and HSA',
     note:'Geographic arbitrage (high salary, low cost-of-living area) is a CoastFIRE cheat code. Earning Bay Area money in Tennessee can compress your saving years by 40%.' },
@@ -224,7 +224,7 @@ function footer() {
 }
 
 function breadcrumbsHTML(crumbs) {
-  // crumbs: [{name, href}, ...] — last one is current page (no link)
+  // crumbs: [{name, href}, ...], last one is current page (no link)
   const parts = crumbs.map((c, i) => {
     const isLast = i === crumbs.length - 1;
     return isLast ? `<span>${c.name}</span>` : `<a href="${c.href}">${c.name}</a> ›`;
@@ -289,7 +289,7 @@ function renderMatrixPage(age, income) {
   const slug = `age-${age}-income-${fmtK(income)}.html`;
   const url  = `${SITE}/coastfire/${slug}`;
   const title = `CoastFIRE at Age ${age} with $${fmtK(income)} Income: How Much You Need (${TODAY.slice(0,4)})`;
-  const description = `If you're ${age} earning ${fmtIncome(income)}/yr, here's exactly how much you need invested today to coast to retirement at 65 — with the math, monthly savings to get there, and scenario comparisons.`;
+  const description = `If you're ${age} earning ${fmtIncome(income)}/yr, here's exactly how much you need invested today to coast to retirement at 65, with the math, monthly savings to get there, and scenario comparisons.`;
 
   // Math
   const annualSpend  = income * SPEND_RATIO;
@@ -322,7 +322,7 @@ function renderMatrixPage(age, income) {
   const faqs = [
     {
       q: `How much do I need invested at ${age} to coast to retirement at 65?`,
-      a: `Assuming you spend roughly 60% of your ${fmtIncome(income)} income in retirement (~${fmt0(annualSpend)}/yr) and earn a 5% real return, you need approximately <strong>${fmt0(coastNum)}</strong> invested today. From there, compound growth alone gets you to a $${fmt0(fireTarget)} portfolio by age 65 — without contributing another dollar.`,
+      a: `Assuming you spend roughly 60% of your ${fmtIncome(income)} income in retirement (~${fmt0(annualSpend)}/yr) and earn a 5% real return, you need approximately <strong>${fmt0(coastNum)}</strong> invested today. From there, compound growth alone gets you to a $${fmt0(fireTarget)} portfolio by age 65, without contributing another dollar.`,
     },
     {
       q: `What if my income is higher or lower than ${fmtIncome(income)}?`,
@@ -333,12 +333,12 @@ function renderMatrixPage(age, income) {
       a: age < 35
         ? `Age ${age} is an excellent position. With ${yrsToRet} years of compounding ahead, every dollar you invest now does roughly ${(Math.pow(1.05, yrsToRet)).toFixed(1)}× the work it would do at 50. Front-loading savings in your 20s and early 30s is the highest-leverage move in personal finance.`
         : age < 45
-        ? `Age ${age} is on track if you've been saving consistently. You still have ${yrsToRet} years of compounding — meaningful but not overwhelming. Catch-up is harder but absolutely achievable with a 20–25% savings rate.`
+        ? `Age ${age} is on track if you've been saving consistently. You still have ${yrsToRet} years of compounding, meaningful but not overwhelming. Catch-up is harder but absolutely achievable with a 20–25% savings rate.`
         : `Age ${age} is later than ideal but far from hopeless. With ${yrsToRet} years to retirement, you'll need a higher savings rate (25%+) and possibly delaying retirement to 67+. Catch-up contributions ($7,500/yr extra in 401(k) at 50+) help close the gap.`,
     },
     {
       q: `Does this assume Social Security?`,
-      a: `No — the base CoastFIRE number above assumes the portfolio fully funds your retirement. If you include Social Security (typically $1,500–$2,500/mo at full retirement age), your portfolio target drops by roughly $375,000–$625,000 (at a 4% SWR). Use the calculator's Social Security toggle to see the impact.`,
+      a: `No, the base CoastFIRE number above assumes the portfolio fully funds your retirement. If you include Social Security (typically $1,500–$2,500/mo at full retirement age), your portfolio target drops by roughly $375,000–$625,000 (at a 4% SWR). Use the calculator's Social Security toggle to see the impact.`,
     },
     {
       q: `What return assumption should I use?`,
@@ -380,13 +380,13 @@ ${breadcrumbsHTML([
   <div class="sub">Invest this much by age ${age}, never add another dollar, retire at ${RETIRE_AGE} on ${fmt0(annualSpend)}/yr</div>
 </div>
 
-<p>Once you hit ${fmt0(coastNum)} invested, you can — in theory — stop contributing entirely. Compound interest does the rest of the work, growing your portfolio to roughly <strong>${fmt0(fireTarget)}</strong> by age ${RETIRE_AGE}. That's enough to fund ${fmt0(annualSpend)}/year in retirement spending under the 4% rule.</p>
+<p>Once you hit ${fmt0(coastNum)} invested, you can, in theory, stop contributing entirely. Compound interest does the rest of the work, growing your portfolio to roughly <strong>${fmt0(fireTarget)}</strong> by age ${RETIRE_AGE}. That's enough to fund ${fmt0(annualSpend)}/year in retirement spending under the 4% rule.</p>
 
 <a class="cta" href="../index.html">Calculate Your Exact CoastFIRE Number →</a>
 
 <h2>How CoastFIRE Scales With Spending</h2>
 
-<p>Your CoastFIRE number depends entirely on what you'll spend in retirement — not what you earn now. Here's how the target shifts based on your retirement spending ratio (% of current income):</p>
+<p>Your CoastFIRE number depends entirely on what you'll spend in retirement, not what you earn now. Here's how the target shifts based on your retirement spending ratio (% of current income):</p>
 
 <table>
   <thead>
@@ -406,7 +406,7 @@ ${breadcrumbsHTML([
 
 <h2>How Long Until You Hit CoastFIRE?</h2>
 
-<p>If you're starting from a typical balance for someone your age and income — roughly <strong>${fmt0(typBal)}</strong> based on a 12% savings rate since age 22 — here's how many more years of contributions you need to reach the ${fmt0(coastNum)} target:</p>
+<p>If you're starting from a typical balance for someone your age and income, roughly <strong>${fmt0(typBal)}</strong> based on a 12% savings rate since age 22, here's how many more years of contributions you need to reach the ${fmt0(coastNum)} target:</p>
 
 <table>
   <thead>
@@ -417,21 +417,21 @@ ${breadcrumbsHTML([
       <td>${fmt0(r.m)}</td>
       <td>${fmt0(r.m * 12)}</td>
       <td>${fmtYears(r.yrs)}</td>
-      <td>${isFinite(r.ageAtCoast) ? Math.round(r.ageAtCoast) : '—'}</td>
+      <td>${isFinite(r.ageAtCoast) ? Math.round(r.ageAtCoast) : 'n/a'}</td>
     </tr>`).join('\n    ')}
   </tbody>
 </table>
 
 ${gap > 0
   ? `<p>You're roughly <strong>${fmt0(gap)}</strong> short of CoastFIRE at your current estimated balance. The table above shows how aggressively you'd need to save to close that gap.</p>`
-  : `<div class="callout"><strong>You may already be at or past CoastFIRE.</strong> Based on the typical balance for your age and income, you're at or above the ${fmt0(coastNum)} target. Run the calculator with your actual portfolio to confirm — and consider whether you want to coast or keep building a buffer.</div>`}
+  : `<div class="callout"><strong>You may already be at or past CoastFIRE.</strong> Based on the typical balance for your age and income, you're at or above the ${fmt0(coastNum)} target. Run the calculator with your actual portfolio to confirm, and consider whether you want to coast or keep building a buffer.</div>`}
 
 <h2>What to Do Next at Age ${age}</h2>
 
 ${age < 35
   ? `<p>You're in the highest-leverage decade for compounding. Concrete priorities:</p>
 <ul>
-  <li><strong>Max your employer match first</strong> — it's a guaranteed 50–100% return.</li>
+  <li><strong>Max your employer match first</strong>: it's a guaranteed 50–100% return.</li>
   <li><strong>Then max a Roth IRA</strong> ($7,000/yr in 2026). Tax-free growth for 35+ years is mathematically extraordinary.</li>
   <li><strong>Then max your 401(k)</strong> ($23,500/yr in 2026). Even partial contributions compound enormously.</li>
   <li><strong>Avoid lifestyle inflation</strong> as raises come in. Banking 50% of every raise gets you to CoastFIRE years earlier.</li>
@@ -440,16 +440,16 @@ ${age < 35
   ? `<p>You're in your peak earning years. Concrete priorities:</p>
 <ul>
   <li><strong>Aim for a 20–25% total savings rate</strong> across 401(k), IRA, and brokerage.</li>
-  <li><strong>Open a brokerage bridge account</strong> if you might retire before 59½ — Roth IRA contributions and brokerage gains let you bridge the gap penalty-free.</li>
+  <li><strong>Open a brokerage bridge account</strong> if you might retire before 59½, Roth IRA contributions and brokerage gains let you bridge the gap penalty-free.</li>
   <li><strong>Run a tax-bracket projection</strong>: at ${fmtIncome(income)}/yr, Traditional 401(k) is usually better than Roth for active deductions; Roth conversions in early retirement can clean up tax exposure later.</li>
-  <li><strong>Don't neglect HSA contributions</strong> if you're on a high-deductible plan — triple tax-advantaged ($4,300 single / $8,550 family in 2026).</li>
+  <li><strong>Don't neglect HSA contributions</strong> if you're on a high-deductible plan, triple tax-advantaged ($4,400 single / $8,750 family in 2026).</li>
 </ul>`
-  : `<p>You have ${yrsToRet} years to retirement — every year of high savings now matters disproportionately. Concrete priorities:</p>
+  : `<p>You have ${yrsToRet} years to retirement, every year of high savings now matters disproportionately. Concrete priorities:</p>
 <ul>
   <li><strong>Take the catch-up contributions</strong>: 50+ adds $7,500/yr extra to 401(k), $1,000 to IRA. At 60–63, the SECURE 2.0 super catch-up adds even more ($11,250 in 2026).</li>
-  <li><strong>Consider working to 67 or 70</strong> — every extra year of work (and Social Security delay) drops your portfolio target by 5–8%.</li>
+  <li><strong>Consider working to 67 or 70</strong>: every extra year of work (and Social Security delay) drops your portfolio target by 5–8%.</li>
   <li><strong>Run the numbers with Social Security on</strong>. At ~$24,000/yr expected SS benefit, your portfolio need drops by ${fmt0(24000 / SWR)}.</li>
-  <li><strong>Don't get aggressive in equities to "make up time"</strong> — sequence-of-returns risk is brutal for late starters. Stick to a balanced glide path.</li>
+  <li><strong>Don't get aggressive in equities to "make up time"</strong>: sequence-of-returns risk is brutal for late starters. Stick to a balanced glide path.</li>
 </ul>`
 }
 
@@ -464,7 +464,7 @@ ${age < 35
   &nbsp;&nbsp;&nbsp;&nbsp;<code>${fmt0(fireTarget)} / (1.05)^${yrsToRet} = <strong>${fmt0(coastNum)}</strong></code>
 </div>
 
-<p>That's it. Three lines of math. The big assumption is the 5% real return — which roughly matches the long-term S&P 500 average minus inflation, but isn't guaranteed in any given decade. The <a href="../index.html">main calculator</a> lets you stress-test it with Monte Carlo simulations.</p>
+<p>That's it. Three lines of math. The big assumption is the 5% real return, which roughly matches the long-term S&P 500 average minus inflation, but isn't guaranteed in any given decade. The <a href="../index.html">main calculator</a> lets you stress-test it with Monte Carlo simulations.</p>
 
 <h2>How This Compares to Adjacent Scenarios</h2>
 
@@ -513,7 +513,7 @@ function renderAgePage(age) {
   const slug = `at-age-${age}.html`;
   const url  = `${SITE}/coastfire/${slug}`;
   const title = `CoastFIRE at Age ${age}: Complete Guide & Calculator (${TODAY.slice(0,4)})`;
-  const description = `Complete CoastFIRE guide for age ${age} — typical numbers, savings strategy, what to prioritize at this stage, and how to know if you're on track or behind.`;
+  const description = `Complete CoastFIRE guide for age ${age}, typical numbers, savings strategy, what to prioritize at this stage, and how to know if you're on track or behind.`;
 
   const yrsToRet = RETIRE_AGE - age;
   const compoundMultiplier = Math.pow(1 + REAL_RETURN, yrsToRet);
@@ -533,14 +533,14 @@ function renderAgePage(age) {
     {
       q: `Is ${age} too late to start saving?`,
       a: age < 40
-        ? `No — at ${age} you still have ${yrsToRet} years of compounding ahead. Every dollar you invest now will roughly ${compoundMultiplier.toFixed(1)}× by retirement (real, after inflation).`
+        ? `No, at ${age} you still have ${yrsToRet} years of compounding ahead. Every dollar you invest now will roughly ${compoundMultiplier.toFixed(1)}× by retirement (real, after inflation).`
         : age < 50
         ? `Not at all. With ${yrsToRet} years to retirement, you have meaningful compounding ahead. The math is harder than starting at 25, but a 20–25% savings rate over the next decade can still get you to CoastFIRE before 60.`
-        : `Late, yes — impossible, no. With ${yrsToRet} years and the 50+ catch-up contributions, you can still reach CoastFIRE before 65, especially if you're willing to consider a part-time "BaristaFIRE" approach to bridge the final years.`,
+        : `Late, yes, impossible, no. With ${yrsToRet} years and the 50+ catch-up contributions, you can still reach CoastFIRE before 65, especially if you're willing to consider a part-time "BaristaFIRE" approach to bridge the final years.`,
     },
     {
       q: `How does ${age} compare to starting at 25?`,
-      a: `Someone who hit CoastFIRE at 25 with a $300k portfolio would have roughly $${Math.round(300000 * Math.pow(1.05, age - 25) / 1000)}k by age ${age} without adding a dollar — that's the cost of waiting. The good news: starting at ${age} just means a higher savings rate and tighter spending control, not failure.`,
+      a: `Someone who hit CoastFIRE at 25 with a $300k portfolio would have roughly $${Math.round(300000 * Math.pow(1.05, age - 25) / 1000)}k by age ${age} without adding a dollar, that's the cost of waiting. The good news: starting at ${age} just means a higher savings rate and tighter spending control, not failure.`,
     },
     {
       q: `What return assumption is realistic?`,
@@ -605,23 +605,23 @@ ${breadcrumbsHTML([
 <p>At ${age}, you have <strong>${yrsToRet} years of compounding</strong> available before traditional retirement age. Every dollar you invest today will grow to roughly <strong>${compoundMultiplier.toFixed(2)}× in real (after-inflation) value</strong> by 65.</p>
 
 <div class="callout">
-  <strong>The compounding leverage:</strong> $10,000 invested at age ${age} becomes <strong>${fmt0(10000 * compoundMultiplier)}</strong> by age ${RETIRE_AGE} (today's dollars), assuming 5% real return. The same $10,000 invested 10 years later becomes only ${fmt0(10000 * Math.pow(1.05, Math.max(yrsToRet - 10, 0)))} — a <strong>${((compoundMultiplier / Math.pow(1.05, Math.max(yrsToRet - 10, 0)) - 1) * 100).toFixed(0)}% penalty</strong> for waiting a decade.
+  <strong>The compounding leverage:</strong> $10,000 invested at age ${age} becomes <strong>${fmt0(10000 * compoundMultiplier)}</strong> by age ${RETIRE_AGE} (today's dollars), assuming 5% real return. The same $10,000 invested 10 years later becomes only ${fmt0(10000 * Math.pow(1.05, Math.max(yrsToRet - 10, 0)))}, a <strong>${((compoundMultiplier / Math.pow(1.05, Math.max(yrsToRet - 10, 0)) - 1) * 100).toFixed(0)}% penalty</strong> for waiting a decade.
 </div>
 
 ${age < 35
-  ? `<p>You're in the highest-leverage decade for retirement saving. Money you invest in your 20s and early 30s does roughly 4–6× the work of money invested in your 40s, simply because of how compound growth stacks. This is the time to be aggressive — high savings rate, all-equity portfolio, max every tax-advantaged vehicle you can.</p>`
+  ? `<p>You're in the highest-leverage decade for retirement saving. Money you invest in your 20s and early 30s does roughly 4–6× the work of money invested in your 40s, simply because of how compound growth stacks. This is the time to be aggressive, high savings rate, all-equity portfolio, max every tax-advantaged vehicle you can.</p>`
   : age < 45
-  ? `<p>You're in your peak earning years and still have substantial compounding ahead. The math at ${age} is forgiving but not generous — you can absolutely reach CoastFIRE by 50, but it requires sustained 20%+ savings rates and avoiding lifestyle inflation as your income grows.</p>`
+  ? `<p>You're in your peak earning years and still have substantial compounding ahead. The math at ${age} is forgiving but not generous, you can absolutely reach CoastFIRE by 50, but it requires sustained 20%+ savings rates and avoiding lifestyle inflation as your income grows.</p>`
   : age < 55
   ? `<p>At ${age}, the runway is shorter but the levers are still real. Catch-up contributions (50+) add $7,500/yr to your 401(k) limit. Most importantly: every year you delay retirement past 65 reduces your portfolio target by ~6%, both because you save longer and your money compounds another year.</p>`
-  : `<p>At ${age}, you're close enough to retirement that the math becomes about portfolio durability, not accumulation. Sequence-of-returns risk is the dominant factor — a 30% market drop in the first 5 years of retirement is much worse than the same drop at 75. Consider a slightly more conservative allocation and a healthy cash buffer.</p>`
+  : `<p>At ${age}, you're close enough to retirement that the math becomes about portfolio durability, not accumulation. Sequence-of-returns risk is the dominant factor, a 30% market drop in the first 5 years of retirement is much worse than the same drop at 75. Consider a slightly more conservative allocation and a healthy cash buffer.</p>`
 }
 
 <h2>What to Prioritize at Age ${age}</h2>
 
 <ol>
   ${age < 35 ? `
-  <li><strong>Capture every dollar of employer match.</strong> A 50% match is a 50% guaranteed return — nothing else in finance comes close.</li>
+  <li><strong>Capture every dollar of employer match.</strong> A 50% match is a 50% guaranteed return, nothing else in finance comes close.</li>
   <li><strong>Max your Roth IRA</strong> ($7,000/yr in 2026). At your age, tax-free growth for 30+ years is mathematically extraordinary.</li>
   <li><strong>Build to a 20%+ total savings rate</strong> across 401(k), IRA, and brokerage.</li>
   <li><strong>Don't pre-invest your future raises.</strong> Each raise is an opportunity to bank 50%+ of the increase before lifestyle creep claims it.</li>
@@ -629,7 +629,7 @@ ${age < 35
   <li><strong>Audit your savings rate.</strong> Aim for 20–25% of gross household income across all retirement vehicles.</li>
   <li><strong>Max the 401(k) if you can</strong> ($23,500 in 2026). At your tax bracket, the deduction is meaningful.</li>
   <li><strong>Open a brokerage bridge account</strong> if you might retire before 59½. Roth IRA contributions can be withdrawn anytime; brokerage gains at LTCG rates fill the rest.</li>
-  <li><strong>HSA if eligible</strong> — triple tax-advantaged, $4,300 single / $8,550 family in 2026.</li>
+  <li><strong>HSA if eligible</strong>: triple tax-advantaged, $4,400 single / $8,750 family in 2026.</li>
   <li><strong>Run an estate-planning check</strong>: beneficiary designations, basic will, power of attorney. Boring but critical.</li>` : age < 55 ? `
   <li><strong>Take the catch-up contributions.</strong> At 50+, the 401(k) limit jumps by $7,500 and the IRA by $1,000.</li>
   <li><strong>Project your tax brackets in retirement.</strong> At ${age}, you can model whether to lean more Traditional (deduct now, taxed later) or Roth (taxed now, free later) based on expected retirement income.</li>
@@ -639,7 +639,7 @@ ${age < 35
   <li><strong>Maximize the 60–63 super catch-up</strong> ($11,250 extra into 401(k) under SECURE 2.0).</li>
   <li><strong>Run a Social Security claiming analysis.</strong> Delaying from 62 to 70 raises your monthly benefit by ~76%.</li>
   <li><strong>Reduce equity allocation gradually</strong> (e.g. 70/30 → 60/40) to manage sequence risk.</li>
-  <li><strong>Plan your healthcare bridge</strong> if retiring before 65. ACA subsidies, COBRA, spouse coverage — pick a path.</li>
+  <li><strong>Plan your healthcare bridge</strong> if retiring before 65. ACA subsidies, COBRA, spouse coverage, pick a path.</li>
   <li><strong>Strategic Roth conversions</strong> in low-income years between retirement and Social Security can save five+ figures in lifetime tax.</li>`}
 </ol>
 
@@ -697,7 +697,7 @@ function renderProfessionPage(prof) {
         : `Without a pension, do I need to save more?`,
       a: prof.hasPension
         ? `A lot. Every $1,000/year of expected pension income lowers your portfolio target by about $25,000 (4% rule). A typical $30,000/yr pension reduces your CoastFIRE number by roughly $750,000.`
-        : `Compared to pension-eligible careers, yes — your portfolio has to do all the heavy lifting. The flip side: no vesting cliffs, full portability when you switch jobs, and your money is yours regardless of employer drama.`,
+        : `Compared to pension-eligible careers, yes, your portfolio has to do all the heavy lifting. The flip side: no vesting cliffs, full portability when you switch jobs, and your money is yours regardless of employer drama.`,
     },
     {
       q: `What's the biggest CoastFIRE mistake for ${prof.name.toLowerCase()}?`,
@@ -767,13 +767,13 @@ ${breadcrumbsHTML([
 <p>${prof.name} typically have access to <strong>${prof.accountType}</strong>. Here's the priority order most fee-only planners recommend:</p>
 
 <ol>
-  <li><strong>Employer match first</strong> — contribute enough to capture every match dollar. This is a guaranteed return that beats every other investment.</li>
-  ${prof.hasPension ? `<li><strong>Understand your pension vesting schedule</strong> — many pensions require 5–10 years of service before you're vested. Leaving early can forfeit huge amounts.</li>` : ''}
+  <li><strong>Employer match first</strong>: contribute enough to capture every match dollar. This is a guaranteed return that beats every other investment.</li>
+  ${prof.hasPension ? `<li><strong>Understand your pension vesting schedule</strong>: many pensions require 5–10 years of service before you're vested. Leaving early can forfeit huge amounts.</li>` : ''}
   <li><strong>Max a Roth IRA if eligible</strong> ($7,000/yr in 2026; $8,000 if 50+). Income limits: phase out at $150–165k single / $236–246k MFJ in 2026.</li>
   <li><strong>Max your primary workplace plan</strong> ($23,500 in 2026 for ${prof.accountType.split(' ')[0]}; $31,000 if 50+).</li>
-  ${prof.slug === 'engineers' || prof.slug === 'doctors' || prof.slug === 'small-business-owners' ? `<li><strong>Mega-backdoor Roth if available</strong> — total 401(k) limit is $70,000 in 2026 (employee + employer + after-tax). The after-tax portion can be converted to Roth.</li>` : ''}
-  ${prof.slug === 'freelancers' || prof.slug === 'small-business-owners' ? `<li><strong>HSA if on a high-deductible plan</strong> — triple tax-advantaged, $4,300 single / $8,550 family.</li>` : `<li><strong>HSA if eligible</strong> ($4,300 single / $8,550 family in 2026) — best tax-advantaged account in existence.</li>`}
-  <li><strong>Brokerage for everything beyond that</strong> — taxable, but flexible, no contribution limits, and LTCG rates (15% for most) are friendlier than ordinary income.</li>
+  ${prof.slug === 'engineers' || prof.slug === 'doctors' || prof.slug === 'small-business-owners' ? `<li><strong>Mega-backdoor Roth if available</strong>: total 401(k) limit is $72,000 in 2026 (employee + employer + after-tax). The after-tax portion can be converted to Roth.</li>` : ''}
+  ${prof.slug === 'freelancers' || prof.slug === 'small-business-owners' ? `<li><strong>HSA if on a high-deductible plan</strong>: triple tax-advantaged, $4,400 single / $8,750 family.</li>` : `<li><strong>HSA if eligible</strong> ($4,400 single / $8,750 family in 2026), best tax-advantaged account in existence.</li>`}
+  <li><strong>Brokerage for everything beyond that</strong>: taxable, but flexible, no contribution limits, and LTCG rates (15% for most) are friendlier than ordinary income.</li>
 </ol>
 
 ${prof.hasPension ? `<h2>The Pension Math</h2>
@@ -785,15 +785,15 @@ ${prof.hasPension ? `<h2>The Pension Math</h2>
   Example: a $36,000/year pension at retirement = a <strong>${fmt0(36000 * 25)} portfolio equivalent</strong>.
 </div>
 
-<p>That's why pension-eligible workers can hit CoastFIRE much earlier — half (or more) of your retirement income is already "saved" through your job. Run the calculator's pension toggle to see your specific number.</p>` : ''}
+<p>That's why pension-eligible workers can hit CoastFIRE much earlier, half (or more) of your retirement income is already "saved" through your job. Run the calculator's pension toggle to see your specific number.</p>` : ''}
 
 <h2>What Could Go Wrong</h2>
 
 <ul>
-  <li><strong>Job change before vesting</strong>${prof.hasPension ? ' — losing your pension without vesting is the most expensive mistake on this page.' : ' — leaving a 401(k) match table on the table when you switch jobs.'}</li>
-  <li><strong>Lifestyle inflation as income grows</strong> — a $30k raise can become $30k of extra spending if you're not intentional.</li>
-  <li><strong>Disability or income loss</strong> — own-occupation disability insurance is non-negotiable for ${prof.name.toLowerCase()} who depend on a specific skillset.</li>
-  <li><strong>Sequence-of-returns risk in early retirement</strong> — a 30% drop in year 1 of retirement can permanently impair your portfolio if you don't have a cash buffer.</li>
+  <li><strong>Job change before vesting</strong>${prof.hasPension ? ': losing your pension without vesting is the most expensive mistake on this page.' : ': leaving a 401(k) match table on the table when you switch jobs.'}</li>
+  <li><strong>Lifestyle inflation as income grows</strong>: a $30k raise can become $30k of extra spending if you're not intentional.</li>
+  <li><strong>Disability or income loss</strong>: own-occupation disability insurance is non-negotiable for ${prof.name.toLowerCase()} who depend on a specific skillset.</li>
+  <li><strong>Sequence-of-returns risk in early retirement</strong>: a 30% drop in year 1 of retirement can permanently impair your portfolio if you don't have a cash buffer.</li>
 </ul>
 
 <a class="cta" href="../index.html">Build Your CoastFIRE Plan in the Calculator →</a>
@@ -868,7 +868,7 @@ ${breadcrumbsHTML([
 
 <p>Find your CoastFIRE number by age and income, dive into a specific age guide, or see how your career affects the math. Every page here uses the same conservative model: 60% income replacement in retirement, 5% real return, 4% safe withdrawal rate, retirement at 65.</p>
 
-<a class="cta" href="../index.html">Skip the scenarios — open the calculator →</a>
+<a class="cta" href="../index.html">Skip the scenarios and open the calculator →</a>
 
 <h2>By Age × Income</h2>
 <p>Click any cell to see the full breakdown for that scenario:</p>
@@ -1013,7 +1013,7 @@ function main() {
   console.log(`   Age 50, $150k income → ${fmt0(coastFireToday(150000 * SPEND_RATIO, 50))}`);
   console.log(`\n🔗 Next steps:`);
   console.log(`   1. Open coastfire/index.html in your browser to spot-check pages.`);
-  console.log(`   2. Commit & push — Netlify auto-deploys.`);
+  console.log(`   2. Commit and push. Netlify auto-deploys.`);
   console.log(`   3. In Google Search Console, submit the new sitemap URL.`);
   console.log(`   4. Re-run this script periodically (or after content updates) to refresh lastmod dates.`);
   console.log('');
