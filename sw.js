@@ -1,4 +1,4 @@
-const CACHE = 'coastfire-v72';
+const CACHE = 'coastfire-v73';
 const LOCAL = [
   './', './index.html', './manifest.json', './icon.svg',
   './about.html', './privacy.html', './terms.html',
@@ -32,6 +32,11 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+  // Never cache or intercept the AI endpoint — it's a POST to a serverless
+  // function and every response is unique to that question.
+  if (e.request.method !== 'GET' || url.pathname.startsWith('/api/')) return;
+
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request))
   );

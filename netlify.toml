@@ -1,0 +1,35 @@
+# Netlify config for coastfirefinance.com
+#
+# The site itself is static — no build step. The only server-side piece is the
+# in-page AI assistant at /api/ask, which proxies to the Claude API so the API
+# key never reaches the browser.
+#
+# Required env var (Site settings → Environment variables):
+#   ANTHROPIC_API_KEY
+# Optional:
+#   ASK_MODEL       — defaults to claude-haiku-5-5
+#   ASK_DAILY_CAP   — defaults to 2000 requests/day
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+  command = ""
+
+[functions]
+  node_bundler = "esbuild"
+
+# Never serve the function source or local tooling as static files.
+[[headers]]
+  for = "/netlify/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/scripts/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"

@@ -350,6 +350,88 @@
 
     .field-hint { font-size: 0.67rem; color: var(--muted); margin-top: 3px; }
 
+    /* ── In-page AI chat ── */
+    .chat-log {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px;
+      max-height: 460px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 12px;
+      margin-bottom: 10px; min-height: 120px;
+    }
+    .chat-empty { color: var(--muted); font-size: 0.84rem; }
+    .chat-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .chat-chip {
+      padding: 7px 12px; border-radius: 99px;
+      background: rgba(201,150,92,0.08); border: 1px solid rgba(201,150,92,0.22);
+      color: var(--accent2); font-size: 0.79rem; cursor: pointer;
+      font-family: inherit; transition: all 0.15s; text-align: left;
+      touch-action: manipulation;
+    }
+    .chat-chip:hover { background: rgba(201,150,92,0.16); border-color: var(--accent); }
+    .chat-msg { display: flex; gap: 10px; font-size: 0.87rem; line-height: 1.6; }
+    .chat-msg .who {
+      flex-shrink: 0; width: 26px; height: 26px; border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; margin-top: 1px;
+    }
+    .chat-msg.user .who { background: rgba(201,150,92,0.18); }
+    .chat-msg.bot  .who { background: rgba(95,150,119,0.18); }
+    .chat-msg .body { flex: 1; min-width: 0; color: var(--text); }
+    .chat-msg.user .body { color: var(--accent2); font-weight: 600; }
+    .chat-msg .body p { margin: 0 0 8px; }
+    .chat-msg .body p:last-child { margin-bottom: 0; }
+    .chat-msg .body ul, .chat-msg .body ol { margin: 6px 0 8px; padding-left: 20px; }
+    .chat-msg .body li { margin-bottom: 4px; }
+    .chat-msg .body strong { color: var(--accent2); }
+    .chat-msg .body code {
+      background: rgba(255,255,255,0.06); padding: 1px 5px;
+      border-radius: 4px; font-size: 0.88em;
+    }
+    .chat-msg .body table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 0.84rem; }
+    .chat-msg .body th, .chat-msg .body td {
+      padding: 6px 9px; border-bottom: 1px solid var(--border); text-align: left;
+    }
+    .chat-msg .body th { color: var(--muted); font-weight: 600; font-size: 0.78rem; }
+    .chat-msg.err .body { color: var(--red); }
+    .chat-input-row { display: flex; gap: 8px; align-items: flex-end; }
+    .chat-input-row textarea {
+      flex: 1; resize: none; overflow-y: auto; max-height: 140px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 13px; color: var(--text);
+      font-family: inherit; font-size: 0.95rem; line-height: 1.5;
+    }
+    .chat-input-row textarea:focus {
+      outline: none; border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(201,150,92,0.15);
+    }
+    .chat-send {
+      flex-shrink: 0; width: 42px; height: 42px; border-radius: 10px;
+      background: linear-gradient(135deg, #c9965c, #e8c685);
+      color: #0b1929; border: none; cursor: pointer;
+      font-size: 1.15rem; font-weight: 700; line-height: 1;
+      transition: filter 0.15s; touch-action: manipulation;
+    }
+    .chat-send:hover:not(:disabled) { filter: brightness(1.1); }
+    .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+    .chat-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 7px; font-size: 0.74rem; color: var(--muted); min-height: 20px;
+    }
+    .chat-clear {
+      background: none; border: none; color: var(--muted);
+      font-size: 0.74rem; cursor: pointer; text-decoration: underline;
+      font-family: inherit; padding: 0;
+    }
+    .chat-clear:hover { color: var(--text); }
+    .chat-typing span {
+      display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--muted); margin-right: 3px;
+      animation: chatBlink 1.3s infinite both;
+    }
+    .chat-typing span:nth-child(2) { animation-delay: 0.18s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes chatBlink { 0%, 70%, 100% { opacity: 0.25; } 35% { opacity: 1; } }
+
     /* ── Compare scenarios ── */
     .compare-bar { margin-bottom: 14px; }
     .cmp-btn {
@@ -748,7 +830,7 @@
     <div class="overflow-menu" id="overflow-menu">
       <button onclick="clearSave()">↺ Reset to defaults</button>
       <button onclick="forceUpdate()">🔄 Reload latest version</button>
-      <div class="overflow-note">build v72</div>
+      <div class="overflow-note">build v73</div>
     </div>
   </span>
 </div>
@@ -1354,7 +1436,86 @@
     </div>
   </div>
 
-  <div class="group-hdr adv">Future Income</div>
+  <div class="group-hdr adv">Debt &amp; Future Income</div>
+
+  <!-- ── MORTGAGE ── -->
+  <div class="acc adv">
+    <div class="acc-hdr" onclick="toggle('mort')">
+      <span class="acc-title">🏠 Mortgage <span class="tl-tag tag-y">Liability</span></span>
+      <span class="acc-arrow" id="arr-mort">▶</span>
+    </div>
+    <div class="acc-body" id="body-mort">
+      <div class="acc-inner">
+        <div class="sw-row">
+          <div>
+            <div>Include Mortgage</div>
+            <div class="sw-row-sub">Payments that outlive your retirement date raise your FIRE number</div>
+          </div>
+          <label class="sw"><input type="checkbox" class="y" id="sw-mort" onchange="toggleMortgage()"><span class="sw-track"></span></label>
+        </div>
+        <div id="mort-block" style="display:none">
+          <div class="field">
+            <label class="field-label">Current Balance</label>
+            <div class="field-wrap y">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-mort-bal" min="0" max="5000000" value="320000" step="5000" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-mort-bal',5000)">▲</button>
+                <button onclick="step('n-mort-bal',-5000)">▼</button>
+              </div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label">Interest Rate</label>
+              <div class="field-wrap y">
+                <input type="number" id="n-mort-rate" min="0" max="15" value="6.5" step="0.125" inputmode="decimal">
+                <span class="field-sfx">%</span>
+                <div class="field-steps">
+                  <button onclick="step('n-mort-rate',0.125)">▲</button>
+                  <button onclick="step('n-mort-rate',-0.125)">▼</button>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label">Monthly P&amp;I</label>
+              <div class="field-wrap y">
+                <span class="field-pfx">$</span>
+                <input type="number" id="n-mort-pmt" min="0" max="30000" value="2100" step="50" inputmode="numeric">
+                <div class="field-steps">
+                  <button onclick="step('n-mort-pmt',50)">▲</button>
+                  <button onclick="step('n-mort-pmt',-50)">▼</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="field-hint" style="margin-top:-6px">Principal &amp; interest only — leave out taxes and insurance, since those continue after payoff.</div>
+          <div class="field">
+            <label class="field-label">Extra Principal / Month</label>
+            <div class="field-wrap g">
+              <span class="field-pfx">$</span>
+              <input type="number" id="n-mort-extra" min="0" max="20000" value="0" step="50" inputmode="numeric">
+              <div class="field-steps">
+                <button onclick="step('n-mort-extra',50)">▲</button>
+                <button onclick="step('n-mort-extra',-50)">▼</button>
+              </div>
+            </div>
+            <div class="field-hint">Optional. The card on the right compares paying this down vs. investing the same money.</div>
+          </div>
+          <div class="sw-row">
+            <div>
+              <div>Mortgage is inside my retirement spending</div>
+              <div class="sw-row-sub">On = the spending number above already includes this payment. Off = spending excludes it and the payment is added on top.</div>
+            </div>
+            <label class="sw"><input type="checkbox" class="g" id="sw-mort-in-spend" checked onchange="recalc()"><span class="sw-track"></span></label>
+          </div>
+          <div class="info-box info-box-y" id="mort-preview" style="margin-top:10px">
+            Payoff: <strong id="mort-payoff-lbl">—</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ── PENSION ── -->
   <div class="acc adv">
@@ -2046,6 +2207,44 @@
     <div class="info-box" id="iaa-footer" style="font-size:0.82rem;line-height:1.6"></div>
   </div>
 
+  <div class="cw" id="mortgage-card" style="display:none">
+    <div class="ct">🏠 Mortgage &amp; Payoff <span style="font-size:0.7rem;color:var(--muted);font-weight:400">Fixed nominal debt</span></div>
+    <div style="font-size:0.79rem;color:var(--muted);margin-bottom:14px;line-height:1.6">
+      A fixed-rate mortgage is the one expense that <strong>doesn't inflate</strong> — and it <strong>ends</strong>. That makes it fundamentally different from the rest of your retirement spending, so it's modelled as a finite nominal obligation rather than a 25× SWR problem.
+    </div>
+
+    <div class="rg" style="grid-template-columns:1fr 1fr 1fr 1fr;margin-bottom:14px">
+      <div class="rb"><div class="lbl">Payoff Age</div><div class="val g" id="mg-payoff-age">—</div><div class="sub" id="mg-payoff-sub">Years remaining</div></div>
+      <div class="rb"><div class="lbl">Total Interest Left</div><div class="val y" id="mg-interest">—</div><div class="sub">Over remaining term</div></div>
+      <div class="rb"><div class="lbl">Still Owed at Retirement</div><div class="val p" id="mg-at-retire">—</div><div class="sub" id="mg-at-retire-sub">Payments after age —</div></div>
+      <div class="rb"><div class="lbl">Adds to FIRE #</div><div class="val" id="mg-fire-add">—</div><div class="sub">Present value of those payments</div></div>
+    </div>
+
+    <div class="info-box" id="mg-summary" style="font-size:0.86rem;line-height:1.6;margin-bottom:12px"></div>
+
+    <div id="mg-extra-box" style="display:none;padding:14px 16px;background:rgba(95,150,119,0.06);border:1px solid rgba(95,150,119,0.25);border-radius:8px">
+      <div class="bbar-lbl" style="margin-bottom:8px">Extra Payment vs. Investing the Same Money</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);color:var(--muted);text-align:left">
+              <th style="padding:6px 8px;font-weight:600">Strategy</th>
+              <th style="padding:6px 8px;font-weight:600;text-align:right">Guaranteed / Expected Return</th>
+              <th style="padding:6px 8px;font-weight:600;text-align:right">Value at Payoff Date</th>
+            </tr>
+          </thead>
+          <tbody id="mg-extra-rows"></tbody>
+        </table>
+      </div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-top:10px;line-height:1.5" id="mg-extra-verdict"></div>
+    </div>
+
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:12px;line-height:1.6">
+      <strong style="color:var(--text)">📋 How this is modelled.</strong>
+      Principal &amp; interest only — property tax and insurance continue after payoff, so leave them in your regular spending. The payment is treated as a flat nominal stream (never inflated), which is why a 30-year mortgage feels cheaper every year in real terms. Payments landing after your retirement date are discounted to a present value at your nominal return and added to the Net FIRE number as a lump sum, rather than multiplied by 25 — you only owe them for a finite number of years.
+    </div>
+  </div>
+
   </div><!-- /pane-income -->
 
   <div class="pane" id="pane-healthspan" style="display:none">
@@ -2278,22 +2477,41 @@
   ══════════════════════════════════════════════ -->
   <span id="plan"></span>
   <div class="cw" id="ai-card" style="margin-bottom:20px;display:none">
-    <div class="ct">🤖 Get a Second Opinion from AI</div>
-    <div class="info-box" style="font-size:0.82rem;line-height:1.5;margin-bottom:12px">
-      Builds a prompt from your numbers and opens it in ChatGPT or Claude. Nothing leaves your browser.
+    <div class="ct">🤖 Ask About Your Numbers</div>
+    <div style="font-size:0.82rem;color:var(--muted);line-height:1.5;margin-bottom:12px">
+      Ask anything about your plan and get an answer right here — your current inputs are sent with the question, so the reply uses your actual figures.
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px">
-      <a href="#" id="ai-chatgpt" class="aff-cta"   target="_blank" rel="noopener" style="flex:1;min-width:160px;text-align:center">Ask ChatGPT →</a>
-      <a href="#" id="ai-claude"  class="aff-cta g" target="_blank" rel="noopener" style="flex:1;min-width:160px;text-align:center">Ask Claude →</a>
-      <a href="#" id="ai-copy"    class="aff-cta y" style="flex:1;min-width:160px;text-align:center">📋 Copy prompt</a>
+
+    <div class="chat-log" id="chat-log">
+      <div class="chat-empty" id="chat-empty">
+        <div style="margin-bottom:10px">Try one of these, or ask your own:</div>
+        <div class="chat-chips" id="chat-chips"></div>
+      </div>
     </div>
-    <div id="ai-copy-status" style="display:none;font-size:0.8rem;color:var(--green);margin-bottom:8px">✓ Copied — paste it into Gemini, Perplexity, or any other AI tool.</div>
-    <details style="font-size:0.8rem;color:var(--muted)">
-      <summary style="cursor:pointer;color:var(--accent2);font-weight:600">Preview the prompt →</summary>
-      <pre id="ai-prompt-preview" style="white-space:pre-wrap;word-wrap:break-word;background:var(--surface2);padding:12px;border-radius:6px;margin-top:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.78rem;line-height:1.5;border:1px solid var(--border);color:var(--text);max-height:320px;overflow:auto"></pre>
+
+    <div class="chat-input-row">
+      <textarea id="chat-input" rows="1" placeholder="e.g. What's the fastest way to pull my CoastFIRE date earlier?"
+                onkeydown="chatKeydown(event)" oninput="autoGrow(this)"></textarea>
+      <button class="chat-send" id="chat-send" onclick="sendChat()" aria-label="Send question">↑</button>
+    </div>
+    <div class="chat-meta">
+      <span id="chat-status"></span>
+      <button class="chat-clear" onclick="clearChat()">Clear</button>
+    </div>
+
+    <details style="font-size:0.78rem;color:var(--muted);margin-top:14px">
+      <summary style="cursor:pointer;color:var(--accent2);font-weight:600">Prefer another AI? Copy the prompt →</summary>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0">
+        <a href="#" id="ai-chatgpt" class="aff-cta"   target="_blank" rel="noopener" style="flex:1;min-width:140px;text-align:center">Ask ChatGPT →</a>
+        <a href="#" id="ai-claude"  class="aff-cta g" target="_blank" rel="noopener" style="flex:1;min-width:140px;text-align:center">Ask Claude →</a>
+        <a href="#" id="ai-copy"    class="aff-cta y" style="flex:1;min-width:140px;text-align:center">📋 Copy prompt</a>
+      </div>
+      <div id="ai-copy-status" style="display:none;font-size:0.8rem;color:var(--green);margin-bottom:8px">✓ Copied — paste it into Gemini, Perplexity, or any other AI tool.</div>
+      <pre id="ai-prompt-preview" style="white-space:pre-wrap;word-wrap:break-word;background:var(--surface2);padding:12px;border-radius:6px;margin-top:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:0.76rem;line-height:1.5;border:1px solid var(--border);color:var(--text);max-height:300px;overflow:auto"></pre>
     </details>
-    <div style="font-size:0.72rem;color:var(--muted);margin-top:10px">
-      AI answers aren't financial advice. Verify with a qualified advisor before acting.
+
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:12px">
+      Answers are generated by Claude from the numbers on this page. Not financial advice — verify anything material with a fee-only fiduciary. Your inputs are sent to the model to answer the question and are not stored.
     </div>
   </div>
 
@@ -2640,6 +2858,8 @@ const S = {
   sRothIraBal: 0, sRothIraCont: 0,
   hsaBal: 0, hsaCont: 0, hsaStrategy: 'trad',
   brBal: 0, brCont: 0, divDrag: 0.003, ltcg: 0.15,
+  mortEnabled: false, mortBalance: 320000, mortRate: 0.065,
+  mortPayment: 2100, mortExtra: 0, mortInSpend: true,
   retTaxRate: 0,
   penEnabled: false, pen: 24000, pAge: 65, cola: true, penTaxable: true,
   ssEnabled: false, ssPrimary: 2000, ssAge: 67,
@@ -2731,6 +2951,10 @@ bindNum('n-hsa-bal',     'hsaBal',       null);
 bindNum('n-hsa-cont',    'hsaCont',      null);
 bindNum('n-br-bal',      'brBal',        null);
 bindNum('n-br-cont',     'brCont',       null);
+bindNum('n-mort-bal',    'mortBalance',  null);
+bindNum('n-mort-rate',   'mortRate',     v => v/100);
+bindNum('n-mort-pmt',    'mortPayment',  null);
+bindNum('n-mort-extra',  'mortExtra',    null);
 bindNum('n-ret-tax',     'retTaxRate',   v => v/100);
 bindNum('n-div-drag',    'divDrag',      v => v/100);
 bindNum('n-ltcg',        'ltcg',         v => v/100);
@@ -2819,6 +3043,15 @@ document.getElementById('sw-match-roth-too').addEventListener('change',  e => { 
 document.getElementById('sw-match-as-roth').addEventListener('change',   e => { S.matchAsRoth   = e.target.checked; recalc(); });
 document.getElementById('sw-s-match-roth-too').addEventListener('change',e => { S.sMatchRothToo = e.target.checked; recalc(); });
 document.getElementById('sw-s-match-as-roth').addEventListener('change', e => { S.sMatchAsRoth  = e.target.checked; recalc(); });
+
+function toggleMortgage() {
+  S.mortEnabled = document.getElementById('sw-mort').checked;
+  document.getElementById('mort-block').style.display = S.mortEnabled ? '' : 'none';
+  recalc();
+}
+document.getElementById('sw-mort-in-spend')?.addEventListener('change', e => {
+  S.mortInSpend = e.target.checked; recalc();
+});
 
 function toggleSpouse() {
   S.spouseEnabled = document.getElementById('sw-spouse').checked;
@@ -3000,6 +3233,8 @@ function runCalc() {
     keepInvestPctRet, keepInvestPctBr, stopInvestAge, postRetRetCont, postRetBrCont,
   } = S;
 
+  const { mortEnabled, mortBalance, mortRate, mortPayment, mortExtra, mortInSpend } = S;
+
   // HSA routing: 'trad' = treat as Traditional (taxed at retirement rate),
   // 'roth' = treat as Roth (tax-free, receipts strategy). Single household
   // HSA bucket — combine both spouses' HSAs into hsaBal/hsaCont in the UI.
@@ -3024,6 +3259,58 @@ function runCalc() {
   const yrs     = rage - cage;
   const nowYear = new Date().getFullYear();
 
+  // ──────────────────────────────────────────────────────
+  //  MORTGAGE AMORTIZATION
+  //  Key nuance most calculators miss: a fixed-rate mortgage payment is
+  //  FIXED IN NOMINAL DOLLARS. It never inflates, so in real terms it
+  //  shrinks every year. We therefore model it as a separate nominal
+  //  stream rather than folding it into inflation-adjusted spending.
+  // ──────────────────────────────────────────────────────
+  const mortOn = !!(mortEnabled && mortBalance > 0 && mortPayment > 0);
+  const mortMoRate   = (mortRate || 0) / 12;
+  const mortTotalPmt = (mortPayment || 0) + (mortExtra || 0);
+  // Months until the balance hits zero. Infinity when the payment can't
+  // even cover the monthly interest.
+  let mortMonths = Infinity;
+  if (mortOn) {
+    if (mortMoRate <= 0) {
+      mortMonths = mortBalance / mortTotalPmt;
+    } else if (mortTotalPmt > mortBalance * mortMoRate) {
+      mortMonths = -Math.log(1 - (mortBalance * mortMoRate) / mortTotalPmt) / Math.log(1 + mortMoRate);
+    }
+  }
+  const mortYears     = isFinite(mortMonths) ? mortMonths / 12 : Infinity;
+  const mortPayoffAge = isFinite(mortYears) ? cage + mortYears : Infinity;
+  const mortTotalInterest = isFinite(mortMonths) ? (mortTotalPmt * mortMonths - mortBalance) : Infinity;
+
+  // Same loan with no extra payment — used for the "extra payment is worth it?" comparison.
+  let mortBaseMonths = Infinity;
+  if (mortOn && mortPayment > 0) {
+    if (mortMoRate <= 0) mortBaseMonths = mortBalance / mortPayment;
+    else if (mortPayment > mortBalance * mortMoRate) {
+      mortBaseMonths = -Math.log(1 - (mortBalance * mortMoRate) / mortPayment) / Math.log(1 + mortMoRate);
+    }
+  }
+  const mortBaseInterest = isFinite(mortBaseMonths) ? (mortPayment * mortBaseMonths - mortBalance) : Infinity;
+  const mortInterestSaved = (isFinite(mortBaseInterest) && isFinite(mortTotalInterest))
+    ? mortBaseInterest - mortTotalInterest : 0;
+  const mortMonthsSaved = (isFinite(mortBaseMonths) && isFinite(mortMonths))
+    ? mortBaseMonths - mortMonths : 0;
+
+  // How much of the loan is still being paid AFTER retirement starts.
+  const monthsToRetire     = yrs * 12;
+  const mortMonthsInRetire = mortOn ? Math.max(0, Math.min(mortMonths, 600) - monthsToRetire) : 0;
+  // Present value (at retirement) of those remaining payments, discounted at
+  // the nominal portfolio return. This is extra capital the portfolio must
+  // hold on day one of retirement, over and above the SWR-based FIRE number.
+  const moNom = Math.pow(1 + nom, 1 / 12) - 1;
+  let mortPvAtRetire = 0;
+  if (mortMonthsInRetire > 0) {
+    mortPvAtRetire = moNom > 0
+      ? mortTotalPmt * (1 - Math.pow(1 + moNom, -mortMonthsInRetire)) / moNom
+      : mortTotalPmt * mortMonthsInRetire;
+  }
+
   const totalIncome   = primaryIncome + (spouseEnabled ? spouseIncome : 0);
   const pMatchCeil    = primaryIncome * matchCap;
   // Primary: match counted against ta401k, optionally also roth401k
@@ -3043,7 +3330,14 @@ function runCalc() {
   const totalContribs    = effectiveTaCont + effectiveRothCont + brCont;
   const savingsRate      = totalIncome > 0 ? totalContribs / totalIncome : 0;
 
-  const nomSpend = spend * Math.pow(1 + inf, yrs);
+  // The mortgage is handled as its own nominal stream, so strip it out of the
+  // inflation-adjusted spending base when the user says it's baked in there.
+  // Otherwise inflating the payment year over year would overstate the cost.
+  const mortAnnual     = mortOn ? mortTotalPmt * 12 : 0;
+  const spendExMort    = (mortOn && mortInSpend) ? Math.max(0, spend - mortAnnual) : spend;
+  const nomSpend       = spendExMort * Math.pow(1 + inf, yrs);
+  // Kept for display: what the user's headline spending becomes after payoff.
+  const spendAfterPayoff = spendExMort;
 
   let nomPension = 0;
   if (penEnabled && pen > 0 && pAge <= rage) {
@@ -3119,8 +3413,12 @@ function runCalc() {
   const grossFIRE  = grossSpend / swr;                                          // target if no pen/SS
   // Taxable pension + SS are pre-tax offsets against the gross spend requirement.
   // Whatever remains must come (pre-tax) from the portfolio.
-  const netFIRE    = Math.max((grossSpend - totalNomOffset) / swr, 0);
-  const coastToday = netFIRE / Math.pow(1 + nom, yrs);
+  // SWR covers perpetual inflation-adjusted spending. The mortgage is a
+  // finite nominal obligation, so it isn't a 25x problem — it's a lump sum
+  // equal to the present value of the payments still due after retirement.
+  const netFIREBase = Math.max((grossSpend - totalNomOffset) / swr, 0);
+  const netFIRE     = netFIREBase + mortPvAtRetire;
+  const coastToday  = netFIRE / Math.pow(1 + nom, yrs);
 
   const ages = [], taVals = [], rothVals = [], brVals = [], effBrVals = [],
         effTotals = [], coastTargets = [], phases = [];
@@ -3246,7 +3544,10 @@ function runCalc() {
     const spend_y         = nomSpend * Math.pow(1 + inf, age - rage);
     const taxableNeedNet_y   = Math.max(spend_y - nonTaxOffsets_y, 0);
     const taxableNeedGross_y = taxableNeedNet_y * taxGrossUp;
-    return Math.max(taxableNeedGross_y - taxOffsets_y, 0);
+    // Mortgage: a flat nominal payment that stops dead at payoff. Not inflated,
+    // and not grossed up — principal is already after-tax money leaving the door.
+    const mort_y = (mortOn && age < mortPayoffAge) ? mortAnnual : 0;
+    return Math.max(taxableNeedGross_y - taxOffsets_y, 0) + mort_y;
   };
 
   if (horizonYears > yrs) {
@@ -3318,6 +3619,10 @@ function runCalc() {
     postRetRetCont, postRetBrCont,
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax, ltcg, divDrag,
+    mortOn, mortBalance, mortRate, mortPayment, mortExtra, mortInSpend,
+    mortAnnual, mortMonths, mortYears, mortPayoffAge, mortTotalInterest,
+    mortInterestSaved, mortMonthsSaved, mortPvAtRetire, mortMonthsInRetire,
+    mortTotalPmt, mortMoRate, moNom, netFIREBase, spendAfterPayoff,
     keepInvestPctRet, keepInvestPctBr, keepRetAdd, keepBrAdd, keepTotalAdd,
     nomSpend, nomPension, nomPensionTaxable, nomPensionNonTaxable,
     nomOtherIncome, nomOtherTaxable, nomOtherNonTaxable, totalNonTaxable,
@@ -3389,6 +3694,10 @@ function _recalcImpl() {
     postRetRetCont, postRetBrCont,
     effectiveTaCont, effectiveRothCont, totalContribs, savingsRate, matchRate, matchCap,
     rothBal, rothCont, retTaxRate, tradShare, effTax, ltcg, divDrag,
+    mortOn, mortBalance, mortRate, mortPayment, mortExtra, mortInSpend,
+    mortAnnual, mortMonths, mortYears, mortPayoffAge, mortTotalInterest,
+    mortInterestSaved, mortMonthsSaved, mortPvAtRetire, mortMonthsInRetire,
+    mortTotalPmt, mortMoRate, moNom, netFIREBase, spendAfterPayoff,
     keepInvestPctRet, keepInvestPctBr, keepRetAdd, keepBrAdd, keepTotalAdd,
     nomSpend, nomPension, nomPensionTaxable, nomPensionNonTaxable,
     nomOtherIncome, nomOtherTaxable, nomOtherNonTaxable, totalNonTaxable,
@@ -4092,6 +4401,94 @@ function _recalcImpl() {
     if (footerEl) {
       footerEl.innerHTML = `<span style="color:var(--red)">⚠️ Card error: ${err.message}</span><br><span style="color:var(--muted);font-size:0.75rem">${(err.stack || '').split('\n').slice(0,3).join(' · ')}</span>`;
     }
+  }
+
+  // ──────────────────────────────────────────────────────
+  //  MORTGAGE & PAYOFF
+  // ──────────────────────────────────────────────────────
+  try {
+    const mgCard = document.getElementById('mortgage-card');
+    if (mgCard) {
+      mgCard.style.display = mortOn ? '' : 'none';
+      // Keep the small preview under the inputs in sync too.
+      const prevEl = document.getElementById('mort-payoff-lbl');
+      if (prevEl) {
+        prevEl.textContent = !mortOn ? '—'
+          : !isFinite(mortPayoffAge) ? 'never at this payment'
+          : `age ${mortPayoffAge.toFixed(1)} · ${mortYears.toFixed(1)} yrs · ${fmt(mortTotalInterest)} interest`;
+      }
+    }
+
+    if (mortOn && mgCard) {
+      if (!isFinite(mortPayoffAge)) {
+        set('mg-payoff-age', 'Never');
+        set('mg-payoff-sub', 'Payment does not cover monthly interest');
+        set('mg-interest', '—');
+        set('mg-at-retire', '—');
+        set('mg-fire-add', '—');
+        document.getElementById('mg-summary').innerHTML =
+          `🚨 <strong>At ${fmt(mortTotalPmt)}/mo this loan never amortises.</strong> Monthly interest alone is ${fmt(mortBalance * mortMoRate)}. Raise the payment above that to start reducing principal.`;
+        document.getElementById('mg-extra-box').style.display = 'none';
+      } else {
+        set('mg-payoff-age', mortPayoffAge.toFixed(1));
+        set('mg-payoff-sub', `${mortYears.toFixed(1)} years from today`);
+        set('mg-interest', fmt(mortTotalInterest));
+        const yearsInRetire = mortMonthsInRetire / 12;
+        set('mg-at-retire', mortMonthsInRetire > 0 ? `${yearsInRetire.toFixed(1)} yrs` : 'Paid off');
+        set('mg-at-retire-sub', mortMonthsInRetire > 0
+          ? `${fmt(mortAnnual)}/yr of payments after ${rage}`
+          : `Clear before you retire at ${rage}`);
+        const fireAddEl = document.getElementById('mg-fire-add');
+        fireAddEl.textContent = mortPvAtRetire > 0 ? '+' + fmt(mortPvAtRetire) : '$0';
+        fireAddEl.style.color = mortPvAtRetire > 0 ? 'var(--red)' : 'var(--green)';
+
+        // Narrative
+        let mgMsg;
+        if (mortPayoffAge <= rage) {
+          const slack = rage - mortPayoffAge;
+          mgMsg = `✅ <strong>Mortgage clears at age ${mortPayoffAge.toFixed(1)}</strong> — ${slack.toFixed(1)} year${slack === 1 ? '' : 's'} before you retire at ${rage}. It adds nothing to your FIRE number. ` +
+            `From ${mortPayoffAge.toFixed(0)} onward that ${fmt(mortAnnual)}/yr is free cash flow: redirect it to investments and your CoastFIRE date moves earlier.`;
+        } else {
+          mgMsg = `⚠️ <strong>You'll still owe ${yearsInRetire.toFixed(1)} years of payments in retirement</strong> (${fmt(mortAnnual)}/yr until age ${mortPayoffAge.toFixed(1)}). ` +
+            `That's ${fmt(mortPvAtRetire)} of extra capital your portfolio has to carry on day one — it's why your Net FIRE number is ${fmt(netFIREBase)} + ${fmt(mortPvAtRetire)} = <strong>${fmt(netFIRE)}</strong>. ` +
+            `<br><br>Two ways to kill it: pay extra now, or push retirement to ${Math.ceil(mortPayoffAge)} so the loan is gone the day you stop working.`;
+        }
+        document.getElementById('mg-summary').innerHTML = mgMsg;
+
+        // Extra-payment comparison — only meaningful when they're actually paying extra
+        const extraBox = document.getElementById('mg-extra-box');
+        if (mortExtra > 0 && isFinite(mortInterestSaved)) {
+          extraBox.style.display = '';
+          // What the same monthly amount would be worth invested over the same horizon
+          const nMo = mortMonths;
+          const investedFV = moNom > 0
+            ? mortExtra * ((Math.pow(1 + moNom, nMo) - 1) / moNom)
+            : mortExtra * nMo;
+          const paidIn = mortExtra * nMo;
+          const investGain = investedFV - paidIn;
+          const payoffBetter = mortInterestSaved > investGain;
+          document.getElementById('mg-extra-rows').innerHTML = `
+            <tr>
+              <td style="padding:6px 8px"><strong>Pay down mortgage</strong></td>
+              <td style="padding:6px 8px;text-align:right;font-variant-numeric:tabular-nums">${pct(mortRate)} guaranteed</td>
+              <td style="padding:6px 8px;text-align:right;font-variant-numeric:tabular-nums;color:${payoffBetter ? 'var(--green)' : 'var(--muted)'}">${fmt(mortInterestSaved)} saved</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 8px"><strong>Invest instead</strong></td>
+              <td style="padding:6px 8px;text-align:right;font-variant-numeric:tabular-nums">${pct(nom)} expected</td>
+              <td style="padding:6px 8px;text-align:right;font-variant-numeric:tabular-nums;color:${payoffBetter ? 'var(--muted)' : 'var(--green)'}">${fmt(investGain)} gain</td>
+            </tr>`;
+          const moSaved = mortMonthsSaved;
+          document.getElementById('mg-extra-verdict').innerHTML = payoffBetter
+            ? `<strong style="color:var(--green)">Paying extra wins by ${fmt(mortInterestSaved - investGain)}</strong> — your ${pct(mortRate)} mortgage rate beats the ${pct(nom)} you'd expect from the market, and it's guaranteed. The extra ${fmt(mortExtra)}/mo also pulls payoff in by <strong>${(moSaved / 12).toFixed(1)} years</strong>.`
+            : `<strong style="color:var(--accent2)">Investing wins by ${fmt(investGain - mortInterestSaved)}</strong> on expected value — but that's a forecast, not a guarantee, while the ${pct(mortRate)} saved is certain. The extra ${fmt(mortExtra)}/mo still pulls payoff in by <strong>${(moSaved / 12).toFixed(1)} years</strong>, which has real value if being debt-free early matters to you.`;
+        } else {
+          extraBox.style.display = 'none';
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Mortgage card error:', err);
   }
 
   // ──────────────────────────────────────────────────────
@@ -5075,6 +5472,14 @@ function updateAiPrompt(R) {
     situation.push(`- HSA: ${fmt0(S.hsaBal || 0)} balance + ${fmt0(S.hsaCont || 0)}/yr contributions — ${stratLabel}`);
   }
   situation.push(`- Retirement spending target: ${fmt0(nomSpend)}/yr in today's dollars`);
+  if (S.mortEnabled && S.mortBalance > 0) {
+    const mp = R.mortPayoffAge;
+    const payoffTxt = (mp && isFinite(mp)) ? `pays off at age ${mp.toFixed(1)}` : 'never amortises at current payment';
+    const retireTxt = (R.mortMonthsInRetire > 0)
+      ? `, still owed ${(R.mortMonthsInRetire/12).toFixed(1)} yrs into retirement (adds ${fmt0(R.mortPvAtRetire)} to the FIRE number)`
+      : ', clear before retirement';
+    situation.push(`- Mortgage: ${fmt0(S.mortBalance)} at ${pctS(S.mortRate)}, ${fmt0(S.mortPayment)}/mo P&I${S.mortExtra > 0 ? ` + ${fmt0(S.mortExtra)}/mo extra` : ''} — ${payoffTxt}${retireTxt}`);
+  }
   if (penEnabled       && pen > 0)       situation.push(`- Pension expected: ${fmt0(pen)}/yr (today's dollars) — ${penTaxable ? 'taxable' : 'tax-free (net cash)'}`);
   if (oiEnabled        && oi > 0)        situation.push(`- Other income expected: ${fmt0(oi)}/yr (today's dollars) — ${oiTaxable ? 'taxable' : 'tax-free (net cash)'}`);
   if (ssEnabled        && ssPrimary > 0) situation.push(`- Social Security (me): ${fmt0(ssPrimary)}/yr projected`);
@@ -5216,6 +5621,10 @@ const INPUT_MAP = [
   { id:'n-hsa-cont',     key:'hsaCont',       m:1   },
   { id:'n-br-bal',       key:'brBal',         m:1   },
   { id:'n-br-cont',      key:'brCont',        m:1   },
+  { id:'n-mort-bal',     key:'mortBalance',   m:1   },
+  { id:'n-mort-rate',    key:'mortRate',      m:100 },
+  { id:'n-mort-pmt',     key:'mortPayment',   m:1   },
+  { id:'n-mort-extra',   key:'mortExtra',     m:1   },
   { id:'n-ret-tax',      key:'retTaxRate',    m:100 },
   { id:'n-div-drag',     key:'divDrag',       m:100 },
   { id:'n-ltcg',         key:'ltcg',          m:100 },
@@ -5270,6 +5679,9 @@ function syncUIFromState() {
   cb('sw-oi',         S.oiEnabled);
   cb('sw-oi-cola',    S.oiCola);
   cb('sw-oi-taxable', S.oiTaxable);
+  cb('sw-mort',          S.mortEnabled);
+  cb('sw-mort-in-spend', S.mortInSpend);
+  show('mort-block',     S.mortEnabled);
   cb('sw-match-roth-too',   S.matchRothToo);
   cb('sw-match-as-roth',    S.matchAsRoth);
   cb('sw-s-match-roth-too', S.sMatchRothToo);
@@ -5608,6 +6020,190 @@ function switchPane(name) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+//  IN-PAGE AI CHAT
+// ─────────────────────────────────────────────────────────────────────────────
+// Posts the question plus a text snapshot of the calculator state to
+// /api/ask (a Netlify Function that proxies the Claude API so the key never
+// reaches the browser). Degrades to the copy-prompt flow if unconfigured.
+const CHAT_ENDPOINT = '/api/ask';
+let chatHistory = [];     // [{role, content}] replayed on each turn
+let chatBusy = false;
+
+const CHAT_SUGGESTIONS = [
+  "What's the fastest way to pull my CoastFIRE date earlier?",
+  'Should I prioritise my 401k, Roth IRA, or brokerage next?',
+  "What breaks this plan — what am I not accounting for?",
+  'Can I retire 5 years earlier than planned?',
+  'Is my withdrawal rate actually safe?',
+];
+
+function renderChatChips() {
+  const el = document.getElementById('chat-chips');
+  if (!el) return;
+  el.innerHTML = CHAT_SUGGESTIONS
+    .map(q => `<button class="chat-chip" onclick="askSuggestion(this)">${escHtml(q)}</button>`)
+    .join('');
+}
+function askSuggestion(btn) {
+  const input = document.getElementById('chat-input');
+  input.value = btn.textContent;
+  autoGrow(input);
+  sendChat();
+}
+
+function escHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// Deliberately small Markdown subset — the model is told to stick to bold,
+// lists, code spans and simple tables, so a full parser would be overkill.
+function mdToHtml(src) {
+  const lines = escHtml(src).split('\n');
+  let out = '', inUl = false, inOl = false, inTable = false;
+  const closeLists = () => {
+    if (inUl) { out += '</ul>'; inUl = false; }
+    if (inOl) { out += '</ol>'; inOl = false; }
+  };
+  const closeTable = () => { if (inTable) { out += '</tbody></table>'; inTable = false; } };
+  const inline = t => t
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = lines[i];
+    const line = raw.trim();
+    if (!line) { closeLists(); closeTable(); continue; }
+
+    // Table rows: | a | b |  (skip the |---|---| separator)
+    if (/^\|.*\|$/.test(line)) {
+      if (/^\|[\s:\-|]+\|$/.test(line)) continue;
+      const cells = line.slice(1, -1).split('|').map(c => inline(c.trim()));
+      if (!inTable) {
+        closeLists();
+        out += '<table><thead><tr>' + cells.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+        inTable = true;
+      } else {
+        out += '<tr>' + cells.map(c => `<td>${c}</td>`).join('') + '</tr>';
+      }
+      continue;
+    }
+    closeTable();
+
+    const ulM = line.match(/^[-*]\s+(.*)$/);
+    const olM = line.match(/^\d+\.\s+(.*)$/);
+    if (ulM) {
+      if (inOl) { out += '</ol>'; inOl = false; }
+      if (!inUl) { out += '<ul>'; inUl = true; }
+      out += `<li>${inline(ulM[1])}</li>`;
+      continue;
+    }
+    if (olM) {
+      if (inUl) { out += '</ul>'; inUl = false; }
+      if (!inOl) { out += '<ol>'; inOl = true; }
+      out += `<li>${inline(olM[1])}</li>`;
+      continue;
+    }
+    closeLists();
+    out += `<p>${inline(line)}</p>`;
+  }
+  closeLists(); closeTable();
+  return out;
+}
+
+function appendChatMsg(role, html, cls) {
+  const log = document.getElementById('chat-log');
+  const empty = document.getElementById('chat-empty');
+  if (empty) empty.remove();
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}${cls ? ' ' + cls : ''}`;
+  div.innerHTML = `<span class="who">${role === 'user' ? '🙋' : '🤖'}</span><div class="body">${html}</div>`;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+  return div;
+}
+
+function autoGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+function clearChat() {
+  chatHistory = [];
+  const log = document.getElementById('chat-log');
+  log.innerHTML = `<div class="chat-empty" id="chat-empty">
+      <div style="margin-bottom:10px">Try one of these, or ask your own:</div>
+      <div class="chat-chips" id="chat-chips"></div>
+    </div>`;
+  renderChatChips();
+  set('chat-status', '');
+}
+
+// Reuses the same state snapshot that powers the copy-prompt flow, so the
+// model sees exactly what a human would paste into ChatGPT.
+function buildChatContext() {
+  try {
+    const el = document.getElementById('ai-prompt-preview');
+    if (el && el.textContent.trim()) return el.textContent.trim();
+  } catch (e) {}
+  return 'Calculator state unavailable.';
+}
+
+async function sendChat() {
+  if (chatBusy) return;
+  const input = document.getElementById('chat-input');
+  const q = input.value.trim();
+  if (!q) return;
+
+  appendChatMsg('user', escHtml(q));
+  input.value = ''; autoGrow(input);
+  chatBusy = true;
+  document.getElementById('chat-send').disabled = true;
+
+  const thinking = appendChatMsg('bot',
+    '<span class="chat-typing"><span></span><span></span><span></span></span>');
+  set('chat-status', 'Thinking…');
+
+  try {
+    const res = await fetch(CHAT_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q, context: buildChatContext(), history: chatHistory }),
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      const fallback = data.error === 'not_configured'
+        ? 'The in-page assistant isn\'t switched on for this site yet. Use <strong>Copy prompt</strong> below to ask in ChatGPT or Claude instead.'
+        : escHtml(data.message || 'Something went wrong. Try again in a moment.');
+      thinking.querySelector('.body').innerHTML = fallback;
+      thinking.classList.add('err');
+      set('chat-status', '');
+      return;
+    }
+
+    const answer = data.answer || 'No answer returned.';
+    thinking.querySelector('.body').innerHTML = mdToHtml(answer);
+    chatHistory.push({ role: 'user', content: q });
+    chatHistory.push({ role: 'assistant', content: answer });
+    if (chatHistory.length > 8) chatHistory = chatHistory.slice(-8);
+    set('chat-status', '');
+  } catch (err) {
+    console.error('chat failed:', err);
+    thinking.querySelector('.body').innerHTML =
+      'Could not reach the assistant. Check your connection, or use <strong>Copy prompt</strong> below.';
+    thinking.classList.add('err');
+    set('chat-status', '');
+  } finally {
+    chatBusy = false;
+    document.getElementById('chat-send').disabled = false;
+    document.getElementById('chat-log').scrollTop = 999999;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 //  SAVE-BAR OVERFLOW MENU
 // ─────────────────────────────────────────────────────────────────────────────
 function toggleOverflow(e) {
@@ -5914,6 +6510,8 @@ document.addEventListener('keydown', e => {
 if (!loadFromHash()) loadState();
 initChart();
 recalc();
+
+renderChatChips();
 
 // Restore the last-viewed tab within this browser session.
 try {
