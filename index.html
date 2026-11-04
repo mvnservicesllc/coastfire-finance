@@ -833,7 +833,7 @@
     <div class="overflow-menu" id="overflow-menu">
       <button onclick="clearSave()">↺ Reset to defaults</button>
       <button onclick="forceUpdate()">🔄 Reload latest version</button>
-      <div class="overflow-note">build v76</div>
+      <div class="overflow-note">build v77</div>
     </div>
   </span>
 </div>
@@ -6187,7 +6187,12 @@ async function sendChat() {
         ? 'The in-page assistant isn\'t switched on for this site yet. Use <strong>Copy prompt</strong> below to ask in ChatGPT or Claude instead.'
         : escHtml(data.message || 'Something went wrong. Try again in a moment.');
       // `detail` is a short setup-diagnostic code (auth / model / bad_request…)
-      const hint = data.detail ? `<br><span style="opacity:0.6;font-size:0.78rem">code: ${escHtml(data.detail)}</span>` : '';
+      // meant for the site owner. "too_long" and "empty" are ordinary outcomes
+      // for the person asking, so don't clutter those with a code.
+      const ownerIssue = data.error !== 'too_long' && data.error !== 'empty';
+      const hint = (data.detail && ownerIssue)
+        ? `<br><span style="opacity:0.6;font-size:0.78rem">code: ${escHtml(data.detail)}</span>`
+        : '';
       thinking.querySelector('.body').innerHTML = msg + hint;
       thinking.classList.add('err');
       set('chat-status', '');
@@ -6195,7 +6200,12 @@ async function sendChat() {
     }
 
     const answer = data.answer || 'No answer returned.';
-    thinking.querySelector('.body').innerHTML = mdToHtml(answer);
+    // The model can also stop mid-sentence once the token budget runs out.
+    // Say so rather than leaving a half-finished answer looking complete.
+    const cut = data.truncated
+      ? '<div style="margin-top:10px;opacity:0.7;font-size:0.8rem">That answer hit the length limit and stops mid-thought. Ask a narrower follow-up for the rest.</div>'
+      : '';
+    thinking.querySelector('.body').innerHTML = mdToHtml(answer) + cut;
     chatHistory.push({ role: 'user', content: q });
     chatHistory.push({ role: 'assistant', content: answer });
     if (chatHistory.length > 8) chatHistory = chatHistory.slice(-8);

@@ -9,8 +9,19 @@
 //
 // Optional:
 //   ASK_MODEL       default "claude-haiku-5-5" (see note below)
-//   ASK_DAILY_CAP   default 2000 — soft global request cap per UTC day
-//   ASK_EFFORT      default "low" — low | medium | high
+//   ASK_DAILY_CAP   default 2000 - soft global request cap per UTC day
+//   ASK_EFFORT      default "low" - low | medium | high
+//   ASK_MAX_TOKENS  default 4000 - see the budget note below
+//
+// Budget note: Haiku 5.5 has adaptive thinking always on and it cannot be
+// disabled on this model. Thinking tokens are billed and counted against
+// max_tokens, so a reasoning pass on an open-ended question ("what am I
+// missing?") can swallow the entire budget before a single word of prose is
+// emitted. At max_tokens 1500 that happened often enough to be the top
+// complaint: the API returned 200 with a lone thinking block, no text, and the
+// user saw a bogus "try rephrasing" message. 4000 leaves room for the thinking
+// pass plus the two-to-four paragraph answer the system prompt asks for. Lower
+// it only if you also lower effort.
 //
 // Model note: Haiku 5.5 is the default because this is a public widget answering
 // short questions over context we hand it, and the site owner pays per query —
@@ -22,7 +33,7 @@ import Anthropic from '@anthropic-ai/sdk';
 
 const MODEL      = process.env.ASK_MODEL || 'claude-haiku-5-5';
 const EFFORT     = process.env.ASK_EFFORT || 'low';
-const MAX_TOKENS = 1500;
+const MAX_TOKENS = parseInt(process.env.ASK_MAX_TOKENS || '4000', 10);
 const DAILY_CAP  = parseInt(process.env.ASK_DAILY_CAP || '2000', 10);
 
 // Per-IP throttle plus a global daily counter. In-memory, so it resets on every
@@ -162,8 +173,24 @@ export default async (req) => {
       .join('\n')
       .trim();
 
+    // No text block at all. With adaptive thinking this almost always means the
+    // budget ran out mid-reasoning, which rephrasing will not fix - the honest
+    // advice is to ask something narrower.
+    if (!answer) {
+      const ranOut = response.stop_reason === 'max_tokens';
+      console.warn('[ask] empty answer; stop_reason=%s output_tokens=%s',
+        response.stop_reason, response.usage?.output_tokens);
+      return json({
+        error: ranOut ? 'too_long' : 'empty',
+        detail: `no_text_${response.stop_reason || 'unknown'}`,
+        message: ranOut
+          ? "That question needed more thinking room than one answer allows. Ask it in smaller pieces and you will get a better answer anyway: one account, or one trade-off, at a time."
+          : 'Nothing came back for that one. Try asking it a different way.',
+      }, 200);
+    }
+
     return json({
-      answer: answer || 'No answer came back. Try rephrasing the question.',
+      answer,
       truncated: response.stop_reason === 'max_tokens',
       usage: {
         input: response.usage?.input_tokens ?? 0,
